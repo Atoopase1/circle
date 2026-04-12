@@ -98,7 +98,7 @@ export default function StatusPage() {
 
       {/* Main Feed Container */}
       <div className="flex-1 overflow-y-auto w-full">
-        <div className="max-w-2xl mx-auto px-6 py-6 pb-24">
+        <div className="max-w-2xl mx-auto px-6 py-6 pb-32">
           
           <div className="mb-8">
             <h2 className="text-sm font-semibold text-[var(--text-muted)] uppercase mb-3 px-1">Share an update</h2>

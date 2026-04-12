@@ -1,5 +1,5 @@
 // ============================================================
-// WhatsApp Clone — Type Definitions
+// Circle — Type Definitions
 // ============================================================
 
 export interface Profile {
@@ -90,4 +90,18 @@ export interface PresenceState {
   user_id: string;
   is_online: boolean;
   last_seen: string;
+}
+
+// Call types
+export type CallType = 'audio' | 'video';
+export type CallStatus = 'idle' | 'calling' | 'ringing' | 'connected' | 'ended';
+
+export interface CallState {
+  callId: string | null;
+  callType: CallType;
+  status: CallStatus;
+  remoteUser: Profile | null;
+  isMuted: boolean;
+  isVideoOff: boolean;
+  startedAt: string | null;
 }

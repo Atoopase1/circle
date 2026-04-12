@@ -1,8 +1,9 @@
 // ============================================================
 // Default chat page — No chat selected
 // ============================================================
-import { MessageCircle, Lock } from 'lucide-react';
+import { Lock } from 'lucide-react';
 import ChatSidebar from '@/components/chat/ChatSidebar';
+import CircleLogo from '@/components/ui/CircleLogo';
 
 export default function ChatDefaultPage() {
   return (
@@ -23,20 +24,18 @@ export default function ChatDefaultPage() {
 
               {/* Center icon */}
               <div className="absolute inset-0 flex items-center justify-center">
-                <div className="w-24 h-24 bg-gradient-to-br from-[#25D366]/10 to-[#128C7E]/10 rounded-full flex items-center justify-center">
-                  <MessageCircle size={48} className="text-[var(--text-muted)] opacity-50" />
-                </div>
+                <CircleLogo size={80} />
               </div>
             </div>
           </div>
 
           <h2 className="text-3xl font-light text-[var(--text-primary)] mb-3">
-            WhatsApp Clone
+            Circle
           </h2>
           <p className="text-sm text-[var(--text-muted)] leading-relaxed mb-8">
-            Send and receive messages without keeping your phone online.
+            Connect, share, and communicate with your circle.
             <br />
-            Use WhatsApp on up to 4 linked devices and 1 phone at the same time.
+            Start a conversation or select a chat to get started.
           </p>
           <div className="flex items-center justify-center gap-1.5 text-xs text-[var(--text-muted)]">
             <Lock size={12} />

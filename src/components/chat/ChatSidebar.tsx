@@ -126,7 +126,7 @@ export default function ChatSidebar() {
 
       {/* Chat list */}
       <div className="flex-1 overflow-y-auto scrollbar-thin">
-        {isLoadingChats ? (
+        {isLoadingChats && filteredChats.length === 0 ? (
           <Spinner className="mt-12" />
         ) : filteredChats.length === 0 ? (
           <div className="flex flex-col items-center justify-center mt-20 text-[var(--text-muted)] px-6 text-center">

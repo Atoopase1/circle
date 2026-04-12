@@ -47,7 +47,8 @@ export default function MessageInput({ chatId }: MessageInputProps) {
         messageType = getMessageTypeFromFile(selectedFile);
       }
 
-      await sendMessage(
+      // Fire and forget, database handles it asynchronously
+      sendMessage(
         chatId,
         trimmed || null!,
         messageType,
@@ -180,7 +181,7 @@ export default function MessageInput({ chatId }: MessageInputProps) {
                 onClick={() => handleFileSelect('image/*')}
                 className="w-full flex items-center gap-3 px-4 py-2.5 hover:bg-[var(--bg-hover)] transition-colors text-sm text-[var(--text-primary)]"
               >
-                <ImageIcon size={18} className="text-purple-500" />
+                <ImageIcon size={18} className="text-[#09A5DB]" />
                 Photos
               </button>
               <button

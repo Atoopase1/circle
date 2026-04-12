@@ -3,7 +3,7 @@
 // ============================================================
 'use client';
 
-import { MessageSquare, Users, CircleDashed } from 'lucide-react';
+import { MessageSquare, Users, Aperture } from 'lucide-react';
 import { usePathname, useRouter } from 'next/navigation';
 
 export default function AppNavigation() {
@@ -12,7 +12,7 @@ export default function AppNavigation() {
 
   const tabs = [
     { name: 'Chats', href: '/', icon: MessageSquare },
-    { name: 'Status', href: '/status', icon: CircleDashed },
+    { name: 'Status', href: '/status', icon: Aperture },
     { name: 'Contacts', href: '/contacts', icon: Users },
   ];
 
@@ -29,7 +29,7 @@ export default function AppNavigation() {
               onClick={() => router.push(tab.href)}
               className={`p-3 rounded-xl transition-all duration-200 group relative ${
                 isActive
-                  ? 'bg-[var(--wa-green)] bg-opacity-20 text-[var(--wa-green)]'
+                  ? 'bg-[#09A5DB]/20 text-[#09A5DB]'
                   : 'text-[var(--text-muted)] hover:bg-[var(--bg-hover)]'
               }`}
             >
@@ -43,8 +43,10 @@ export default function AppNavigation() {
         })}
       </div>
 
-      {/* Mobile Navigation (Bottom bar) */}
-      <div className="lg:hidden absolute bottom-0 left-0 right-0 h-16 bg-[var(--bg-header)] border-t border-[var(--border-color)] flex items-center justify-around z-20">
+      {/* Mobile Navigation (Bottom bar) — fixed position with safe area + higher z-index */}
+      <div className="lg:hidden fixed bottom-0 left-0 right-0 h-16 bg-[var(--bg-header)] border-t border-[var(--border-color)] flex items-center justify-around z-50 backdrop-blur-md bg-opacity-95"
+        style={{ paddingBottom: 'env(safe-area-inset-bottom, 0px)' }}
+      >
         {tabs.map((tab) => {
           const Icon = tab.icon;
           const isActive = pathname === tab.href || (tab.href !== '/' && pathname.startsWith(tab.href));
@@ -52,12 +54,16 @@ export default function AppNavigation() {
             <button
               key={tab.name}
               onClick={() => router.push(tab.href)}
-              className={`flex flex-col items-center justify-center w-full h-full gap-1 transition-colors ${
-                isActive ? 'text-[var(--wa-green)]' : 'text-[var(--text-muted)]'
+              className={`flex flex-col items-center justify-center w-full h-full gap-1 transition-colors relative ${
+                isActive ? 'text-[#09A5DB]' : 'text-[var(--text-muted)]'
               }`}
             >
               <Icon size={22} className={isActive ? 'opacity-100' : 'opacity-70'} />
               <span className="text-[10px] font-medium">{tab.name}</span>
+              {/* Active indicator bar */}
+              {isActive && (
+                <span className="absolute top-0 left-1/2 -translate-x-1/2 w-8 h-0.5 bg-[#09A5DB] rounded-full" />
+              )}
             </button>
           );
         })}

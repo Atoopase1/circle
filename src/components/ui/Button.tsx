@@ -25,7 +25,7 @@ export default function Button({
     'inline-flex items-center justify-center font-medium rounded-lg transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed';
 
   const variantStyles = {
-    primary: 'bg-[var(--wa-green)] text-white hover:bg-[var(--wa-green-dark)] focus:ring-[var(--wa-green)]',
+    primary: 'bg-[var(--paystack-navy)] text-white hover:bg-[var(--paystack-blue)] focus:ring-[var(--paystack-blue)]',
     secondary: 'bg-[var(--bg-secondary)] text-[var(--text-primary)] hover:bg-[var(--bg-hover)] focus:ring-gray-400',
     ghost: 'text-[var(--text-secondary)] hover:bg-[var(--bg-hover)] focus:ring-gray-400',
     danger: 'bg-red-600 text-white hover:bg-red-700 focus:ring-red-500',

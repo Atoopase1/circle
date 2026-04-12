@@ -251,6 +251,12 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql SECURITY DEFINER;
 
+-- Function: Get user's chats (Bypasses RLS to prevent infinite recursion)
+CREATE OR REPLACE FUNCTION public.get_my_chat_ids()
+RETURNS SETOF uuid AS $$
+  SELECT chat_id FROM chat_participants WHERE user_id = auth.uid();
+$$ LANGUAGE sql SECURITY DEFINER SET search_path = public;
+
 -- ============================================================
 -- 7. ROW LEVEL SECURITY (RLS) POLICIES
 -- ============================================================
@@ -288,9 +294,7 @@ CREATE POLICY "Users can view chats they participate in"
   ON chats FOR SELECT
   TO authenticated
   USING (
-    id IN (
-      SELECT chat_id FROM chat_participants WHERE user_id = auth.uid()
-    )
+    id IN (SELECT public.get_my_chat_ids())
   );
 
 DROP POLICY IF EXISTS "Authenticated users can create chats" ON chats;
@@ -316,9 +320,7 @@ CREATE POLICY "Users can view participants of their chats"
   ON chat_participants FOR SELECT
   TO authenticated
   USING (
-    chat_id IN (
-      SELECT chat_id FROM chat_participants WHERE user_id = auth.uid()
-    )
+    chat_id IN (SELECT public.get_my_chat_ids())
   );
 
 DROP POLICY IF EXISTS "Chat admins can add participants" ON chat_participants;
@@ -358,9 +360,7 @@ CREATE POLICY "Users can view messages in their chats"
   ON messages FOR SELECT
   TO authenticated
   USING (
-    chat_id IN (
-      SELECT chat_id FROM chat_participants WHERE user_id = auth.uid()
-    )
+    chat_id IN (SELECT public.get_my_chat_ids())
   );
 
 DROP POLICY IF EXISTS "Users can send messages to their chats" ON messages;
@@ -369,9 +369,7 @@ CREATE POLICY "Users can send messages to their chats"
   TO authenticated
   WITH CHECK (
     sender_id = auth.uid()
-    AND chat_id IN (
-      SELECT chat_id FROM chat_participants WHERE user_id = auth.uid()
-    )
+    AND chat_id IN (SELECT public.get_my_chat_ids())
   );
 
 DROP POLICY IF EXISTS "Users can update own messages (soft delete)" ON messages;

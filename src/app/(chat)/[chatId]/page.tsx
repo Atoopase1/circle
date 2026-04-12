@@ -10,15 +10,15 @@ import MessageList from '@/components/chat/MessageList';
 import MessageInput from '@/components/chat/MessageInput';
 import GroupInfoPanel from '@/components/chat/GroupInfoPanel';
 import ChatSidebar from '@/components/chat/ChatSidebar';
-import Spinner from '@/components/ui/Spinner';
+import LottieLoader from '@/components/ui/LottieLoader';
 import { useChatStore } from '@/store/chat-store';
 import { useRealtimeMessages } from '@/hooks/useRealtimeMessages';
 import { useMessageStatus } from '@/hooks/useMessageStatus';
-
 export default function ChatPage() {
   const params = useParams();
   const chatId = params.chatId as string;
   const { activeChat, setActiveChat, fetchChats, chats } = useChatStore();
+  const hasFetchedOnce = useChatStore((s) => s._hasFetchedOnce);
   const [showGroupInfo, setShowGroupInfo] = useState(false);
 
   // Subscribe to realtime messages
@@ -26,24 +26,44 @@ export default function ChatPage() {
   useMessageStatus(chatId);
 
   useEffect(() => {
-    // If chats not loaded yet, fetch them first
-    if (chats.length === 0) {
-      fetchChats().then(() => {
-        setActiveChat(chatId);
-      });
-    } else {
-      setActiveChat(chatId);
-    }
+    if (!chatId) return;
+    
+    const initChat = async () => {
+      // If chats never fetched, fetch them first
+      if (!hasFetchedOnce) {
+        await fetchChats();
+      }
+      
+      // Now set the active chat (it will fetch messages inside)
+      await setActiveChat(chatId);
+    };
+
+    initChat();
 
     return () => {
       // Don't clear active chat on unmount to prevent flicker
     };
-  }, [chatId, chats.length, fetchChats, setActiveChat]);
+  }, [chatId, hasFetchedOnce, fetchChats, setActiveChat]);
 
+  // Check if chat actually exists to prevent race conditions during load
+  const isChatValid = chats.some((c) => c.id === chatId);
+
+  if (hasFetchedOnce && !isChatValid) {
+    return (
+      <div className="flex-1 flex flex-col items-center justify-center bg-[var(--bg-chat)] h-full">
+        <p className="text-[var(--text-muted)] text-sm mb-4">Chat not found.</p>
+        <button onClick={() => window.location.href = '/'} className="px-4 py-2 bg-[#09A5DB] text-white rounded-lg text-sm">
+          Return to Chats
+        </button>
+      </div>
+    );
+  }
+
+  // Still wait for activeChat to be populated by Zustand
   if (!activeChat) {
     return (
-      <div className="flex-1 flex items-center justify-center bg-[var(--bg-chat)]">
-        <Spinner size="lg" />
+      <div className="flex-1 flex items-center justify-center bg-[var(--bg-chat)] h-full">
+        <LottieLoader size={100} />
       </div>
     );
   }

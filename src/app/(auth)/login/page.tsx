@@ -5,8 +5,9 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { MessageCircle, Mail, Phone, Eye, EyeOff, ArrowRight } from 'lucide-react';
+import { Mail, Phone, Eye, EyeOff, ArrowRight } from 'lucide-react';
 import Button from '@/components/ui/Button';
+import CircleLogo from '@/components/ui/CircleLogo';
 import { getSupabaseBrowserClient } from '@/lib/supabase/client';
 import toast, { Toaster } from 'react-hot-toast';
 
@@ -126,10 +127,8 @@ export default function LoginPage() {
 
       {/* Logo & Title */}
       <div className="flex flex-col items-center mb-8">
-        <div className="w-16 h-16 bg-gradient-to-br from-[#25D366] to-[#128C7E] rounded-2xl flex items-center justify-center mb-4 shadow-lg">
-          <MessageCircle size={32} className="text-white" />
-        </div>
-        <h1 className="text-2xl font-bold text-[var(--text-primary)]">WhatsApp Clone</h1>
+        <CircleLogo size={56} className="mb-4" />
+        <h1 className="text-2xl font-bold bg-gradient-to-br from-[#09A5DB] to-[#011B33] bg-clip-text text-transparent">Circle</h1>
         <p className="text-sm text-[var(--text-muted)] mt-1">
           {isLogin ? 'Sign in to continue' : 'Create your account'}
         </p>
@@ -141,7 +140,7 @@ export default function LoginPage() {
           onClick={() => { setMode('email'); setOtpSent(false); }}
           className={`flex-1 flex items-center justify-center gap-2 py-2 rounded-md text-sm font-medium transition-all ${
             mode === 'email'
-              ? 'bg-[var(--wa-green)] text-white shadow-sm'
+              ? 'bg-[var(--paystack-navy)] text-white shadow-sm'
               : 'text-[var(--text-muted)] hover:text-[var(--text-primary)]'
           }`}
         >
@@ -152,7 +151,7 @@ export default function LoginPage() {
           onClick={() => setMode('phone')}
           className={`flex-1 flex items-center justify-center gap-2 py-2 rounded-md text-sm font-medium transition-all ${
             mode === 'phone'
-              ? 'bg-[var(--wa-green)] text-white shadow-sm'
+              ? 'bg-[var(--paystack-navy)] text-white shadow-sm'
               : 'text-[var(--text-muted)] hover:text-[var(--text-primary)]'
           }`}
         >
@@ -173,7 +172,7 @@ export default function LoginPage() {
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               placeholder="you@example.com"
-              className="w-full px-4 py-3 bg-[var(--bg-search)] text-[var(--text-primary)] rounded-lg text-sm placeholder:text-[var(--text-muted)] focus:outline-none focus:ring-2 focus:ring-[var(--wa-green)] transition-all"
+              className="w-full px-4 py-3 bg-[var(--bg-search)] text-[var(--text-primary)] rounded-lg text-sm placeholder:text-[var(--text-muted)] focus:outline-none focus:ring-2 focus:ring-[var(--paystack-blue)] transition-all"
             />
           </div>
           <div>
@@ -186,7 +185,7 @@ export default function LoginPage() {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 placeholder="Enter your password"
-                className="w-full px-4 py-3 pr-12 bg-[var(--bg-search)] text-[var(--text-primary)] rounded-lg text-sm placeholder:text-[var(--text-muted)] focus:outline-none focus:ring-2 focus:ring-[var(--wa-green)] transition-all"
+                className="w-full px-4 py-3 pr-12 bg-[var(--bg-search)] text-[var(--text-primary)] rounded-lg text-sm placeholder:text-[var(--text-muted)] focus:outline-none focus:ring-2 focus:ring-[var(--paystack-blue)] transition-all"
                 onKeyDown={(e) => e.key === 'Enter' && handleEmailAuth()}
               />
               <button
@@ -227,7 +226,7 @@ export default function LoginPage() {
               onChange={(e) => setPhone(e.target.value)}
               placeholder="+1 234 567 8900"
               disabled={otpSent}
-              className="w-full px-4 py-3 bg-[var(--bg-search)] text-[var(--text-primary)] rounded-lg text-sm placeholder:text-[var(--text-muted)] focus:outline-none focus:ring-2 focus:ring-[var(--wa-green)] transition-all disabled:opacity-60"
+              className="w-full px-4 py-3 bg-[var(--bg-search)] text-[var(--text-primary)] rounded-lg text-sm placeholder:text-[var(--text-muted)] focus:outline-none focus:ring-2 focus:ring-[var(--paystack-blue)] transition-all disabled:opacity-60"
             />
           </div>
           {otpSent && (
@@ -241,7 +240,7 @@ export default function LoginPage() {
                 onChange={(e) => setOtp(e.target.value)}
                 placeholder="Enter 6-digit code"
                 maxLength={6}
-                className="w-full px-4 py-3 bg-[var(--bg-search)] text-[var(--text-primary)] rounded-lg text-sm text-center tracking-[0.5em] font-mono placeholder:tracking-normal placeholder:text-[var(--text-muted)] focus:outline-none focus:ring-2 focus:ring-[var(--wa-green)] transition-all"
+                className="w-full px-4 py-3 bg-[var(--bg-search)] text-[var(--text-primary)] rounded-lg text-sm text-center tracking-[0.5em] font-mono placeholder:tracking-normal placeholder:text-[var(--text-muted)] focus:outline-none focus:ring-2 focus:ring-[var(--paystack-blue)] transition-all"
                 onKeyDown={(e) => e.key === 'Enter' && handleVerifyOtp()}
               />
             </div>

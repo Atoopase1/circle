@@ -1,13 +1,14 @@
 // ============================================================
-// ChatHeader — Top bar of an active chat
+// ChatHeader — Top bar of an active chat with call buttons
 // ============================================================
 'use client';
 
-import { ArrowLeft, Phone, Video, MoreVertical, Search } from 'lucide-react';
+import { ArrowLeft, Phone, Video, Search } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import Avatar from '@/components/ui/Avatar';
 import { usePresenceStore } from '@/store/presence-store';
 import { useAuthStore } from '@/store/auth-store';
+import { useCallStore } from '@/store/call-store';
 import { formatLastSeen } from '@/lib/utils';
 import type { ChatWithDetails } from '@/types';
 
@@ -20,6 +21,7 @@ export default function ChatHeader({ chat, onInfoClick }: ChatHeaderProps) {
   const router = useRouter();
   const user = useAuthStore((s) => s.user);
   const { isUserOnline, getTypingUsersForChat } = usePresenceStore();
+  const initiateCall = useCallStore((s) => s.initiateCall);
 
   const displayName = chat.is_group
     ? chat.group_name || 'Group'
@@ -54,6 +56,18 @@ export default function ChatHeader({ chat, onInfoClick }: ChatHeaderProps) {
     statusText = formatLastSeen(chat.other_user.last_seen);
   }
 
+  const handleVideoCall = () => {
+    if (!chat.is_group && chat.other_user) {
+      initiateCall(chat.other_user, 'video');
+    }
+  };
+
+  const handleAudioCall = () => {
+    if (!chat.is_group && chat.other_user) {
+      initiateCall(chat.other_user, 'audio');
+    }
+  };
+
   return (
     <div className="flex items-center gap-3 px-4 py-3 bg-[var(--bg-header)] border-b border-[var(--border-color)]">
       {/* Back button (mobile) */}
@@ -79,14 +93,26 @@ export default function ChatHeader({ chat, onInfoClick }: ChatHeaderProps) {
         )}
       </button>
 
-      {/* Actions */}
+      {/* Actions — Call buttons work in 1-on-1 chats */}
       <div className="flex items-center gap-1">
-        <button className="p-2 rounded-full hover:bg-[var(--bg-hover)] transition-colors text-[var(--text-muted)]">
-          <Video size={20} />
-        </button>
-        <button className="p-2 rounded-full hover:bg-[var(--bg-hover)] transition-colors text-[var(--text-muted)]">
-          <Phone size={20} />
-        </button>
+        {!chat.is_group && (
+          <>
+            <button
+              onClick={handleVideoCall}
+              className="p-2 rounded-full hover:bg-[var(--bg-hover)] transition-colors text-[var(--text-muted)] hover:text-[var(--wa-green)]"
+              title="Video call"
+            >
+              <Video size={20} />
+            </button>
+            <button
+              onClick={handleAudioCall}
+              className="p-2 rounded-full hover:bg-[var(--bg-hover)] transition-colors text-[var(--text-muted)] hover:text-[var(--wa-green)]"
+              title="Audio call"
+            >
+              <Phone size={20} />
+            </button>
+          </>
+        )}
         <button className="p-2 rounded-full hover:bg-[var(--bg-hover)] transition-colors text-[var(--text-muted)]">
           <Search size={20} />
         </button>

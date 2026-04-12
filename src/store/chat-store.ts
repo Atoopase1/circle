@@ -6,6 +6,7 @@
 import { create } from 'zustand';
 import { getSupabaseBrowserClient } from '@/lib/supabase/client';
 import type { ChatWithDetails, Message, Profile } from '@/types';
+import { useAuthStore } from '@/store/auth-store';
 
 interface ChatState {
   chats: ChatWithDetails[];
@@ -16,6 +17,7 @@ interface ChatState {
   isLoadingMessages: boolean;
   hasMoreMessages: boolean;
   searchQuery: string;
+  _hasFetchedOnce: boolean;
 
   // Actions
   fetchChats: () => Promise<void>;
@@ -29,6 +31,8 @@ interface ChatState {
   startDirectChat: (otherUserId: string) => Promise<string | null>;
   createGroupChat: (name: string, participantIds: string[], description?: string) => Promise<string | null>;
   resetUnreadCount: (chatId: string) => void;
+  updateChatWithNewMessage: (chatId: string, message: Message) => void;
+  incrementUnreadCount: (chatId: string) => void;
 }
 
 export const useChatStore = create<ChatState>((set, get) => ({
@@ -40,46 +44,59 @@ export const useChatStore = create<ChatState>((set, get) => ({
   isLoadingMessages: false,
   hasMoreMessages: true,
   searchQuery: '',
+  _hasFetchedOnce: false,
 
   fetchChats: async () => {
-    set({ isLoadingChats: true });
+    const hasCachedChats = get().chats.length > 0;
+    
+    // Only show loading spinner on first load — subsequent fetches are silent background refreshes
+    if (!hasCachedChats) {
+      set({ isLoadingChats: true });
+    }
+
     const supabase = getSupabaseBrowserClient();
-    const { data: { user } } = await supabase.auth.getUser();
-    if (!user) return;
+    const user = useAuthStore.getState().user;
+    if (!user) {
+      set({ isLoadingChats: false });
+      return;
+    }
 
     try {
-      // Fetch chat participants for current user
+      // Step 1: Get our participations (needed to know which chats to fetch)
       const { data: myParticipations } = await supabase
         .from('chat_participants')
         .select('chat_id, role, unread_count')
         .eq('user_id', user.id);
 
       if (!myParticipations?.length) {
-        set({ chats: [], isLoadingChats: false });
+        set({ chats: [], isLoadingChats: false, _hasFetchedOnce: true });
         return;
       }
 
       const chatIds = myParticipations.map((p) => p.chat_id);
 
-      // Fetch chats
-      const { data: chatsData } = await supabase
-        .from('chats')
-        .select('*')
-        .in('id', chatIds)
-        .order('last_message_at', { ascending: false, nullsFirst: false });
+      // Step 2: Fetch chats, participants, and messages IN PARALLEL
+      const [chatsResult, participantsResult] = await Promise.all([
+        supabase
+          .from('chats')
+          .select('*')
+          .in('id', chatIds)
+          .order('last_message_at', { ascending: false, nullsFirst: false }),
+        supabase
+          .from('chat_participants')
+          .select('*, profile:profiles(*)')
+          .in('chat_id', chatIds),
+      ]);
+
+      const chatsData = chatsResult.data;
+      const allParticipants = participantsResult.data;
 
       if (!chatsData) {
-        set({ chats: [], isLoadingChats: false });
+        set({ chats: [], isLoadingChats: false, _hasFetchedOnce: true });
         return;
       }
 
-      // Fetch all participants with profiles
-      const { data: allParticipants } = await supabase
-        .from('chat_participants')
-        .select('*, profile:profiles(*)')
-        .in('chat_id', chatIds);
-
-      // Fetch last messages
+      // Step 3: Fetch last messages in parallel (only if we have message IDs)
       const lastMessageIds = chatsData
         .map((c) => c.last_message_id)
         .filter(Boolean);
@@ -121,7 +138,7 @@ export const useChatStore = create<ChatState>((set, get) => ({
         } as ChatWithDetails;
       });
 
-      set({ chats, isLoadingChats: false });
+      set({ chats, isLoadingChats: false, _hasFetchedOnce: true });
     } catch (err) {
       console.error('fetchChats error:', err);
       set({ isLoadingChats: false });
@@ -154,7 +171,7 @@ export const useChatStore = create<ChatState>((set, get) => ({
     try {
       let query = supabase
         .from('messages')
-        .select('*, sender:profiles!messages_sender_id_fkey(*)')
+        .select('*, sender:profiles(*), status:message_status(*)')
         .eq('chat_id', chatId)
         .order('created_at', { ascending: false })
         .limit(50);
@@ -191,12 +208,37 @@ export const useChatStore = create<ChatState>((set, get) => ({
 
   sendMessage: async (chatId, content, messageType = 'text', mediaUrl, mediaMetadata, replyToId) => {
     const supabase = getSupabaseBrowserClient();
-    const { data: { user } } = await supabase.auth.getUser();
+    const user = useAuthStore.getState().user;
+    const profile = useAuthStore.getState().profile;
     if (!user) return null;
 
-    const { data, error } = await supabase
+    const messageId = crypto.randomUUID();
+    
+    // 1. Create Optimistic Message
+    const optimisticMessage = {
+      id: messageId,
+      chat_id: chatId,
+      sender_id: user.id,
+      content,
+      message_type: messageType,
+      media_url: mediaUrl || null,
+      media_metadata: mediaMetadata || null,
+      reply_to_id: replyToId || null,
+      is_deleted: false,
+      created_at: new Date().toISOString(),
+      sender: profile || undefined,
+      status: [],
+    } as Message;
+
+    // 2. Instantly show it on screen
+    get().addMessage(optimisticMessage);
+    get().updateChatWithNewMessage(chatId, optimisticMessage);
+
+    // 3. Send to Database in background (minimal — no heavy joins)
+    const { error } = await supabase
       .from('messages')
       .insert({
+        id: messageId,
         chat_id: chatId,
         sender_id: user.id,
         content,
@@ -204,21 +246,33 @@ export const useChatStore = create<ChatState>((set, get) => ({
         media_url: mediaUrl || null,
         media_metadata: mediaMetadata || null,
         reply_to_id: replyToId || null,
-      })
-      .select('*, sender:profiles!messages_sender_id_fkey(*)')
-      .single();
+      });
 
     if (error) {
       console.error('sendMessage error:', error);
+      if (typeof window !== 'undefined') {
+        const { toast } = require('react-hot-toast');
+        toast.error(`Send Error: ${error.message}`);
+      }
+      // Remove the optimistic message on failure
+      set((state) => ({
+        messages: state.messages.filter((m) => m.id !== messageId),
+      }));
       return null;
     }
 
-    return data as Message;
+    // 4. Mark optimistic message as "sent" (single checkmark)
+    get().updateMessageInList({
+      ...optimisticMessage,
+      status: [{ id: '', message_id: messageId, user_id: '', status: 'sent', updated_at: new Date().toISOString() }],
+    });
+
+    return optimisticMessage;
   },
 
   markAsRead: async (chatId: string) => {
     const supabase = getSupabaseBrowserClient();
-    const { data: { user } } = await supabase.auth.getUser();
+    const user = useAuthStore.getState().user;
     if (!user) return;
 
     // Reset unread count
@@ -259,11 +313,15 @@ export const useChatStore = create<ChatState>((set, get) => ({
       return { messages: [...state.messages, message] };
     });
 
-    // Update chat list
+    // Update chat list with the new message
+    get().updateChatWithNewMessage(message.chat_id, message);
+  },
+
+  updateChatWithNewMessage: (chatId: string, message: Message) => {
     set((state) => ({
       chats: state.chats
         .map((c) =>
-          c.id === message.chat_id
+          c.id === chatId
             ? { ...c, last_message: message, last_message_at: message.created_at }
             : c
         )
@@ -272,6 +330,20 @@ export const useChatStore = create<ChatState>((set, get) => ({
           const bTime = b.last_message_at || b.created_at;
           return new Date(bTime).getTime() - new Date(aTime).getTime();
         }),
+    }));
+  },
+
+  incrementUnreadCount: (chatId: string) => {
+    const activeChatId = get().activeChatId;
+    // Don't increment if we're currently viewing this chat
+    if (activeChatId === chatId) return;
+
+    set((state) => ({
+      chats: state.chats.map((c) =>
+        c.id === chatId && c.my_participant
+          ? { ...c, my_participant: { ...c.my_participant, unread_count: (c.my_participant.unread_count || 0) + 1 } }
+          : c
+      ),
     }));
   },
 
@@ -292,6 +364,10 @@ export const useChatStore = create<ChatState>((set, get) => ({
 
     if (error) {
       console.error('startDirectChat error:', error);
+      if (typeof window !== 'undefined') {
+        const { toast } = require('react-hot-toast');
+        toast.error(`Chat Error: ${error.message}`);
+      }
       return null;
     }
 
@@ -302,7 +378,7 @@ export const useChatStore = create<ChatState>((set, get) => ({
 
   createGroupChat: async (name: string, participantIds: string[], description?: string) => {
     const supabase = getSupabaseBrowserClient();
-    const { data: { user } } = await supabase.auth.getUser();
+    const user = useAuthStore.getState().user;
     if (!user) return null;
 
     // Create chat

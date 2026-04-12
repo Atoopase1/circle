@@ -24,7 +24,8 @@ export default function MessageList({ chatId, isGroup }: MessageListProps) {
   const hasMoreMessages = useChatStore((s) => s.hasMoreMessages);
   const fetchMessages = useChatStore((s) => s.fetchMessages);
   const user = useAuthStore((s) => s.user);
-  const typingUsers = usePresenceStore((s) => s.getTypingUsersForChat(chatId));
+  const typingUsersAll = usePresenceStore((s) => s.typingUsers);
+  const typingUsers = typingUsersAll.filter((t) => t.chat_id === chatId);
 
   const bottomRef = useRef<HTMLDivElement>(null);
   const listRef = useRef<HTMLDivElement>(null);

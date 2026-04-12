@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import { Inter } from "next/font/google";
+import { Toaster } from "react-hot-toast";
 import "./globals.css";
 
 const inter = Inter({
@@ -9,10 +10,10 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
-  title: "WhatsApp Clone — Real-time Chat",
+  title: "Circle — Connect, Share, Communicate",
   description:
-    "A production-ready real-time chat application built with Next.js and Supabase, replicating WhatsApp's core experience.",
-  keywords: ["chat", "messaging", "whatsapp", "realtime", "nextjs", "supabase"],
+    "Circle is a modern social messaging platform. Chat, call, share status updates, and stay connected with your circle.",
+  keywords: ["circle", "chat", "messaging", "social", "realtime", "video call", "audio call"],
 };
 
 export const viewport: Viewport = {
@@ -21,8 +22,8 @@ export const viewport: Viewport = {
   maximumScale: 1,
   userScalable: false,
   themeColor: [
-    { media: "(prefers-color-scheme: light)", color: "#00a884" },
-    { media: "(prefers-color-scheme: dark)", color: "#111b21" },
+    { media: "(prefers-color-scheme: light)", color: "#09A5DB" },
+    { media: "(prefers-color-scheme: dark)", color: "#011B33" },
   ],
 };
 
@@ -47,8 +48,9 @@ export default function RootLayout({
           }}
         />
       </head>
-      <body className="min-h-full font-sans antialiased" style={{ fontFamily: 'var(--font-sans)' }}>
+      <body className="min-h-full font-sans antialiased" style={{ fontFamily: 'var(--font-sans)' }} suppressHydrationWarning>
         {children}
+        <Toaster position="top-center" />
       </body>
     </html>
   );

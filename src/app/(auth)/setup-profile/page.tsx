@@ -5,11 +5,11 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { MessageCircle, ArrowRight } from 'lucide-react';
+import { ArrowRight } from 'lucide-react';
 import Button from '@/components/ui/Button';
 import Avatar from '@/components/ui/Avatar';
+import CircleLogo from '@/components/ui/CircleLogo';
 import { useAuthStore } from '@/store/auth-store';
-import { getSupabaseBrowserClient } from '@/lib/supabase/client';
 import toast, { Toaster } from 'react-hot-toast';
 
 export default function SetupProfilePage() {
@@ -30,7 +30,7 @@ export default function SetupProfilePage() {
     try {
       await updateProfile({
         display_name: displayName.trim(),
-        bio: bio.trim() || 'Hey there! I am using WhatsApp.',
+        bio: bio.trim() || 'Hey there! I am using Circle.',
         is_online: true,
       });
 
@@ -48,9 +48,7 @@ export default function SetupProfilePage() {
       <Toaster position="top-center" />
 
       <div className="flex flex-col items-center mb-8">
-        <div className="w-16 h-16 bg-gradient-to-br from-[#25D366] to-[#128C7E] rounded-2xl flex items-center justify-center mb-4 shadow-lg">
-          <MessageCircle size={32} className="text-white" />
-        </div>
+        <CircleLogo size={56} className="mb-4" />
         <h1 className="text-xl font-bold text-[var(--text-primary)]">Set up your profile</h1>
         <p className="text-sm text-[var(--text-muted)] mt-1">Tell us about yourself</p>
       </div>
@@ -86,7 +84,7 @@ export default function SetupProfilePage() {
           <textarea
             value={bio}
             onChange={(e) => setBio(e.target.value)}
-            placeholder="Hey there! I am using WhatsApp."
+            placeholder="Hey there! I am using Circle."
             rows={3}
             maxLength={200}
             className="w-full px-4 py-3 bg-[var(--bg-search)] text-[var(--text-primary)] rounded-lg text-sm placeholder:text-[var(--text-muted)] focus:outline-none focus:ring-2 focus:ring-[var(--wa-green)] transition-all resize-none"
