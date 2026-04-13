@@ -101,6 +101,14 @@ const MessageBubble = React.memo(function MessageBubble({ message, isOwn, showSe
     );
   }
 
+  const getDisplayName = (profile: any) => {
+    if (!profile) return 'Unknown';
+    if (profile.display_name && profile.display_name !== 'User') return profile.display_name;
+    if (profile.phone) return profile.phone;
+    if (profile.email) return profile.email.split('@')[0];
+    return profile.display_name || 'User';
+  };
+
   return (
     <div 
       className={`flex ${isOwn ? 'justify-end' : 'justify-start'} mb-1.5 px-4 group`}
@@ -147,7 +155,7 @@ const MessageBubble = React.memo(function MessageBubble({ message, isOwn, showSe
               : 'bg-[var(--bg-secondary)] border-l-3 border-[var(--emerald)] hover:bg-[var(--bg-hover)]'
           }`}>
             <span className={`text-[11px] font-semibold ${isOwn ? 'text-white/80' : 'text-[var(--emerald)]'}`}>
-              {message.reply_to.sender?.display_name || 'User'}
+              {getDisplayName(message.reply_to.sender)}
             </span>
             <span className={`text-[12px] line-clamp-2 mt-0.5 ${isOwn ? 'text-white/60' : 'text-[var(--text-secondary)]'}`}>
               {message.reply_to.content || (message.reply_to.media_url ? 'Media' : '')}
@@ -159,9 +167,9 @@ const MessageBubble = React.memo(function MessageBubble({ message, isOwn, showSe
         {showSenderName && !isOwn && message.sender && (
           <p
             className="text-[11px] font-semibold mb-1"
-            style={{ color: `hsl(${(message.sender.display_name.charCodeAt(0) * 37) % 360}, 65%, 55%)` }}
+            style={{ color: `hsl(${(message.sender.id ? message.sender.id.charCodeAt(0) * 37 : 1) % 360}, 65%, 55%)` }}
           >
-            {message.sender.display_name}
+            {getDisplayName(message.sender)}
           </p>
         )}
 
