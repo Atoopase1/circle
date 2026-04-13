@@ -25,27 +25,35 @@ export default function StatusPage() {
 
   const loadStatuses = useCallback(async () => {
     setIsLoading(true);
-    // Unified Query: Fetch status AND all related social engagements
-    let query = supabase
-      .from('statuses')
-      .select(`
-        *, 
-        profiles!statuses_user_id_fkey(*), 
-        status_likes(*), 
-        status_comments(*, profiles(*)), 
-        status_ratings(*)
-      `);
+    
+    const buildQuery = (advanced: boolean) => {
+      const selectStr = advanced 
+        ? '*, profiles!statuses_user_id_fkey(*), status_likes(*), status_comments(*, profiles(*)), status_ratings(*)'
+        : '*, profiles(*)';
+        
+      let q = supabase.from('statuses').select(selectStr);
+      
+      if (activeTab === 'public') {
+        q = q.eq('visibility', 'public');
+      } else {
+        q = q.neq('visibility', 'public');
+      }
+      
+      return q.order('created_at', { ascending: false }).limit(50);
+    };
 
-    if (activeTab === 'public') {
-      query = query.eq('visibility', 'public');
-    } else {
-      query = query.neq('visibility', 'public');
+    let { data, error } = await buildQuery(true);
+    
+    // If the advanced query with likes/comments fails, fall back to basic query immediately
+    if (error) {
+      console.warn('Advanced query failed, falling back to basic query:', error);
+      const result = await buildQuery(false);
+      data = result.data;
+      error = result.error;
     }
 
-    const { data, error } = await query.order('created_at', { ascending: false }).limit(50);
-    
     if (error) {
-      console.error('Error fetching statuses:', error);
+      console.error('Error fetching statuses:', error.message || JSON.stringify(error) || error);
     }
     
     if (data) setStatuses(data);
