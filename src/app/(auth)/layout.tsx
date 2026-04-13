@@ -15,14 +15,14 @@ export default function AuthLayout({ children }: { children: React.ReactNode }) 
       <div 
         className="h-60 relative overflow-hidden"
         style={{
-          background: 'linear-gradient(135deg, #0F172A 0%, #1E293B 40%, #16A34A 100%)',
+          background: 'var(--emerald)',
         }}
       >
         {/* Subtle mesh overlay */}
         <div 
           className="absolute inset-0 opacity-20"
           style={{
-            backgroundImage: 'radial-gradient(circle at 20% 50%, rgba(22, 163, 74, 0.3) 0%, transparent 50%), radial-gradient(circle at 80% 20%, rgba(245, 158, 11, 0.15) 0%, transparent 40%)',
+            background: 'var(--emerald)',
           }}
         />
         {/* Subtle grid pattern */}

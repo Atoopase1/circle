@@ -1,9 +1,9 @@
 // ============================================================
-// MessageContextMenu — Premium glass dropdown for actions
+// MessageContextMenu — WhatsApp-style compact floating card
 // ============================================================
 'use client';
 
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect, useCallback } from 'react';
 import { 
   Reply, 
   Star, 
@@ -13,10 +13,12 @@ import {
   Forward, 
   Trash2, 
   MoreVertical,
-  SmilePlus,
-  Pencil
+  Pencil,
+  CheckCircle2
 } from 'lucide-react';
+import { useChatStore } from '@/store/chat-store';
 import type { Message } from '@/types';
+import { createPortal } from 'react-dom';
 
 interface MessageContextMenuProps {
   message: Message;
@@ -33,119 +35,236 @@ interface MessageContextMenuProps {
   onReact: (emoji: string) => void;
   isStarred: boolean;
   isPinned: boolean;
+  disabled?: boolean;
+  children?: React.ReactNode;
 }
 
 export default function MessageContextMenu(props: MessageContextMenuProps) {
   const [isOpen, setIsOpen] = useState(false);
-  const [showReactions, setShowReactions] = useState(false);
+  const [menuPos, setMenuPos] = useState<{ top: number; left: number; openUp: boolean } | null>(null);
+  const triggerRef = useRef<HTMLDivElement>(null);
   const menuRef = useRef<HTMLDivElement>(null);
 
   const EMOJIS = ['👍', '❤️', '😂', '😮', '😢', '🙏'];
 
+  const toggleSelectionMode = useChatStore(s => s.toggleSelectionMode);
+  const clearSelection = useChatStore(s => s.clearSelection);
+  const toggleMessageSelection = useChatStore(s => s.toggleMessageSelection);
+
+  // Calculate where to place the floating card near the message
+  const calculatePosition = useCallback(() => {
+    if (!triggerRef.current) return;
+    const rect = triggerRef.current.getBoundingClientRect();
+    const menuWidth = 200;
+    const menuHeight = 320; // approximate
+    const gap = 4;
+
+    // Decide up vs down
+    const spaceBelow = window.innerHeight - rect.bottom;
+    const spaceAbove = rect.top;
+    const openUp = spaceBelow < menuHeight && spaceAbove > spaceBelow;
+
+    let top: number;
+    if (openUp) {
+      top = rect.top - gap; // menu bottom anchored here
+    } else {
+      top = rect.bottom + gap;
+    }
+
+    // Horizontal: align to the side of the message
+    let left: number;
+    if (props.isOwn) {
+      left = rect.right - menuWidth; // right-aligned for own messages
+    } else {
+      left = rect.left; // left-aligned for others
+    }
+
+    // Clamp to viewport edges
+    const pad = 8;
+    if (left < pad) left = pad;
+    if (left + menuWidth > window.innerWidth - pad) left = window.innerWidth - menuWidth - pad;
+    if (!openUp && top + menuHeight > window.innerHeight - pad) {
+      top = window.innerHeight - menuHeight - pad;
+    }
+    if (openUp && top < pad) top = pad;
+
+    setMenuPos({ top, left, openUp });
+  }, [props.isOwn]);
+
+  const handleOpen = useCallback(() => {
+    setIsOpen(true);
+    requestAnimationFrame(() => calculatePosition());
+  }, [calculatePosition]);
+
+  const handleClose = useCallback(() => {
+    setIsOpen(false);
+  }, []);
+
+  // Close on outside click
   useEffect(() => {
+    if (!isOpen) return;
     function handleClickOutside(event: MouseEvent) {
-      if (menuRef.current && !menuRef.current.contains(event.target as Node)) {
-        setIsOpen(false);
-        setShowReactions(false);
+      if (
+        menuRef.current && !menuRef.current.contains(event.target as Node) &&
+        triggerRef.current && !triggerRef.current.contains(event.target as Node)
+      ) {
+        handleClose();
       }
     }
     document.addEventListener('mousedown', handleClickOutside);
     return () => document.removeEventListener('mousedown', handleClickOutside);
-  }, []);
+  }, [isOpen, handleClose]);
 
-  const MenuItem = ({ icon: Icon, label, onClick, danger, iconClass, disabled }: { 
+  // Close on scroll
+  useEffect(() => {
+    if (!isOpen) return;
+    const onScroll = () => handleClose();
+    window.addEventListener('scroll', onScroll, true);
+    return () => window.removeEventListener('scroll', onScroll, true);
+  }, [isOpen, handleClose]);
+
+  // Close on Escape
+  useEffect(() => {
+    if (!isOpen) return;
+    const onKey = (e: KeyboardEvent) => { if (e.key === 'Escape') handleClose(); };
+    document.addEventListener('keydown', onKey);
+    return () => document.removeEventListener('keydown', onKey);
+  }, [isOpen, handleClose]);
+
+  const ActionBtn = ({ icon: Icon, label, onClick, danger, iconClass, disabled }: { 
     icon: any; label: string; onClick: () => void; danger?: boolean; iconClass?: string; disabled?: boolean 
   }) => (
     <button 
-      onClick={() => { onClick(); setIsOpen(false); }} 
+      onClick={() => { onClick(); handleClose(); }} 
       disabled={disabled}
-      className={`w-full flex items-center gap-3 px-4 py-2.5 text-[13px] transition-all duration-150 ${
+      className={`flex flex-col items-center justify-center gap-1 p-2 rounded-xl text-center transition-all duration-150 min-w-[56px] ${
         danger 
-          ? 'text-red-500 hover:bg-red-50 dark:hover:bg-red-500/10' 
-          : 'text-[var(--text-primary)] hover:bg-[var(--bg-hover)]'
-      } ${disabled ? 'opacity-40 cursor-not-allowed' : ''}`}
+          ? 'text-red-500 hover:bg-red-500/10 active:bg-red-500/20' 
+          : 'text-[var(--text-primary)] hover:bg-[var(--bg-hover)] active:bg-[var(--bg-secondary)]'
+      } ${disabled ? 'opacity-30 pointer-events-none' : ''}`}
     >
-      <Icon size={15} className={iconClass || 'text-[var(--text-muted)]'} />
-      {label}
+      <Icon size={18} className={danger ? 'text-red-500' : (iconClass || 'text-[var(--text-muted)]')} />
+      <span className="text-[10px] font-medium leading-tight">{label}</span>
     </button>
   );
 
   return (
-    <div className="relative inline-block" ref={menuRef}>
-      <button 
-        onClick={() => setIsOpen(!isOpen)}
-        className="p-1 rounded-lg bg-[var(--bg-primary)]/80 hover:bg-[var(--bg-primary)] text-[var(--text-muted)] transition-all duration-150 border border-[var(--border-color)]/50"
-        style={{ backdropFilter: 'blur(8px)' }}
+    <>
+      <div 
+        ref={triggerRef}
+        onClick={(e) => {
+          if (props.disabled) return;
+          // Prevent default to stop scrolling if any
+          if (!isOpen) {
+            handleOpen();
+          } else {
+            handleClose();
+          }
+        }}
+        className={`relative inline-flex transition-opacity ${isOpen ? 'opacity-90' : ''}`}
       >
-        <MoreVertical size={15} />
-      </button>
+        {props.children}
+      </div>
 
-      {isOpen && (
-        <div 
-          className="absolute right-0 top-full mt-1 w-52 bg-[var(--bg-primary)] border border-[var(--border-color)] rounded-2xl z-50 overflow-hidden animate-scaleIn origin-top-right"
-          style={{ boxShadow: 'var(--shadow-xl)' }}
-        >
-          {/* Reaction bar */}
-          {showReactions ? (
-            <div className="p-2.5 flex gap-1.5 justify-between bg-[var(--bg-secondary)] border-b border-[var(--border-color)]">
+      {isOpen && menuPos && typeof document !== 'undefined' && createPortal(
+        <>
+          {/* Invisible backdrop to catch taps */}
+          <div 
+            className="fixed inset-0 z-[9990]" 
+            onClick={(e) => { e.stopPropagation(); handleClose(); }} 
+          />
+          
+          {/* Floating card — WhatsApp style */}
+          <div 
+            ref={menuRef}
+            className={`fixed z-[9991] w-[200px] bg-[var(--bg-primary)] border border-[var(--border-color)] rounded-2xl overflow-hidden ${
+              menuPos.openUp ? 'origin-bottom' : 'origin-top'
+            }`}
+            style={{ 
+              top: menuPos.openUp ? undefined : menuPos.top,
+              bottom: menuPos.openUp ? (window.innerHeight - menuPos.top) : undefined,
+              left: menuPos.left,
+              boxShadow: '0 8px 30px rgba(0,0,0,0.18), 0 2px 8px rgba(0,0,0,0.08)',
+              animation: 'ctxMenuIn 0.18s cubic-bezier(0.32, 0.72, 0, 1)',
+              maxHeight: 'calc(100vh - 32px)',
+              overflowY: 'auto',
+            }}
+          >
+            {/* Emoji reaction row */}
+            <div className="flex items-center justify-between px-2 py-2 border-b border-[var(--border-color)]">
               {EMOJIS.map(e => (
                 <button
                   key={e}
-                  onClick={() => { props.onReact(e); setIsOpen(false); setShowReactions(false); }}
-                  className="hover:scale-125 transition-transform text-lg p-1 rounded-lg hover:bg-[var(--bg-hover)]"
+                  onClick={() => { props.onReact(e); handleClose(); }}
+                  className="text-[20px] p-1.5 rounded-full hover:bg-[var(--bg-hover)] active:scale-125 transition-all duration-150"
                 >
                   {e}
                 </button>
               ))}
             </div>
-          ) : (
-            <button
-              onClick={(e) => { e.stopPropagation(); setShowReactions(true); }}
-              className="w-full flex items-center gap-3 px-4 py-2.5 text-[13px] text-[var(--text-primary)] hover:bg-[var(--bg-hover)] transition-all duration-150 border-b border-[var(--border-color)]"
-            >
-              <SmilePlus size={15} className="text-[var(--gold)]" /> React
-            </button>
-          )}
 
-          <div className="py-1">
-            <MenuItem icon={Reply} label="Reply" onClick={props.onReply} iconClass="text-[var(--emerald)]" />
-            {props.isOwn && (
-              <MenuItem 
-                icon={Pencil} 
-                label="Edit" 
-                onClick={props.onEdit}
-                iconClass="text-[var(--emerald)]"
-                disabled={props.message.message_type !== 'text'}
-              />
-            )}
-            <MenuItem icon={Copy} label="Copy" onClick={props.onCopy} />
-            <MenuItem icon={Forward} label="Forward" onClick={props.onForward} />
-            <MenuItem 
-              icon={Star} 
-              label={props.isStarred ? 'Unstar' : 'Star'} 
-              onClick={props.onStar}
-              iconClass={props.isStarred ? 'text-[var(--gold)] fill-[var(--gold)]' : 'text-[var(--text-muted)]'}
-            />
-            <MenuItem 
-              icon={Pin} 
-              label={props.isPinned ? 'Unpin' : 'Pin'} 
-              onClick={props.onPin}
-              iconClass={props.isPinned ? 'text-[var(--emerald)] fill-[var(--emerald)]' : 'text-[var(--text-muted)]'}
-            />
-            
-            {props.isOwn && (
-              <MenuItem icon={Info} label="Message Info" onClick={props.onInfo} iconClass="text-blue-500" />
-            )}
+            {/* Action grid — compact rows */}
+            <div className="py-1">
+              <Row>
+                <ActionBtn icon={Reply} label="Reply" onClick={props.onReply} iconClass="text-[var(--emerald)]" />
+                <ActionBtn icon={Copy} label="Copy" onClick={props.onCopy} />
+                <ActionBtn icon={Forward} label="Forward" onClick={props.onForward} />
+              </Row>
+              <Row>
+                <ActionBtn 
+                  icon={Star} 
+                  label={props.isStarred ? 'Unstar' : 'Star'} 
+                  onClick={props.onStar}
+                  iconClass={props.isStarred ? 'text-[var(--gold)] fill-[var(--gold)]' : 'text-[var(--text-muted)]'}
+                />
+                <ActionBtn 
+                  icon={Pin} 
+                  label={props.isPinned ? 'Unpin' : 'Pin'} 
+                  onClick={props.onPin}
+                  iconClass={props.isPinned ? 'text-[var(--emerald)]' : 'text-[var(--text-muted)]'}
+                />
+                {props.isOwn ? (
+                  <ActionBtn icon={Pencil} label="Edit" onClick={props.onEdit} iconClass="text-[var(--emerald)]" disabled={props.message.message_type !== 'text'} />
+                ) : (
+                  <ActionBtn icon={Info} label="Info" onClick={props.onInfo} iconClass="text-blue-500" />
+                )}
+              </Row>
 
-            <div className="h-px bg-[var(--border-color)] my-1 mx-3" />
+              {/* Divider */}
+              <div className="h-px bg-[var(--border-color)] mx-3 my-0.5" />
 
-            <MenuItem icon={Trash2} label="Delete for me" onClick={props.onDeleteForMe} danger />
-            {props.isOwn && (
-              <MenuItem icon={Trash2} label="Delete for everyone" onClick={props.onDeleteForEveryone} danger />
-            )}
+              {/* Delete row */}
+              <Row>
+                <ActionBtn icon={Trash2} label="Delete" onClick={props.onDeleteForMe} danger />
+                {props.isOwn && (
+                  <>
+                    <ActionBtn icon={Info} label="Info" onClick={props.onInfo} iconClass="text-blue-500" />
+                    <ActionBtn icon={Trash2} label="Unsend" onClick={props.onDeleteForEveryone} danger />
+                  </>
+                )}
+                <ActionBtn 
+                  icon={CheckCircle2} 
+                  label="Select" 
+                  onClick={() => {
+                    toggleSelectionMode(true);
+                    toggleMessageSelection(props.message.id);
+                  }} 
+                />
+              </Row>
+            </div>
           </div>
-        </div>
+        </>,
+        document.body
       )}
+    </>
+  );
+}
+
+/** Simple flex row for the grid layout */
+function Row({ children }: { children: React.ReactNode }) {
+  return (
+    <div className="flex items-stretch justify-evenly px-1">
+      {children}
     </div>
   );
 }

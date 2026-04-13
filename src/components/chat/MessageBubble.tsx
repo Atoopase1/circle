@@ -73,7 +73,10 @@ const MessageBubble = React.memo(function MessageBubble({ message, isOwn, showSe
     addReaction, 
     removeReaction,
     setEditingMessage,
-    retryMessage
+    retryMessage,
+    selectionMode,
+    selectedMessageIds,
+    toggleMessageSelection
   } = useChatStore();
 
   const isStarred = message.stars?.some(s => s.user_id === currentUser?.id) || false;
@@ -101,70 +104,101 @@ const MessageBubble = React.memo(function MessageBubble({ message, isOwn, showSe
     );
   }
 
-  const getDisplayName = (profile: any) => {
-    if (!profile) return 'Unknown';
+  const getDisplayName = (profile: any): string | null => {
+    if (!profile) return null;
     if (profile.display_name && profile.display_name !== 'User') return profile.display_name;
     if (profile.phone) return profile.phone;
     if (profile.email) return profile.email.split('@')[0];
-    return profile.display_name || 'User';
+    return null;
   };
+
+  const isSelected = selectedMessageIds.includes(message.id);
 
   return (
     <div 
-      className={`flex ${isOwn ? 'justify-end' : 'justify-start'} mb-1.5 px-4 group`}
+      className={`flex ${isOwn ? 'justify-end' : 'justify-start'} mb-1.5 px-4 group relative items-center gap-2 transition-all ${
+        isSelected ? 'bg-emerald-500/10 -mx-4 px-8 py-1' : ''
+      }`}
       onMouseEnter={() => setShowMenuHover(true)}
       onMouseLeave={() => setShowMenuHover(false)}
     >
-      <div
-        className={`relative max-w-[75%] min-w-[80px] px-3.5 py-2 ${
-          isOwn
-            ? 'bg-[var(--bubble-out)] text-[var(--bubble-out-text)] rounded-2xl rounded-br-md'
-            : 'bg-[var(--bubble-in)] text-[var(--bubble-in-text)] rounded-2xl rounded-bl-md border border-[var(--border-color)]'
-        }`}
-        style={{
-          boxShadow: isOwn 
-            ? '0 1px 3px rgba(22, 163, 74, 0.12)' 
-            : 'var(--shadow-xs)',
-        }}
-      >
-        {/* Context Menu Trigger */}
-        <div className={`absolute top-1 right-1 z-10 transition-opacity duration-150 ${showMenuHover ? 'opacity-100' : 'opacity-0'}`}>
-          <MessageContextMenu 
-            message={message}
-            isOwn={isOwn}
-            isStarred={isStarred}
-            isPinned={isPinned}
-            onReply={() => setReplyingTo(message)}
-            onEdit={() => setEditingMessage(message)}
-            onStar={() => isStarred ? unstarMessage(message.id) : starMessage(message.id)}
-            onCopy={() => navigator.clipboard.writeText(message.content || message.media_url || '')}
-            onInfo={() => setShowInfo(true)}
-            onPin={() => isPinned ? unpinMessage(message.chat_id) : pinMessage(message.chat_id, message.id)}
-            onForward={() => setShowForward(true)}
-            onDeleteForMe={() => deleteMessageForMe(message.id)}
-            onDeleteForEveryone={() => deleteMessageForEveryone(message.id)}
-            onReact={(emoji) => addReaction(message.id, emoji)}
-          />
+      {/* Selection Checkbox */}
+      {selectionMode && (
+        <div 
+          onClick={(e) => {
+            e.stopPropagation();
+            toggleMessageSelection(message.id);
+          }}
+          className={`shrink-0 w-5 h-5 rounded-full border-2 flex items-center justify-center cursor-pointer transition-colors ${
+            isSelected ? 'bg-[var(--emerald)] border-[var(--emerald)]' : 'border-[var(--text-muted)] bg-transparent hover:border-[var(--text-primary)]'
+          } ${isOwn ? 'order-first' : ''}`}
+        >
+          {isSelected && <Check size={12} className="text-white" strokeWidth={3} />}
         </div>
+      )}
+
+      {/* Context Menu or Selection Handler */}
+
+      <MessageContextMenu 
+        message={message}
+        isOwn={isOwn}
+        isStarred={isStarred}
+        isPinned={isPinned}
+        onReply={() => setReplyingTo(message)}
+        onEdit={() => setEditingMessage(message)}
+        onStar={() => isStarred ? unstarMessage(message.id) : starMessage(message.id)}
+        onCopy={() => navigator.clipboard.writeText(message.content || message.media_url || '')}
+        onInfo={() => setShowInfo(true)}
+        onPin={() => isPinned ? unpinMessage(message.chat_id) : pinMessage(message.chat_id, message.id)}
+        onForward={() => setShowForward(true)}
+        onDeleteForMe={() => deleteMessageForMe(message.id)}
+        onDeleteForEveryone={() => deleteMessageForEveryone(message.id)}
+        onReact={(emoji) => addReaction(message.id, emoji)}
+        disabled={selectionMode}
+      >
+        <div
+          onClick={(e) => {
+            if (selectionMode) {
+              e.stopPropagation();
+              toggleMessageSelection(message.id);
+            }
+          }}
+          className={`relative max-w-full min-w-[80px] px-3.5 py-2 ${selectionMode ? 'cursor-pointer' : ''} ${
+            isOwn
+              ? 'bg-[var(--bubble-out)] text-[var(--bubble-out-text)] rounded-2xl bubble-tail-out'
+              : 'bg-[var(--bubble-in)] text-[var(--bubble-in-text)] rounded-2xl border border-[var(--border-color)] bubble-tail-in'
+          }`}
+          style={{
+            boxShadow: isOwn 
+              ? '0 1px 3px rgba(22, 163, 74, 0.12)' 
+              : 'var(--shadow-xs)',
+          }}
+        >
 
         {/* Replied To */}
-        {message.reply_to && (
-          <div className={`mb-2 p-2.5 rounded-xl flex flex-col cursor-pointer transition-colors ${
-            isOwn 
-              ? 'bg-white/10 border-l-3 border-white/40 hover:bg-white/15' 
-              : 'bg-[var(--bg-secondary)] border-l-3 border-[var(--emerald)] hover:bg-[var(--bg-hover)]'
-          }`}>
-            <span className={`text-[11px] font-semibold ${isOwn ? 'text-white/80' : 'text-[var(--emerald)]'}`}>
-              {getDisplayName(message.reply_to.sender)}
-            </span>
-            <span className={`text-[12px] line-clamp-2 mt-0.5 ${isOwn ? 'text-white/60' : 'text-[var(--text-secondary)]'}`}>
-              {message.reply_to.content || (message.reply_to.media_url ? 'Media' : '')}
-            </span>
-          </div>
-        )}
+        {message.reply_to_id && message.reply_to && (!Array.isArray(message.reply_to) || message.reply_to.length > 0) && (() => {
+          const replyData = Array.isArray(message.reply_to) ? message.reply_to[0] : message.reply_to;
+          if (!replyData) return null;
+          return (
+            <div className={`mb-2 p-2.5 rounded-xl flex flex-col cursor-pointer transition-colors ${
+              isOwn 
+                ? 'bg-white/10 border-l-3 border-white/40 hover:bg-white/15' 
+                : 'bg-[var(--bg-secondary)] border-l-3 border-[var(--emerald)] hover:bg-[var(--bg-hover)]'
+            }`}>
+              {getDisplayName(replyData.sender) && (
+                <span className={`text-[11px] font-semibold ${isOwn ? 'text-white/80' : 'text-[var(--emerald)]'}`}>
+                  {getDisplayName(replyData.sender)}
+                </span>
+              )}
+              <span className={`text-[12px] line-clamp-2 mt-0.5 ${isOwn ? 'text-white/60' : 'text-[var(--text-secondary)]'}`}>
+                {replyData.content || (replyData.media_url ? 'Media' : '')}
+              </span>
+            </div>
+          );
+        })()}
 
-        {/* Sender name in groups */}
-        {showSenderName && !isOwn && message.sender && (
+        {/* Sender name in groups — only show if we have a real name */}
+        {showSenderName && !isOwn && message.sender && getDisplayName(message.sender) && (
           <p
             className="text-[11px] font-semibold mb-1"
             style={{ color: `hsl(${(message.sender.id ? message.sender.id.charCodeAt(0) * 37 : 1) % 360}, 65%, 55%)` }}
@@ -317,7 +351,8 @@ const MessageBubble = React.memo(function MessageBubble({ message, isOwn, showSe
             {message.reactions.length > 1 && <span className="text-[var(--text-muted)] text-[10px] font-medium">{message.reactions.length}</span>}
           </div>
         )}
-      </div>
+        </div>
+      </MessageContextMenu>
 
       {showInfo && activeChat && (
         <MessageInfoModal 

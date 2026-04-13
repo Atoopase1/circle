@@ -41,7 +41,7 @@ export default function GroupInfoPanel({ chat, isOpen, onClose }: GroupInfoPanel
       {/* Group details */}
       <div className="flex-1 overflow-y-auto scrollbar-thin">
         <div className="flex flex-col items-center py-8 px-5 border-b border-[var(--border-color)]">
-          <div className="p-1 rounded-full" style={{ background: 'linear-gradient(135deg, var(--navy), var(--emerald))' }}>
+          <div className="p-1 rounded-full" style={{ background: 'var(--emerald)' }}>
             <div className="rounded-full bg-[var(--bg-primary)] p-0.5">
               <Avatar
                 src={chat.group_icon_url}

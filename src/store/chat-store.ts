@@ -21,6 +21,8 @@ interface ChatState {
   _hasFetchedOnce: boolean;
   replyingTo: Message | null;
   editingMessage: Message | null;
+  selectionMode: boolean;
+  selectedMessageIds: string[];
 
   // Actions
   fetchChats: () => Promise<void>;
@@ -49,6 +51,9 @@ interface ChatState {
   unstarMessage: (messageId: string) => Promise<void>;
   addReaction: (messageId: string, emoji: string) => Promise<void>;
   removeReaction: (messageId: string, emoji: string) => Promise<void>;
+  toggleSelectionMode: (force?: boolean) => void;
+  toggleMessageSelection: (messageId: string) => void;
+  clearSelection: () => void;
 }
 
 export const useChatStore = create<ChatState>((set, get) => ({
@@ -64,6 +69,8 @@ export const useChatStore = create<ChatState>((set, get) => ({
   _hasFetchedOnce: false,
   replyingTo: null,
   editingMessage: null,
+  selectionMode: false,
+  selectedMessageIds: [],
 
   fetchChats: async () => {
     const hasCachedChats = get().chats.length > 0;
@@ -782,4 +789,29 @@ export const useChatStore = create<ChatState>((set, get) => ({
 
     await supabase.from('message_reactions').delete().eq('user_id', user.id).eq('message_id', messageId).eq('emoji', emoji);
   },
+
+  toggleSelectionMode: (force?: boolean) => {
+    set(state => {
+      const active = force !== undefined ? force : !state.selectionMode;
+      return {
+        selectionMode: active,
+        selectedMessageIds: active ? state.selectedMessageIds : []
+      };
+    });
+  },
+
+  toggleMessageSelection: (messageId: string) => {
+    set(state => {
+      const selected = state.selectedMessageIds.includes(messageId);
+      return {
+        selectedMessageIds: selected
+          ? state.selectedMessageIds.filter(id => id !== messageId)
+          : [...state.selectedMessageIds, messageId]
+      };
+    });
+  },
+
+  clearSelection: () => {
+    set({ selectionMode: false, selectedMessageIds: [] });
+  }
 }));

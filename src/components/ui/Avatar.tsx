@@ -37,7 +37,7 @@ export default function Avatar({ src, name, size = 'md', isOnline, className = '
         <div
           className={`${s.container} rounded-full flex items-center justify-center text-white font-semibold ${s.text} ring-1 ring-white/20`}
           style={{ 
-            background: `linear-gradient(135deg, ${bgColor}, ${adjustColor(bgColor, -25)})`,
+            background: bgColor,
           }}
         >
           {getInitials(name)}

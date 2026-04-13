@@ -255,7 +255,7 @@ export default function MessageInput({ chatId }: MessageInputProps) {
               className="h-1 rounded-full transition-all duration-300"
               style={{ 
                 width: `${uploadProgress}%`,
-                background: 'linear-gradient(90deg, var(--navy), var(--emerald))',
+                background: 'var(--emerald)',
               }}
             />
           </div>
@@ -398,7 +398,7 @@ export default function MessageInput({ chatId }: MessageInputProps) {
               : 'text-[var(--text-muted)] hover:bg-[var(--bg-hover)] hover:text-[var(--text-primary)]'
           }`}
           style={text.trim() || selectedFile || isRecording ? {
-            background: isRecording ? 'var(--gold)' : 'linear-gradient(135deg, var(--navy), var(--emerald))',
+            background: isRecording ? 'var(--gold)' : 'var(--emerald)',
             boxShadow: isRecording ? '0 4px 12px rgba(245, 158, 11, 0.25)' : '0 4px 12px rgba(22, 163, 74, 0.25)',
           } : undefined}
         >

@@ -8,7 +8,7 @@ import { format, isToday, isYesterday, isThisWeek, formatDistanceToNow } from 'd
  */
 export function formatChatTime(date: string | Date): string {
   const d = new Date(date);
-  if (isToday(d)) return format(d, 'HH:mm');
+  if (isToday(d)) return format(d, 'h:mm a');
   if (isYesterday(d)) return 'Yesterday';
   if (isThisWeek(d)) return format(d, 'EEEE');
   return format(d, 'dd/MM/yyyy');
@@ -18,7 +18,7 @@ export function formatChatTime(date: string | Date): string {
  * Format a timestamp for message bubble
  */
 export function formatMessageTime(date: string | Date): string {
-  return format(new Date(date), 'HH:mm');
+  return format(new Date(date), 'h:mm a');
 }
 
 /**
@@ -26,9 +26,9 @@ export function formatMessageTime(date: string | Date): string {
  */
 export function formatLastSeen(date: string | Date): string {
   const d = new Date(date);
-  if (isToday(d)) return `last seen today at ${format(d, 'HH:mm')}`;
-  if (isYesterday(d)) return `last seen yesterday at ${format(d, 'HH:mm')}`;
-  return `last seen ${format(d, 'dd/MM/yyyy')} at ${format(d, 'HH:mm')}`;
+  if (isToday(d)) return `last seen today at ${format(d, 'h:mm a')}`;
+  if (isYesterday(d)) return `last seen yesterday at ${format(d, 'h:mm a')}`;
+  return `last seen ${format(d, 'dd/MM/yyyy')} at ${format(d, 'h:mm a')}`;
 }
 
 /**

@@ -328,6 +328,17 @@ h1, h2, h3 {
   }
 }
 
+@keyframes ctxMenuIn {
+  from {
+    opacity: 0;
+    transform: scale(0.9);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
 /* Animation utility classes */
 .animate-fadeIn {
   animation: fadeIn var(--transition-base) ease-out;
@@ -424,19 +435,13 @@ h1, h2, h3 {
   transform: translateY(0);
 }
 
-/* Premium gradient text */
+/* Premium text */
 .gradient-text {
-  background: linear-gradient(135deg, var(--navy) 0%, var(--emerald) 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
+  color: var(--emerald);
 }
 
 .dark .gradient-text {
-  background: linear-gradient(135deg, #F1F5F9 0%, var(--emerald) 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
+  color: var(--emerald);
 }
 
 /* Premium card surface */
@@ -471,6 +476,50 @@ h1, h2, h3 {
   .chat-mobile-sidebar {
     display: none !important;
   }
+}
+
+/* ============================================================
+   WHATSAPP TAILS
+   ============================================================ */
+
+.bubble-tail-out {
+  border-top-right-radius: 0px !important;
+}
+.bubble-tail-out::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  right: -6px;
+  width: 0;
+  height: 0;
+  border-left: 6px solid var(--bubble-out);
+  border-bottom: 8px solid transparent;
+}
+
+.bubble-tail-in {
+  border-top-left-radius: 0px !important;
+}
+.bubble-tail-in::before {
+  content: "";
+  position: absolute;
+  top: -1px;
+  left: -7px;
+  width: 0;
+  height: 0;
+  border-right: 7px solid var(--border-color);
+  border-bottom: 8px solid transparent;
+  z-index: -1;
+}
+.bubble-tail-in::after {
+  content: "";
+  position: absolute;
+  top: 0px;
+  left: -6px;
+  width: 0;
+  height: 0;
+  border-right: 6px solid var(--bubble-in);
+  border-bottom: 8px solid transparent;
+  z-index: 1;
 }
 
 /* ============================================================

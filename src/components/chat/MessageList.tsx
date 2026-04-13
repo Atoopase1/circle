@@ -13,7 +13,8 @@ import { useAuthStore } from '@/store/auth-store';
 import { usePresenceStore } from '@/store/presence-store';
 import { formatDateSeparator } from '@/lib/utils';
 import type { Message } from '@/types';
-import { Pin, WifiOff } from 'lucide-react';
+import { Pin, WifiOff, ChevronDown } from 'lucide-react';
+import { useState } from 'react';
 
 interface MessageListProps {
   chatId: string;
@@ -35,6 +36,7 @@ export default function MessageList({ chatId, isGroup }: MessageListProps) {
   const isAutoScrollRef = useRef(true);
   const scrollTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   const isReconnecting = useRealtimeConnection();
+  const [showScrollBottom, setShowScrollBottom] = useState(false);
 
   // Scroll to bottom when new messages arrive
   useEffect(() => {
@@ -57,7 +59,9 @@ export default function MessageList({ chatId, isGroup }: MessageListProps) {
     scrollTimeoutRef.current = setTimeout(() => {
       if (!listRef.current) return;
       const { scrollTop, scrollHeight, clientHeight } = listRef.current;
-      isAutoScrollRef.current = scrollHeight - scrollTop - clientHeight < 100;
+      const isAtBottom = scrollHeight - scrollTop - clientHeight < 100;
+      isAutoScrollRef.current = isAtBottom;
+      setShowScrollBottom(!isAtBottom);
 
       // Load more messages when scrolled to top
       if (scrollTop < 80 && hasMoreMessages && !isLoadingMessages && messages.length > 0) {
@@ -180,6 +184,16 @@ export default function MessageList({ chatId, isGroup }: MessageListProps) {
 
       <div ref={bottomRef} />
       </div>
+      
+      {/* Scroll to Bottom FAB */}
+      {showScrollBottom && (
+        <button
+          onClick={() => bottomRef.current?.scrollIntoView({ behavior: 'smooth' })}
+          className="absolute bottom-4 right-4 z-50 p-3 bg-[var(--bg-primary)] border border-[var(--border-color)] rounded-full text-[var(--emerald)] shadow-lg hover:bg-[var(--bg-hover)] transition-all animate-scaleIn"
+        >
+          <ChevronDown size={22} />
+        </button>
+      )}
     </div>
   );
 }

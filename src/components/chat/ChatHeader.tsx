@@ -3,12 +3,13 @@
 // ============================================================
 'use client';
 
-import { ArrowLeft, Phone, Video, Search } from 'lucide-react';
+import { ArrowLeft, Phone, Video, Search, X, Trash2, Forward, Star, Copy } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import Avatar from '@/components/ui/Avatar';
 import { usePresenceStore } from '@/store/presence-store';
 import { useAuthStore } from '@/store/auth-store';
 import { useCallStore } from '@/store/call-store';
+import { useChatStore } from '@/store/chat-store';
 import { formatLastSeen } from '@/lib/utils';
 import type { ChatWithDetails } from '@/types';
 
@@ -22,6 +23,61 @@ export default function ChatHeader({ chat, onInfoClick }: ChatHeaderProps) {
   const user = useAuthStore((s) => s.user);
   const { isUserOnline, getTypingUsersForChat } = usePresenceStore();
   const initiateCall = useCallStore((s) => s.initiateCall);
+  const { selectionMode, selectedMessageIds, clearSelection, deleteMessageForMe } = useChatStore();
+
+  const handleBulkDelete = () => {
+    selectedMessageIds.forEach(id => deleteMessageForMe(id));
+    clearSelection();
+  };
+
+  if (selectionMode) {
+    return (
+      <div className="flex items-center gap-3 px-4 py-3 glass-header border-b border-[var(--emerald)] bg-[var(--emerald)]/5 transition-colors">
+        <button
+          onClick={() => clearSelection()}
+          className="p-2 -ml-2 rounded-xl text-[var(--text-primary)] hover:bg-[var(--bg-hover)] transition-all"
+        >
+          <X size={20} />
+        </button>
+        <div className="flex-1 min-w-0">
+          <h2 className="font-semibold text-[var(--text-primary)] text-[16px]">
+            {selectedMessageIds.length} Selected
+          </h2>
+        </div>
+        <div className="flex items-center gap-1">
+          <button 
+            disabled={selectedMessageIds.length === 0}
+            className="p-2.5 rounded-xl text-[var(--text-muted)] hover:text-red-500 hover:bg-red-500/10 disabled:opacity-50 transition-all"
+            onClick={handleBulkDelete}
+            title="Delete Selected"
+          >
+            <Trash2 size={20} />
+          </button>
+          <button 
+            disabled={selectedMessageIds.length === 0}
+            className="p-2.5 rounded-xl text-[var(--text-muted)] hover:text-[var(--emerald)] hover:bg-[var(--emerald)]/10 disabled:opacity-50 transition-all"
+            title="Forward Selected"
+          >
+            <Forward size={20} />
+          </button>
+          <button 
+            disabled={selectedMessageIds.length === 0}
+            className="p-2.5 rounded-xl text-[var(--text-muted)] hover:text-[var(--gold)] hover:bg-[var(--gold)]/10 disabled:opacity-50 transition-all"
+            title="Star Selected"
+          >
+            <Star size={20} />
+          </button>
+          <button 
+            disabled={selectedMessageIds.length === 0}
+            className="p-2.5 rounded-xl text-[var(--text-muted)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-hover)] disabled:opacity-50 transition-all"
+            title="Copy Selected"
+          >
+            <Copy size={20} />
+          </button>
+        </div>
+      </div>
+    );
+  }
 
   const displayName = chat.is_group
     ? chat.group_name || 'Group'
