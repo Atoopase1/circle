@@ -12,15 +12,10 @@ export default function AuthLayout({ children }: { children: React.ReactNode }) 
   return (
     <div className="min-h-screen flex flex-col bg-[var(--bg-app)]">
       {/* Premium solid header */}
-      {/* Total black solid header */}
+      {/* Strictly solid total black header */}
       <div 
         className="h-60 relative overflow-hidden bg-black"
-      >
-        {/* Subtle mesh overlay - slightly reduced opacity for black look */}
-        <div 
-          className="absolute inset-0 opacity-5 bg-[var(--emerald)] mix-blend-overlay"
-        />
-      </div>
+      />
 
       {/* Content card */}
       <div className="flex-1 flex items-start justify-center -mt-40 px-4 pb-8 relative z-10">

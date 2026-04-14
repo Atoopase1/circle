@@ -283,10 +283,12 @@ export const useChatStore = create<ChatState>((set, get) => ({
     const supabase = getSupabaseBrowserClient();
     const user = useAuthStore.getState().user;
     const profile = useAuthStore.getState().profile;
-    if (!user) return null;
+    if (!user) {
+      console.error('[ChatStore] No user found - cannot send message');
+      return null;
+    }
 
     const messageId = crypto.randomUUID();
-    
     const isOffline = typeof navigator !== 'undefined' && !navigator.onLine;
 
     // 1. Create Optimistic Message
@@ -295,15 +297,23 @@ export const useChatStore = create<ChatState>((set, get) => ({
       chat_id: chatId,
       sender_id: user.id,
       content,
-      message_type: messageType,
+      message_type: messageType as any,
       media_url: mediaUrl || null,
       media_metadata: mediaMetadata || null,
       reply_to_id: replyToId || null,
       is_deleted: false,
       created_at: new Date().toISOString(),
       sender: profile || undefined,
-      status: [{ id: 'temp', message_id: messageId, user_id: '', status: isOffline ? 'queued' : 'sent', updated_at: new Date().toISOString() }],
+      status: [{ 
+        id: 'temp', 
+        message_id: messageId, 
+        user_id: user.id, 
+        status: isOffline ? 'queued' : 'sent', 
+        updated_at: new Date().toISOString() 
+      }],
     } as Message;
+
+    console.log(`[ChatStore] Optimistic send: id=${messageId} user=${user.id}`);
 
     // 2. Instantly show it on screen
     get().addMessage(optimisticMessage);
@@ -316,14 +326,14 @@ export const useChatStore = create<ChatState>((set, get) => ({
       return optimisticMessage;
     }
 
-    // 3. Send to Database in background (minimal — no heavy joins)
+    // 3. Send to Database in background
     const { error } = await supabase
       .from('messages')
       .insert({
         id: messageId,
         chat_id: chatId,
         sender_id: user.id,
-        content,
+        content: content || null,
         message_type: messageType,
         media_url: mediaUrl || null,
         media_metadata: mediaMetadata || null,
@@ -331,12 +341,17 @@ export const useChatStore = create<ChatState>((set, get) => ({
       });
 
     if (error) {
-      console.error('sendMessage error:', error);
+      console.error('[ChatStore] Supabase insert failed:', error);
       // Mark as failed instead of deleting
       get().updateMessageInList({
         ...optimisticMessage,
-        status: [{ id: 'temp', message_id: messageId, user_id: '', status: 'failed', updated_at: new Date().toISOString() }],
+        status: [{ id: 'temp', message_id: messageId, user_id: user.id, status: 'failed', updated_at: new Date().toISOString() }],
       });
+      // Show error toast if possible
+      if (typeof window !== 'undefined') {
+        const toast = (await import('react-hot-toast')).default;
+        toast.error(`Message failed: ${error.message}`);
+      }
       return optimisticMessage;
     }
 

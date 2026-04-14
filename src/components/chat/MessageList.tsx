@@ -167,14 +167,20 @@ export default function MessageList({ chatId, isGroup }: MessageListProps) {
               </span>
             </div>
             {/* Messages for this date */}
-            {group.messages.map((msg) => (
-              <MessageBubble
-                key={msg.id}
-                message={msg}
-                isOwn={msg.sender_id === user?.id}
-                showSenderName={isGroup}
-              />
-            ))}
+            {group.messages.map((msg) => {
+              const isMe = msg.sender_id === user?.id;
+              if (msg.id.includes('temp')) {
+                console.log(`[MessageList] Rendering optimistic message ${msg.id}: isOwn=${isMe} (sender=${msg.sender_id} user=${user?.id})`);
+              }
+              return (
+                <MessageBubble
+                  key={msg.id}
+                  message={msg}
+                  isOwn={isMe}
+                  showSenderName={isGroup}
+                />
+              );
+            })}
           </div>
         ))}
 

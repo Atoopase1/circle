@@ -62,8 +62,18 @@ export function useRealtimeMessages(chatId: string | null) {
         },
         async (payload) => {
           const newMessage = payload.new as Message;
+          const currentUser = useAuthStore.getState().user;
 
-          // Fetch sender profile
+          console.log(`[Realtime] New message received: ${newMessage.id} from ${newMessage.sender_id}`);
+
+          // If the message is from me, I already have the profile in the store
+          if (newMessage.sender_id === currentUser?.id) {
+            const currentProfile = useAuthStore.getState().profile;
+            addMessage({ ...newMessage, sender: currentProfile || undefined } as Message);
+            return;
+          }
+
+          // Fetch sender profile for incoming messages
           const { data: sender } = await supabase
             .from('profiles')
             .select('*')
