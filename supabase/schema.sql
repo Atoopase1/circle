@@ -189,12 +189,13 @@ CREATE INDEX IF NOT EXISTS idx_status_ratings_status ON status_ratings(status_id
 CREATE OR REPLACE FUNCTION public.handle_new_user()
 RETURNS TRIGGER AS $$
 BEGIN
-  INSERT INTO public.profiles (id, phone, email, display_name)
+  INSERT INTO public.profiles (id, phone, email, display_name, cover_url)
   VALUES (
     NEW.id,
     NEW.phone,
     NEW.email,
-    COALESCE(NEW.raw_user_meta_data->>'display_name', 'User')
+    COALESCE(NEW.raw_user_meta_data->>'full_name', NEW.raw_user_meta_data->>'name', NEW.raw_user_meta_data->>'display_name', split_part(NEW.email, '@', 1), 'User'),
+    '/default-cover.png'
   );
   RETURN NEW;
 END;
