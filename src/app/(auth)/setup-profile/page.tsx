@@ -14,7 +14,7 @@ import toast, { Toaster } from 'react-hot-toast';
 
 export default function SetupProfilePage() {
   const router = useRouter();
-  const { user, updateProfile } = useAuthStore();
+  const { user, profile, updateProfile } = useAuthStore();
   const [displayName, setDisplayName] = useState('');
   const [bio, setBio] = useState('');
   const [isLoading, setIsLoading] = useState(false);
