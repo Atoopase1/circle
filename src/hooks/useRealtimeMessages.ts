@@ -102,7 +102,8 @@ export function useRealtimeMessages(chatId: string | null) {
           table: 'message_status',
         },
         (payload) => {
-          const updatedStatus = payload.new as any;
+          // @ts-ignore - explicitly suppressing any potential nested typing complaints
+          const updatedStatus = payload.new as Record<string, any>;
           if (!updatedStatus || !updatedStatus.message_id) return;
 
           // Update the specific message's status securely in the Zustand store
