@@ -20,34 +20,48 @@ export default function UpdatePasswordPage() {
   const supabase = getSupabaseBrowserClient();
 
   useEffect(() => {
-    // Listen for PASSWORD_RECOVERY event.
-    // Supabase parses the #access_token from the URL hash and fires this event.
+    let isMounted = true;
+
+    const checkAuthStatus = async () => {
+      // 1. Direct hash check (bulletproof for implicit flow)
+      const hash = window.location.hash;
+      if (hash && (hash.includes('access_token=') || hash.includes('type=recovery'))) {
+        if (isMounted) setHasSession(true);
+        return;
+      }
+
+      // 2. Check existing session
+      const { data } = await supabase.auth.getSession();
+      if (data.session) {
+        if (isMounted) setHasSession(true);
+        return;
+      }
+    };
+
+    checkAuthStatus();
+
+    // 3. Listen for future events (like late parsing)
     const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
-      if (event === 'PASSWORD_RECOVERY') {
-        setHasSession(true);
-      } else if (event === 'SIGNED_IN' && session) {
-        // Also accept if they already have a valid session (e.g. refreshed the page)
-        setHasSession(true);
+      if (event === 'PASSWORD_RECOVERY' || (event === 'SIGNED_IN' && session)) {
+        if (isMounted) setHasSession(true);
       }
     });
 
-    // Also check if there's already an active session (e.g. page refresh after token parsed)
-    supabase.auth.getSession().then(({ data }) => {
-      if (data.session) setHasSession(true);
-    });
-
-    // If after 4 seconds we still have no session, the link is invalid/expired
+    // 4. Timeout fallback
     const timeout = setTimeout(() => {
-      setHasSession((prev) => {
-        if (prev === null) {
-          toast.error('Reset link is invalid or expired. Please request a new one.');
-          return false;
-        }
-        return prev;
-      });
+      if (isMounted) {
+        setHasSession((prev) => {
+          if (prev === null) {
+            toast.error('Reset link is invalid or expired. Please request a new one.');
+            return false;
+          }
+          return prev;
+        });
+      }
     }, 4000);
 
     return () => {
+      isMounted = false;
       subscription.unsubscribe();
       clearTimeout(timeout);
     };
