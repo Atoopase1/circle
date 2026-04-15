@@ -113,8 +113,7 @@ export default function ChatHeader({ chat, onInfoClick }: ChatHeaderProps) {
     statusText = participantNames;
   } else if (isOnline) {
     statusText = (
-      <span className="flex items-center gap-1.5 text-[var(--text-muted)] font-medium tracking-wide">
-        <span className="w-1.5 h-1.5 rounded-full bg-[var(--emerald)] shadow-[0_0_5px_var(--emerald)] animate-pulse" />
+      <span className="text-[var(--text-muted)] font-medium tracking-wide">
         Online
       </span>
     );

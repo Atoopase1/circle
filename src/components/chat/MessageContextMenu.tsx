@@ -149,8 +149,7 @@ export default function MessageContextMenu(props: MessageContextMenuProps) {
 
     longPressTimerRef.current = setTimeout(() => {
       setIsLongPressTriggered(true);
-      toggleSelectionMode(true);
-      toggleMessageSelection(props.message.id);
+      handleOpen();
       
       // Haptic feedback if supported natively
       if (typeof navigator !== 'undefined' && navigator.vibrate) {

@@ -68,7 +68,7 @@ export default function ChatLayout({ children }: { children: React.ReactNode }) 
       <AppNavigation />
 
       {/* Main content area */}
-      <div className="flex-1 flex min-w-0 lg:h-full h-[calc(100vh-64px)] pb-16 lg:pb-0 relative">
+      <div className="flex-1 flex min-w-0 lg:h-full h-[calc(100vh-64px)] relative">
         <div className="flex-1 flex min-w-0 h-full w-full">
             {children}
         </div>

@@ -24,17 +24,17 @@ interface MessageBubbleProps {
 function StatusIcon({ status }: { status?: MessageStatusType }) {
   switch (status) {
     case 'seen':
-      return <CheckCheck size={22} className="text-[#34B7F1] ml-0.5" strokeWidth={2.5} />; // WhatsApp light blue for seen
+      return <CheckCheck size={15} className="text-[#53bDEB] ml-0.5" strokeWidth={2.5} />;
     case 'delivered':
-      return <CheckCheck size={22} className="text-white/70 ml-0.5" strokeWidth={2} />;
+      return <CheckCheck size={15} className="text-[var(--bubble-out-meta,#667781)] ml-0.5 opacity-90" strokeWidth={2} />;
     case 'sent':
-      return <Check size={22} className="text-white/70 ml-0.5" strokeWidth={2} />;
+      return <Check size={15} className="text-[var(--bubble-out-meta,#667781)] ml-0.5 opacity-90" strokeWidth={2} />;
     case 'failed':
-      return <AlertCircle size={13} className="text-red-400 ml-0.5" strokeWidth={2} />;
+      return <AlertCircle size={13} className="text-red-500 ml-0.5" strokeWidth={2} />;
     case 'queued':
-      return <Clock size={12} className="text-white/50 ml-0.5" strokeWidth={2} />;
+      return <Clock size={12} className="text-[var(--bubble-out-meta,#667781)] ml-0.5 opacity-80" strokeWidth={2} />;
     default:
-      return <Clock size={12} className="text-white/50 ml-0.5" strokeWidth={2} />;
+      return <Clock size={12} className="text-[var(--bubble-out-meta,#667781)] ml-0.5 opacity-80" strokeWidth={2} />;
   }
 }
 
@@ -62,15 +62,15 @@ const MessageBubble = React.memo(function MessageBubble({ message, isOwn, showSe
 
   const currentUser = useAuthStore(s => s.user);
   const activeChat = useChatStore(s => s.activeChat);
-  const { 
-    setReplyingTo, 
-    deleteMessageForMe, 
-    deleteMessageForEveryone, 
-    pinMessage, 
-    unpinMessage, 
-    starMessage, 
-    unstarMessage, 
-    addReaction, 
+  const {
+    setReplyingTo,
+    deleteMessageForMe,
+    deleteMessageForEveryone,
+    pinMessage,
+    unpinMessage,
+    starMessage,
+    unstarMessage,
+    addReaction,
     removeReaction,
     setEditingMessage,
     retryMessage,
@@ -115,269 +115,287 @@ const MessageBubble = React.memo(function MessageBubble({ message, isOwn, showSe
   const isSelected = selectedMessageIds.includes(message.id);
 
   return (
-    <div 
-      className={`flex ${isOwn ? 'justify-end' : 'justify-start'} mb-1.5 px-4 group relative items-center gap-2 transition-all ${
-        isSelected ? 'bg-emerald-500/10 -mx-4 px-8 py-1' : ''
-      }`}
+    <div
+      className={`flex w-full mb-1.5 px-4 group relative transition-all ${isSelected ? 'bg-emerald-500/10 -mx-4 px-8 py-1' : ''
+        }`}
+      style={{
+        display: 'flex',
+        flexDirection: 'column',
+        justifyContent: isOwn ? 'flex-end' : 'flex-start',
+        alignItems: isOwn ? 'flex-end' : 'flex-start',
+      }}
       onMouseEnter={() => setShowMenuHover(true)}
       onMouseLeave={() => setShowMenuHover(false)}
     >
       {/* Selection Checkbox */}
       {selectionMode && (
-        <div 
+        <div
           onClick={(e) => {
             e.stopPropagation();
             toggleMessageSelection(message.id);
           }}
-          className={`shrink-0 w-5 h-5 rounded-full border-2 flex items-center justify-center cursor-pointer transition-colors ${
-            isSelected ? 'bg-[var(--emerald)] border-[var(--emerald)]' : 'border-[var(--text-muted)] bg-transparent hover:border-[var(--text-primary)]'
-          } ${isOwn ? 'order-first' : ''}`}
+          className={`shrink-0 w-5 h-5 rounded-full border-2 flex items-center justify-center cursor-pointer transition-colors ${isSelected ? 'bg-[var(--emerald)] border-[var(--emerald)]' : 'border-[var(--text-muted)] bg-transparent hover:border-[var(--text-primary)]'
+            }`}
         >
           {isSelected && <Check size={12} className="text-white" strokeWidth={3} />}
         </div>
       )}
 
-      {/* Context Menu or Selection Handler */}
-
-      <MessageContextMenu 
-        message={message}
-        isOwn={isOwn}
-        isStarred={isStarred}
-        isPinned={isPinned}
-        onReply={() => setReplyingTo(message)}
-        onEdit={() => setEditingMessage(message)}
-        onStar={() => isStarred ? unstarMessage(message.id) : starMessage(message.id)}
-        onCopy={() => navigator.clipboard.writeText(message.content || message.media_url || '')}
-        onInfo={() => setShowInfo(true)}
-        onPin={() => isPinned ? unpinMessage(message.chat_id) : pinMessage(message.chat_id, message.id)}
-        onForward={() => setShowForward(true)}
-        onDeleteForMe={() => deleteMessageForMe(message.id)}
-        onDeleteForEveryone={() => deleteMessageForEveryone(message.id)}
-        onReact={(emoji) => addReaction(message.id, emoji)}
-        disabled={selectionMode}
+      {/* Constraints Wrapper for perfect ~70% max width anchoring */}
+      <div
+        className="max-w-[85%] sm:max-w-[70%]"
+        style={{
+          display: 'flex',
+          flexDirection: 'column',
+          width: 'fit-content',
+          minWidth: 0,
+          marginLeft: isOwn ? 'auto' : '0',
+          marginRight: isOwn ? '0' : 'auto',
+          boxSizing: 'border-box',
+        }}
       >
-        <div
-          onClick={(e) => {
-            if (selectionMode) {
-              e.stopPropagation();
-              toggleMessageSelection(message.id);
-            }
-          }}
-          className={`relative max-w-full min-w-[80px] px-3.5 py-2 ${selectionMode ? 'cursor-pointer' : ''} ${
-            isOwn
-              ? 'bg-[var(--bubble-out)] text-[var(--bubble-out-text)] rounded-2xl bubble-tail-out'
-              : 'bg-[var(--bubble-in)] text-[var(--bubble-in-text)] rounded-2xl border border-[var(--border-color)] bubble-tail-in'
-          }`}
-          style={{
-            boxShadow: isOwn 
-              ? '0 1px 3px rgba(22, 163, 74, 0.12)' 
-              : 'var(--shadow-xs)',
-          }}
+        <MessageContextMenu
+          message={message}
+          isOwn={isOwn}
+          isStarred={isStarred}
+          isPinned={isPinned}
+          onReply={() => setReplyingTo(message)}
+          onEdit={() => setEditingMessage(message)}
+          onStar={() => isStarred ? unstarMessage(message.id) : starMessage(message.id)}
+          onCopy={() => navigator.clipboard.writeText(message.content || message.media_url || '')}
+          onInfo={() => setShowInfo(true)}
+          onPin={() => isPinned ? unpinMessage(message.chat_id) : pinMessage(message.chat_id, message.id)}
+          onForward={() => setShowForward(true)}
+          onDeleteForMe={() => deleteMessageForMe(message.id)}
+          onDeleteForEveryone={() => deleteMessageForEveryone(message.id)}
+          onReact={(emoji) => addReaction(message.id, emoji)}
+          disabled={selectionMode}
         >
-
-        {/* Replied To */}
-        {message.reply_to_id && message.reply_to && (!Array.isArray(message.reply_to) || message.reply_to.length > 0) && (() => {
-          const replyData = Array.isArray(message.reply_to) ? message.reply_to[0] : message.reply_to;
-          if (!replyData) return null;
-          return (
-            <div className={`mb-2 p-2.5 rounded-xl flex flex-col cursor-pointer transition-colors ${
-              isOwn 
-                ? 'bg-white/10 border-l-3 border-white/40 hover:bg-white/15' 
-                : 'bg-[var(--bg-secondary)] border-l-3 border-[var(--emerald)] hover:bg-[var(--bg-hover)]'
-            }`}>
-              {getDisplayName(replyData.sender) && (
-                <span className={`text-[14px] font-semibold ${isOwn ? 'text-white/80' : 'text-[var(--emerald)]'}`}>
-                  {getDisplayName(replyData.sender)}
-                </span>
-              )}
-              <span className={`text-[14px] line-clamp-2 mt-0.5 ${isOwn ? 'text-white/60' : 'text-[var(--text-secondary)]'}`}>
-                {replyData.content || (replyData.media_url ? 'Media' : '')}
-              </span>
-            </div>
-          );
-        })()}
-
-        {/* Sender name in groups — only show if we have a real name */}
-        {showSenderName && !isOwn && message.sender && getDisplayName(message.sender) && (
-          <p
-            className="text-[14px] font-semibold mb-1"
-            style={{ color: `hsl(${(message.sender.id ? message.sender.id.charCodeAt(0) * 37 : 1) % 360}, 65%, 55%)` }}
-          >
-            {getDisplayName(message.sender)}
-          </p>
-        )}
-
-        {/* Media content — Image */}
-        {((message.message_type === 'image') || 
-          message.media_metadata?.mime_type?.startsWith('image/') || 
-          message.media_metadata?.filename?.match(/\.(jpg|jpeg|png|gif|webp)$/i)) && message.media_url && (
-          <div ref={mediaRef} className="mb-1.5 -mx-1 -mt-0.5 min-h-[150px] overflow-hidden rounded-xl bg-[var(--bg-hover)] relative">
-            {isMediaInView && !mediaError ? (
-              <img
-                src={message.media_url}
-                alt="Photo"
-                className={`w-full max-h-[300px] object-cover cursor-pointer transition-all duration-500 ${
-                  mediaLoaded ? 'opacity-100 blur-0 scale-100' : 'opacity-0 blur-md scale-105'
-                }`}
-                onLoad={() => setMediaLoaded(true)}
-                onError={() => setMediaError(true)}
-                loading="lazy"
-                onClick={() => openLightbox('image')}
-              />
-            ) : mediaError ? (
-              <div className="flex flex-col items-center justify-center p-6 text-red-400">
-                <AlertCircle size={24} className="mb-2" />
-                <span className="text-[13px]">Failed to load media</span>
-              </div>
-            ) : null}
-            {!mediaLoaded && !mediaError && (
-              <div className="absolute inset-0 animate-shimmer" />
-            )}
-          </div>
-        )}
-
-        {/* Video */}
-        {((message.message_type === 'video') || 
-          (message.message_type !== 'audio' && message.message_type !== 'image' && message.message_type !== 'document' && (message.media_metadata?.mime_type?.startsWith('video/') || 
-          message.media_metadata?.filename?.match(/\.(mp4|webm|ogg|mov)$/i)))) && message.media_url && (
-          <div ref={mediaRef} className="mb-1.5 -mx-1 -mt-0.5 min-h-[150px] overflow-hidden rounded-xl bg-[var(--bg-hover)] relative cursor-pointer" onClick={() => openLightbox('video')}>
-            {isMediaInView ? (
-              <video
-                src={message.media_url}
-                className="w-full max-h-[300px] object-cover transition-opacity pointer-events-none"
-                preload="metadata"
-                onLoadedData={() => setMediaLoaded(true)}
-                onError={() => setMediaError(true)}
-                muted
-              />
-            ) : null}
-            {!mediaLoaded && !mediaError && (
-              <div className="absolute inset-0 animate-shimmer" />
-            )}
-            {mediaError && (
-              <div className="flex flex-col items-center justify-center p-6 text-red-400">
-                <AlertCircle size={24} className="mb-2" />
-                <span className="text-[13px]">Failed to load video</span>
-              </div>
-            )}
-            {/* Play overlay */}
-            {mediaLoaded && !mediaError && (
-              <div className="absolute inset-0 flex items-center justify-center bg-black/30 hover:bg-black/40 transition-colors">
-                <div className="w-12 h-12 rounded-full bg-white/90 flex items-center justify-center shadow-lg">
-                  <Play size={22} className="text-gray-800 ml-0.5" fill="currentColor" />
-                </div>
-              </div>
-            )}
-          </div>
-        )}
-
-        {/* Audio */}
-        {((message.message_type === 'audio') || 
-          (message.message_type !== 'video' && message.message_type !== 'image' && message.message_type !== 'document' && (message.media_metadata?.mime_type?.startsWith('audio/') || 
-          message.media_metadata?.filename?.match(/\.(mp3|wav|ogg|m4a|webm)$/i)))) && message.media_url && (
-          <div className="mb-1.5 min-w-[200px]">
-            <audio src={message.media_url} controls className="w-full h-10" preload="metadata" />
-          </div>
-        )}
-
-        {/* Document */}
-        {message.message_type === 'document' && 
-         !message.media_metadata?.mime_type?.startsWith('image/') && 
-         !message.media_metadata?.filename?.match(/\.(jpg|jpeg|png|gif|webp)$/i) &&
-         !message.media_metadata?.mime_type?.startsWith('video/') && 
-         !message.media_metadata?.filename?.match(/\.(mp4|webm|ogg|mov)$/i) &&
-         !message.media_metadata?.mime_type?.startsWith('audio/') && 
-         !message.media_metadata?.filename?.match(/\.(mp3|wav|ogg|m4a)$/i) && 
-         message.media_url && (
           <div
-            onClick={() => openLightbox('document')}
-            className={`flex items-center gap-3 mb-1.5 p-3 rounded-xl hover:opacity-80 transition-opacity cursor-pointer ${
-              isOwn ? 'bg-white/10' : 'bg-[var(--bg-secondary)]'
-            }`}
+            onClick={(e) => {
+              if (selectionMode) {
+                e.stopPropagation();
+                toggleMessageSelection(message.id);
+              }
+            }}
+            className={`relative ${selectionMode ? 'cursor-pointer' : ''} ${isOwn
+                ? 'bg-[var(--bubble-out)] text-[var(--bubble-out-text)] bubble-tail-out'
+                : 'bg-[var(--bubble-in)] text-[var(--bubble-in-text)] border border-[var(--border-color)] bubble-tail-in'
+              }`}
+            style={{
+              padding: '8px 12px',
+              borderRadius: '12px',
+              minWidth: '60px',
+              width: 'fit-content',
+              wordBreak: 'break-word',
+              overflowWrap: 'anywhere',
+              whiteSpace: 'pre-wrap',
+              boxSizing: 'border-box',
+              boxShadow: isOwn
+                ? '0 1px 3px rgba(22, 163, 74, 0.12)'
+                : 'var(--shadow-xs)',
+            }}
           >
-            <div className={`w-10 h-10 rounded-lg flex items-center justify-center ${isOwn ? 'bg-white/15' : 'bg-[var(--emerald)]/10'}`}>
-              <FileText size={22} className={isOwn ? 'text-white/80' : 'text-[var(--emerald)]'} />
-            </div>
-            <div className="flex-1 min-w-0">
-              <p className={`text-sm truncate font-medium ${isOwn ? 'text-white' : 'text-[var(--text-primary)]'}`}>
-                {message.media_metadata?.filename || 'Document'}
+
+            {/* Replied To */}
+            {message.reply_to_id && message.reply_to && (!Array.isArray(message.reply_to) || message.reply_to.length > 0) && (() => {
+              const replyData = Array.isArray(message.reply_to) ? message.reply_to[0] : message.reply_to;
+              if (!replyData) return null;
+              return (
+                <div className={`mb-2 p-2.5 rounded-xl flex flex-col cursor-pointer transition-colors ${isOwn
+                    ? 'bg-white/10 border-l-3 border-white/40 hover:bg-white/15'
+                    : 'bg-[var(--bg-secondary)] border-l-3 border-[var(--emerald)] hover:bg-[var(--bg-hover)]'
+                  }`}>
+                  {getDisplayName(replyData.sender) && (
+                    <span className={`text-[14px] font-semibold ${isOwn ? 'text-white/80' : 'text-[var(--emerald)]'}`}>
+                      {getDisplayName(replyData.sender)}
+                    </span>
+                  )}
+                  <span className={`text-[14px] line-clamp-2 mt-0.5 ${isOwn ? 'text-white/60' : 'text-[var(--text-secondary)]'}`}>
+                    {replyData.content || (replyData.media_url ? 'Media' : '')}
+                  </span>
+                </div>
+              );
+            })()}
+
+            {/* Sender name in groups — only show if we have a real name */}
+            {showSenderName && !isOwn && message.sender && getDisplayName(message.sender) && (
+              <p
+                className="text-[14px] font-semibold mb-1"
+                style={{ color: `hsl(${(message.sender.id ? message.sender.id.charCodeAt(0) * 37 : 1) % 360}, 65%, 55%)` }}
+              >
+                {getDisplayName(message.sender)}
               </p>
-              <p className={`text-[13px] ${isOwn ? 'text-white/60' : 'text-[var(--text-muted)]'}`}>
-                {message.media_metadata?.size
-                  ? formatFileSize(message.media_metadata.size as number)
-                  : 'File'}
+            )}
+
+            {/* Media content — Image */}
+            {((message.message_type === 'image') ||
+              message.media_metadata?.mime_type?.startsWith('image/') ||
+              message.media_metadata?.filename?.match(/\.(jpg|jpeg|png|gif|webp)$/i)) && message.media_url && (
+                <div ref={mediaRef} className="mb-1.5 -mx-1 -mt-0.5 min-h-[150px] overflow-hidden rounded-xl bg-[var(--bg-hover)] relative">
+                  {isMediaInView && !mediaError ? (
+                    <img
+                      src={message.media_url}
+                      alt="Photo"
+                      className={`w-full max-h-[300px] object-cover cursor-pointer transition-all duration-500 ${mediaLoaded ? 'opacity-100 blur-0 scale-100' : 'opacity-0 blur-md scale-105'
+                        }`}
+                      onLoad={() => setMediaLoaded(true)}
+                      onError={() => setMediaError(true)}
+                      loading="lazy"
+                      onClick={() => openLightbox('image')}
+                    />
+                  ) : mediaError ? (
+                    <div className="flex flex-col items-center justify-center p-6 text-red-400">
+                      <AlertCircle size={24} className="mb-2" />
+                      <span className="text-[13px]">Failed to load media</span>
+                    </div>
+                  ) : null}
+                  {!mediaLoaded && !mediaError && (
+                    <div className="absolute inset-0 animate-shimmer" />
+                  )}
+                </div>
+              )}
+
+            {/* Video */}
+            {((message.message_type === 'video') ||
+              (message.message_type !== 'audio' && message.message_type !== 'image' && message.message_type !== 'document' && (message.media_metadata?.mime_type?.startsWith('video/') ||
+                message.media_metadata?.filename?.match(/\.(mp4|webm|ogg|mov)$/i)))) && message.media_url && (
+                <div ref={mediaRef} className="mb-1.5 -mx-1 -mt-0.5 min-h-[150px] overflow-hidden rounded-xl bg-[var(--bg-hover)] relative cursor-pointer" onClick={() => openLightbox('video')}>
+                  {isMediaInView ? (
+                    <video
+                      src={message.media_url}
+                      className="w-full max-h-[300px] object-cover transition-opacity pointer-events-none"
+                      preload="metadata"
+                      onLoadedData={() => setMediaLoaded(true)}
+                      onError={() => setMediaError(true)}
+                      muted
+                    />
+                  ) : null}
+                  {!mediaLoaded && !mediaError && (
+                    <div className="absolute inset-0 animate-shimmer" />
+                  )}
+                  {mediaError && (
+                    <div className="flex flex-col items-center justify-center p-6 text-red-400">
+                      <AlertCircle size={24} className="mb-2" />
+                      <span className="text-[13px]">Failed to load video</span>
+                    </div>
+                  )}
+                  {/* Play overlay */}
+                  {mediaLoaded && !mediaError && (
+                    <div className="absolute inset-0 flex items-center justify-center bg-black/30 hover:bg-black/40 transition-colors">
+                      <div className="w-12 h-12 rounded-full bg-white/90 flex items-center justify-center shadow-lg">
+                        <Play size={22} className="text-gray-800 ml-0.5" fill="currentColor" />
+                      </div>
+                    </div>
+                  )}
+                </div>
+              )}
+
+            {/* Audio */}
+            {((message.message_type === 'audio') ||
+              (message.message_type !== 'video' && message.message_type !== 'image' && message.message_type !== 'document' && (message.media_metadata?.mime_type?.startsWith('audio/') ||
+                message.media_metadata?.filename?.match(/\.(mp3|wav|ogg|m4a|webm)$/i)))) && message.media_url && (
+                <div className="mb-1.5 min-w-[200px]">
+                  <audio src={message.media_url} controls className="w-full h-10" preload="metadata" />
+                </div>
+              )}
+
+            {/* Document */}
+            {message.message_type === 'document' &&
+              !message.media_metadata?.mime_type?.startsWith('image/') &&
+              !message.media_metadata?.filename?.match(/\.(jpg|jpeg|png|gif|webp)$/i) &&
+              !message.media_metadata?.mime_type?.startsWith('video/') &&
+              !message.media_metadata?.filename?.match(/\.(mp4|webm|ogg|mov)$/i) &&
+              !message.media_metadata?.mime_type?.startsWith('audio/') &&
+              !message.media_metadata?.filename?.match(/\.(mp3|wav|ogg|m4a)$/i) &&
+              message.media_url && (
+                <div
+                  onClick={() => openLightbox('document')}
+                  className={`flex items-center gap-3 mb-1.5 p-3 rounded-xl hover:opacity-80 transition-opacity cursor-pointer ${isOwn ? 'bg-white/10' : 'bg-[var(--bg-secondary)]'
+                    }`}
+                >
+                  <div className={`w-10 h-10 rounded-lg flex items-center justify-center ${isOwn ? 'bg-white/15' : 'bg-[var(--emerald)]/10'}`}>
+                    <FileText size={22} className={isOwn ? 'text-white/80' : 'text-[var(--emerald)]'} />
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <p className={`text-sm truncate font-medium ${isOwn ? 'text-white' : 'text-[var(--text-primary)]'}`}>
+                      {message.media_metadata?.filename || 'Document'}
+                    </p>
+                    <p className={`text-[13px] ${isOwn ? 'text-white/60' : 'text-[var(--text-muted)]'}`}>
+                      {message.media_metadata?.size
+                        ? formatFileSize(message.media_metadata.size as number)
+                        : 'File'}
+                    </p>
+                  </div>
+                  <Download size={19} className={isOwn ? 'text-white/60' : 'text-[var(--text-muted)]'} />
+                </div>
+              )}
+
+            {/* Text content */}
+            {message.content && (
+              <p className={`text-[14px] leading-relaxed m-0`} style={{ whiteSpace: 'pre-wrap', overflowWrap: 'anywhere', wordBreak: 'break-word', color: isOwn ? 'var(--bubble-out-text)' : 'var(--bubble-in-text)', boxSizing: 'border-box', minWidth: 0 }}>
+                {message.content}
               </p>
+            )}
+
+            {/* Time & Status */}
+            <div className="flex items-center justify-end gap-1 -mb-0.5 mt-1" style={{ minWidth: isOwn ? '64px' : '44px' }}>
+              {isStarred && <Star size={10} className={isOwn ? 'fill-[var(--gold)] text-[var(--gold)]' : 'fill-[var(--gold)] text-[var(--gold)]'} />}
+              <span className="text-[11px] font-normal" style={{ color: isOwn ? 'var(--bubble-out-meta, #667781)' : 'var(--bubble-in-meta, #667781)' }}>
+                {formatMessageTime(message.created_at)}
+              </span>
+              {isOwn && overallStatus === 'failed' && (
+                <button
+                  onClick={() => retryMessage(message.id, message.chat_id, message.content as string, message.message_type, message.media_url as string, message.media_metadata as any, message.reply_to_id as string)}
+                  className="text-red-400 hover:text-red-300 transition-colors rounded-full p-0.5 ml-0.5"
+                  title="Retry sending"
+                >
+                  <RefreshCw size={12} />
+                </button>
+              )}
+              {isOwn && overallStatus !== 'failed' && <StatusIcon status={overallStatus as MessageStatusType | undefined} />}
             </div>
-            <Download size={19} className={isOwn ? 'text-white/60' : 'text-[var(--text-muted)]'} />
+
+            {/* Reactions beneath bubble */}
+            {message.reactions && message.reactions.length > 0 && (
+              <div
+                className={`absolute -bottom-3 ${isOwn ? '-left-2' : '-right-2'} bg-[var(--bg-primary)] border border-[var(--border-color)] rounded-full px-2 py-0.5 text-[13px] flex gap-1 items-center`}
+                style={{ boxShadow: 'var(--shadow-sm)' }}
+              >
+                {Array.from(new Set(message.reactions.map(r => r.emoji))).map(emoji => (
+                  <span key={emoji}>{emoji}</span>
+                ))}
+                {message.reactions.length > 1 && <span className="text-[var(--text-muted)] text-[10px] font-medium">{message.reactions.length}</span>}
+              </div>
+            )}
           </div>
-        )}
-
-        {/* Text content */}
-        {message.content && (
-          <p className={`text-[14px] whitespace-pre-wrap break-words leading-relaxed ${
-            isOwn ? 'text-[var(--bubble-out-text)]' : 'text-[var(--bubble-in-text)]'
-          }`}>
-            {message.content}
-          </p>
-        )}
-
-        {/* Time & Status */}
-        <div className="flex items-center justify-end gap-1 -mb-0.5 mt-1" style={{ minWidth: isOwn ? '64px' : '44px' }}>
-          {isStarred && <Star size={10} className={isOwn ? 'fill-[var(--gold)] text-[var(--gold)]' : 'fill-[var(--gold)] text-[var(--gold)]'} />}
-          <span className={`text-[14px] font-light ${isOwn ? 'text-white/60' : 'text-[var(--text-muted)]'}`}>
-            {formatMessageTime(message.created_at)}
-          </span>
-          {isOwn && overallStatus === 'failed' && (
-            <button 
-              onClick={() => retryMessage(message.id, message.chat_id, message.content as string, message.message_type, message.media_url as string, message.media_metadata as any, message.reply_to_id as string)}
-              className="text-red-400 hover:text-red-300 transition-colors rounded-full p-0.5 ml-0.5"
-              title="Retry sending"
-            >
-              <RefreshCw size={12} />
-            </button>
-          )}
-          {isOwn && overallStatus !== 'failed' && <StatusIcon status={overallStatus as MessageStatusType | undefined} />}
-        </div>
-
-        {/* Reactions beneath bubble */}
-        {message.reactions && message.reactions.length > 0 && (
-          <div 
-            className={`absolute -bottom-3 ${isOwn ? '-left-2' : '-right-2'} bg-[var(--bg-primary)] border border-[var(--border-color)] rounded-full px-2 py-0.5 text-[13px] flex gap-1 items-center`}
-            style={{ boxShadow: 'var(--shadow-sm)' }}
-          >
-            {Array.from(new Set(message.reactions.map(r => r.emoji))).map(emoji => (
-              <span key={emoji}>{emoji}</span>
-            ))}
-            {message.reactions.length > 1 && <span className="text-[var(--text-muted)] text-[10px] font-medium">{message.reactions.length}</span>}
-          </div>
-        )}
-        </div>
-      </MessageContextMenu>
+        </MessageContextMenu>
+      </div>
 
       {showInfo && activeChat && (
-        <MessageInfoModal 
-          message={message} 
-          chatParticipants={activeChat.participants} 
-          onClose={() => setShowInfo(false)} 
+        <MessageInfoModal
+          message={message}
+          chatParticipants={activeChat.participants}
+          onClose={() => setShowInfo(false)}
         />
       )}
-      
+
       {showForward && (
         <ForwardModal message={message} onClose={() => setShowForward(false)} />
       )}
 
       {/* Image Lightbox */}
       {lightboxOpen && message.media_url && (
-        <div 
+        <div
           className="fixed inset-0 z-[9999] bg-black/95 flex items-center justify-center animate-fadeIn"
           onClick={closeLightbox}
         >
           {/* Controls */}
           <div className="absolute top-0 left-0 right-0 flex items-center justify-between p-4 z-10 bg-black/60">
             <p className="text-white/80 text-sm font-medium truncate max-w-[60%]">
-              {lightboxType === 'image' ? (message.sender?.display_name || 'Photo') 
+              {lightboxType === 'image' ? (message.sender?.display_name || 'Photo')
                 : lightboxType === 'video' ? (message.sender?.display_name || 'Video')
-                : (message.media_metadata?.filename || 'Document')}
+                  : (message.media_metadata?.filename || 'Document')}
             </p>
             <div className="flex items-center gap-2">
               {lightboxType === 'image' && (
@@ -439,7 +457,7 @@ const MessageBubble = React.memo(function MessageBubble({ message, isOwn, showSe
           )}
 
           {lightboxType === 'document' && (
-            <div 
+            <div
               className="bg-[var(--bg-primary)] rounded-2xl p-8 max-w-md w-[90vw] shadow-2xl text-center"
               onClick={(e) => e.stopPropagation()}
             >

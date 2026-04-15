@@ -127,7 +127,7 @@ export default function MessageList({ chatId, isGroup }: MessageListProps) {
       <div
         ref={listRef}
         onScroll={handleScroll}
-        className={`flex-1 overflow-y-auto scrollbar-thin ${pinnedMessage ? (isReconnecting ? 'pt-20' : 'pt-16') : (isReconnecting ? 'pt-8' : '')}`}
+        className={`flex-1 overflow-y-auto overflow-x-hidden scrollbar-thin ${pinnedMessage ? (isReconnecting ? 'pt-20' : 'pt-16') : (isReconnecting ? 'pt-8' : '')}`}
       >
       {/* Loading spinner for older messages */}
       {isLoadingMessages && messages.length > 0 && (
@@ -156,8 +156,8 @@ export default function MessageList({ chatId, isGroup }: MessageListProps) {
             {/* Date separator — premium glass pill */}
             <div className="flex items-center justify-center my-4">
               <span 
-                className="px-4 py-1.5 text-[var(--text-muted)] text-[14px] rounded-full font-medium tracking-wide border border-[var(--border-color)]"
-                style={{ 
+                className="px-3 py-1 text-[var(--text-secondary)] text-[12px] rounded-full font-medium tracking-wide border border-[var(--border-color)]"
+                style={{  
                   background: 'var(--bg-date-separator)',
                   backdropFilter: 'blur(8px)',
                   boxShadow: 'var(--shadow-xs)',

@@ -9,55 +9,57 @@
 :root {
   /* Core palette */
   --primary: #0F172A;
-  --secondary: #16A34A;
+  --secondary: #00A884;
   --accent-gold: #F59E0B;
 
   /* Backgrounds */
-  --bg-app: #F8FAFC;
+  --bg-app: #F7F7F7;
   --bg-primary: #FFFFFF;
-  --bg-secondary: #F1F5F9;
-  --bg-header: rgba(255, 255, 255, 0.85);
-  --bg-hover: #F1F5F9;
-  --bg-active: #E2E8F0;
-  --bg-search: #F1F5F9;
-  --bg-chat: #F8FAFC;
-  --bg-date-separator: rgba(255, 255, 255, 0.9);
-  --bg-glass: rgba(255, 255, 255, 0.7);
-  --bg-glass-strong: rgba(255, 255, 255, 0.85);
+  --bg-secondary: #F0F2F5;
+  --bg-header: #F7F7F7;
+  --bg-hover: #F0F2F5;
+  --bg-active: #E9EDEF;
+  --bg-search: #F0F2F5;
+  --bg-chat: #E5DDD5;
+  --bg-date-separator: rgba(229, 221, 213, 0.9);
+  --bg-glass: rgba(247, 247, 247, 0.9);
+  --bg-glass-strong: rgba(247, 247, 247, 0.95);
 
   /* Text */
-  --text-primary: #020617;
-  --text-secondary: #334155;
-  --text-muted: #64748B;
+  --text-primary: #111B21;
+  --text-secondary: #667781;
+  --text-muted: #8696A0;
 
   /* Borders */
-  --border-color: #E2E8F0;
+  --border-color: #E9EDEF;
 
   /* Chat bubbles */
-  --bubble-out: #16A34A;
-  --bubble-out-text: #FFFFFF;
+  --bubble-out: #D9FDD3;
+  --bubble-out-text: #111B21;
+  --bubble-out-meta: #667781;
   --bubble-in: #FFFFFF;
-  --bubble-in-text: #020617;
+  --bubble-in-text: #111B21;
+  --bubble-in-meta: #667781;
 
   /* Brand colors */
-  --emerald: #16A34A;
-  --emerald-light: #22C55E;
-  --emerald-dark: #15803D;
+  --emerald: #00A884;
+  --emerald-light: #00A884;
+  --emerald-dark: #00A884;
   --navy: #0F172A;
   --navy-light: #1E293B;
   --gold: #F59E0B;
   --gold-light: #FBBF24;
 
   /* Legacy aliases for compatibility */
-  --wa-green: #16A34A;
-  --wa-green-dark: #15803D;
-  --wa-teal: #16A34A;
-  --paystack-blue: #16A34A;
+  --wa-green: #00A884;
+  --wa-green-dark: #00A884;
+  --wa-teal: #00A884;
+  --paystack-blue: #00A884;
   --paystack-navy: #0F172A;
-  --paystack-light: #22C55E;
+  --paystack-light: #00A884;
 
   /* Shadows */
-  --shadow-xs: 0 1px 2px rgba(15, 23, 42, 0.04);
+  --shadow-xs: 0 1px 2px rgba(0, 0, 0, 0.05);
   --shadow-sm: 0 1px 3px rgba(15, 23, 42, 0.06), 0 1px 2px rgba(15, 23, 42, 0.04);
   --shadow-md: 0 4px 6px -1px rgba(15, 23, 42, 0.06), 0 2px 4px -2px rgba(15, 23, 42, 0.04);
   --shadow-lg: 0 10px 15px -3px rgba(15, 23, 42, 0.06), 0 4px 6px -4px rgba(15, 23, 42, 0.04);
@@ -90,39 +92,41 @@
 
 /* ------ Dark Theme ------ */
 .dark {
-  --bg-app: #020617;
+  --bg-app: #0B141A;
   --bg-primary: #0F172A;
-  --bg-secondary: #1E293B;
-  --bg-header: rgba(15, 23, 42, 0.9);
+  --bg-secondary: #202C33;
+  --bg-header: rgba(11, 20, 26, 0.9);
   --bg-hover: #1E293B;
   --bg-active: #334155;
   --bg-search: #1E293B;
-  --bg-chat: #020617;
+  --bg-chat: #0B141A;
   --bg-date-separator: rgba(30, 41, 59, 0.9);
-  --bg-glass: rgba(15, 23, 42, 0.7);
-  --bg-glass-strong: rgba(15, 23, 42, 0.85);
+  --bg-glass: rgba(11, 20, 26, 0.7);
+  --bg-glass-strong: rgba(11, 20, 26, 0.85);
 
-  --text-primary: #F1F5F9;
-  --text-secondary: #CBD5E1;
-  --text-muted: #94A3B8;
+  --text-primary: #E9EDEF;
+  --text-secondary: #8696A0;
+  --text-muted: #8696A0;
 
   --border-color: #1E293B;
 
-  --bubble-out: #166534;
-  --bubble-out-text: #F0FDF4;
-  --bubble-in: #1E293B;
-  --bubble-in-text: #F1F5F9;
+  --bubble-out: #005C4B;
+  --bubble-out-text: #E9EDEF;
+  --bubble-out-meta: rgba(233,237,239,0.6);
+  --bubble-in: #202C33;
+  --bubble-in-text: #FFFFFF;
+  --bubble-in-meta: rgba(255,255,255,0.6);
 
-  --emerald: #22C55E;
-  --emerald-light: #4ADE80;
+  --emerald: #00A884;
+  --emerald-light: #00A884;
   --gold: #FBBF24;
   --gold-light: #FCD34D;
 
-  --wa-green: #22C55E;
-  --wa-green-dark: #16A34A;
-  --paystack-blue: #22C55E;
+  --wa-green: #00A884;
+  --wa-green-dark: #00A884;
+  --paystack-blue: #00A884;
   --paystack-navy: #0F172A;
-  --paystack-light: #4ADE80;
+  --paystack-light: #00A884;
 
   --shadow-xs: 0 1px 2px rgba(0, 0, 0, 0.2);
   --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.25), 0 1px 2px rgba(0, 0, 0, 0.15);
