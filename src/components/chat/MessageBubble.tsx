@@ -96,9 +96,16 @@ const MessageBubble = React.memo(function MessageBubble({ message, isOwn, showSe
 
   if (message.is_deleted) {
     return (
-      <div className={`flex ${isOwn ? 'justify-end' : 'justify-start'} mb-1.5 px-4`}>
-        <div className="px-4 py-2 rounded-2xl bg-[var(--bg-secondary)] text-[var(--text-muted)] text-[14px] italic border border-[var(--border-color)]">
-          🚫 This message was deleted
+      <div className={`flex ${isOwn ? 'justify-end' : 'justify-start'} mb-1.5 px-4 group`}>
+        <div className="relative flex items-center gap-2 px-4 py-2 rounded-2xl bg-[var(--bg-secondary)] text-[var(--text-muted)] text-[14px] italic border border-[var(--border-color)]">
+          <span>🚫 This message was deleted</span>
+          <button
+            onClick={() => deleteMessageForMe(message.id)}
+            className="opacity-0 group-hover:opacity-100 p-1 rounded-full hover:bg-red-500/10 text-red-400 hover:text-red-500 transition-all duration-200"
+            title="Remove this message"
+          >
+            <X size={14} />
+          </button>
         </div>
       </div>
     );
@@ -296,7 +303,7 @@ const MessageBubble = React.memo(function MessageBubble({ message, isOwn, showSe
               (message.message_type !== 'video' && message.message_type !== 'image' && message.message_type !== 'document' && (message.media_metadata?.mime_type?.startsWith('audio/') ||
                 message.media_metadata?.filename?.match(/\.(mp3|wav|ogg|m4a|webm)$/i)))) && message.media_url && (
                 <div className="mb-1.5 min-w-[200px]">
-                  <audio src={message.media_url} controls className="w-full h-10" preload="metadata" />
+                  <audio src={message.media_url} controls className="w-full h-10" preload="none" />
                 </div>
               )}
 

@@ -247,9 +247,11 @@ export const useChatStore = create<ChatState>((set, get) => ({
       const user = useAuthStore.getState().user;
       const rawMessages = (data || []) as Message[];
       
-      // Filter out messages deleted for ME
+      const localDeletedIds = typeof localStorage !== 'undefined' && user ? JSON.parse(localStorage.getItem(`deleted-messages-${user.id}`) || '[]') : [];
+
+      // Filter out messages deleted for ME (from DB or local fallback)
       const filteredMessages = rawMessages.filter(m => 
-        !m.deletions?.some(d => d.user_id === user?.id)
+        !localDeletedIds.includes(m.id) && !m.deletions?.some(d => d.user_id === user?.id)
       );
 
       const messages = filteredMessages.reverse();
@@ -641,6 +643,15 @@ export const useChatStore = create<ChatState>((set, get) => ({
     const user = useAuthStore.getState().user;
     if (!user) return;
 
+    // Save to localStorage as a reliable local fallback to keep it permanently hidden
+    if (typeof localStorage !== 'undefined') {
+      const localDeletedIds = JSON.parse(localStorage.getItem(`deleted-messages-${user.id}`) || '[]');
+      if (!localDeletedIds.includes(messageId)) {
+        localDeletedIds.push(messageId);
+        localStorage.setItem(`deleted-messages-${user.id}`, JSON.stringify(localDeletedIds));
+      }
+    }
+
     // Optimistically hide it
     set((state) => ({
       messages: state.messages.filter((m) => m.id !== messageId),
@@ -652,16 +663,36 @@ export const useChatStore = create<ChatState>((set, get) => ({
       )
     }));
 
-    await supabase.from('message_deletions').insert({
+    // Try to save to DB (this syncs across devices if DB RLS allows)
+    const { error } = await supabase.from('message_deletions').insert({
       user_id: user.id,
       message_id: messageId,
     });
+    if (error) {
+      console.warn('[ChatStore] message_deletions insert failed, relying on localStorage fallback:', error.message);
+    }
   },
 
   deleteMessageForEveryone: async (messageId: string) => {
     const supabase = getSupabaseBrowserClient();
     
-    // Optimistically update
+    // Check if message is already marked as deleted (unsent) — if so, fully remove from local view
+    const existingMsg = get().messages.find(m => m.id === messageId);
+    if (existingMsg?.is_deleted) {
+      // Already unsent in DB (is_deleted=true), just remove from local view
+      set((state) => ({
+        messages: state.messages.filter((m) => m.id !== messageId),
+        messagesByChat: Object.fromEntries(
+          Object.entries(state.messagesByChat).map(([cId, msgs]) => [
+            cId,
+            msgs.filter((m) => m.id !== messageId)
+          ])
+        )
+      }));
+      return;
+    }
+
+    // Optimistically update — mark as deleted for everyone
     set((state) => ({
       messages: state.messages.map((m) => 
         m.id === messageId ? { ...m, is_deleted: true } : m

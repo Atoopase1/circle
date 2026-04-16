@@ -69,15 +69,15 @@ export default function ChatPage() {
   }
 
   return (
-    <div className="flex w-full h-full">
+    <div className="flex w-full h-full min-w-0 overflow-hidden">
       {/* Desktop sidebar */}
       <div className="w-full max-w-[420px] lg:w-[420px] shrink-0 hidden lg:flex flex-col z-10 border-r border-[var(--border-color)]">
         <ChatSidebar />
       </div>
 
       {/* Main chat area */}
-      <div className="flex-1 flex h-full">
-        <div className="flex-1 flex flex-col min-w-0">
+      <div className="flex-1 flex h-full min-w-0 overflow-hidden">
+        <div className="flex-1 flex flex-col min-w-0 overflow-hidden">
           <ChatHeader
             chat={activeChat}
             onInfoClick={activeChat.is_group ? () => setShowGroupInfo(!showGroupInfo) : undefined}

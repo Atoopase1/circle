@@ -58,7 +58,7 @@ export default function MessageContextMenu(props: MessageContextMenuProps) {
   const calculatePosition = useCallback(() => {
     if (!triggerRef.current) return;
     const rect = triggerRef.current.getBoundingClientRect();
-    const menuWidth = 200;
+    const menuWidth = 240; // match CSS w-[240px]
     const menuHeight = 320; // approximate
     const gap = 4;
 
@@ -83,9 +83,13 @@ export default function MessageContextMenu(props: MessageContextMenuProps) {
     }
 
     // Clamp to viewport edges
-    const pad = 8;
-    if (left < pad) left = pad;
-    if (left + menuWidth > window.innerWidth - pad) left = window.innerWidth - menuWidth - pad;
+    const pad = 12; // safer padding for mobile edges
+    if (left + menuWidth > window.innerWidth - pad) {
+      left = window.innerWidth - menuWidth - pad;
+    }
+    if (left < pad) {
+      left = pad;
+    }
     if (!openUp && top + menuHeight > window.innerHeight - pad) {
       top = window.innerHeight - menuHeight - pad;
     }
