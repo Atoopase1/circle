@@ -5,7 +5,7 @@
 
 import { useState } from 'react';
 import { formatDistanceToNow } from 'date-fns';
-import { UserPlus, UserCheck, Bookmark, BookmarkCheck, Download, Heart, MessageSquare, Star, Send } from 'lucide-react';
+import { UserPlus, UserCheck, Bookmark, BookmarkCheck, Download, Heart, MessageSquare, Star, Send, MoreVertical, Trash2, Edit, Check, X } from 'lucide-react';
 import Avatar from '@/components/ui/Avatar';
 import { useRouter } from 'next/navigation';
 import { getSupabaseBrowserClient } from '@/lib/supabase/client';
@@ -15,9 +15,10 @@ import toast from 'react-hot-toast';
 interface StatusCardProps {
   status: any;
   onAddContact?: (id: string, category: 'friend' | 'family') => void;
+  onRefresh?: () => void;
 }
 
-export default function StatusCard({ status, onAddContact }: StatusCardProps) {
+export default function StatusCard({ status, onAddContact, onRefresh }: StatusCardProps) {
   const router = useRouter();
   const { profile } = useAuthStore();
   const supabase = getSupabaseBrowserClient();
@@ -46,8 +47,45 @@ export default function StatusCard({ status, onAddContact }: StatusCardProps) {
 
   const [followed, setFollowed] = useState(false);
   const [saved, setSaved] = useState(false);
+  const [showMenu, setShowMenu] = useState(false);
+  const [isEditing, setIsEditing] = useState(false);
+  const [editText, setEditText] = useState(status.text_content || '');
 
   const isOwnPost = status.user_id === profile?.id;
+
+  const handleDelete = async () => {
+    if (!window.confirm('Are you sure you want to delete this post?')) return;
+    
+    const { error } = await supabase
+      .from('statuses')
+      .delete()
+      .eq('id', status.id);
+
+    if (error) {
+      toast.error('Failed to delete status');
+    } else {
+      toast.success('Status deleted');
+      onRefresh?.();
+    }
+    setShowMenu(false);
+  };
+
+  const handleUpdate = async () => {
+    if (!editText.trim()) return;
+    
+    const { error } = await supabase
+      .from('statuses')
+      .update({ text_content: editText.trim() })
+      .eq('id', status.id);
+
+    if (error) {
+      toast.error('Failed to update status');
+    } else {
+      toast.success('Status updated');
+      setIsEditing(false);
+      onRefresh?.();
+    }
+  };
 
   const handleLike = async () => {
     if (!profile) return;
@@ -136,8 +174,37 @@ export default function StatusCard({ status, onAddContact }: StatusCardProps) {
           </div>
         </div>
 
-        {/* Follow button (only for others' posts) */}
-        {!isOwnPost && (
+        {/* Actions for owner or follow for others */}
+        {isOwnPost ? (
+          <div className="relative">
+            <button
+              onClick={() => setShowMenu(!showMenu)}
+              className="p-1.5 rounded-full hover:bg-[var(--bg-hover)] text-[var(--text-muted)] hover:text-[var(--text-primary)] transition-colors"
+            >
+              <MoreVertical size={20} />
+            </button>
+            
+            {showMenu && (
+              <div className="absolute right-0 mt-2 w-32 bg-[var(--bg-primary)] border border-[var(--border-color)] rounded-xl shadow-xl z-50 animate-scaleIn overflow-hidden">
+                <button
+                  onClick={() => { setIsEditing(true); setShowMenu(false); }}
+                  className="w-full flex items-center gap-2 px-3 py-2.5 text-sm text-[var(--text-primary)] hover:bg-[var(--bg-hover)] transition-colors"
+                >
+                  <Edit size={16} className="text-blue-500" />
+                  Edit
+                </button>
+                <div className="h-px bg-[var(--border-color)]" />
+                <button
+                  onClick={handleDelete}
+                  className="w-full flex items-center gap-2 px-3 py-2.5 text-sm text-red-500 hover:bg-[var(--bg-hover)] transition-colors"
+                >
+                  <Trash2 size={16} />
+                  Delete
+                </button>
+              </div>
+            )}
+          </div>
+        ) : (
           <button
             onClick={handleFollow}
             className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-[13px] font-semibold transition-all ${
@@ -152,12 +219,37 @@ export default function StatusCard({ status, onAddContact }: StatusCardProps) {
         )}
       </div>
 
-      {/* Text content */}
-      {text_content && (
-        <div className="px-4 py-2">
+      {/* Text content / Edit mode */}
+      <div className="px-4 py-2">
+        {isEditing ? (
+          <div className="flex flex-col gap-2">
+            <textarea
+              value={editText}
+              onChange={(e) => setEditText(e.target.value)}
+              className="w-full bg-[var(--bg-secondary)] text-[var(--text-primary)] p-3 rounded-xl text-sm border-none focus:ring-1 focus:ring-[var(--wa-green)] resize-none"
+              rows={3}
+              autoFocus
+            />
+            <div className="flex justify-end gap-2">
+              <button 
+                onClick={() => { setIsEditing(false); setEditText(status.text_content || ''); }}
+                className="p-1.5 rounded-lg text-[var(--text-muted)] hover:bg-[var(--bg-hover)] transition-colors"
+              >
+                <X size={20} />
+              </button>
+              <button 
+                onClick={handleUpdate}
+                disabled={!editText.trim() || editText === status.text_content}
+                className="p-1.5 rounded-lg text-[var(--wa-green)] hover:bg-[var(--wa-green)]/10 transition-colors disabled:opacity-50"
+              >
+                <Check size={20} />
+              </button>
+            </div>
+          </div>
+        ) : text_content && (
           <p className="text-[var(--text-primary)] whitespace-pre-wrap text-sm leading-relaxed">{text_content}</p>
-        </div>
-      )}
+        )}
+      </div>
 
       {/* Media Content (truncated logic for brevity, assuming standard rendering) */}
       {media_url && content_type === 'image' && (

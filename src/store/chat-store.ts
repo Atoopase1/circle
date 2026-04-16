@@ -16,6 +16,7 @@ interface ChatState {
   messagesByChat: Record<string, Message[]>;
   isLoadingChats: boolean;
   isLoadingMessages: boolean;
+  hasMoreMessages: boolean;
   searchQuery: string;
   _hasFetchedOnce: boolean;
   _fetchedChats: Record<string, boolean>;
@@ -54,6 +55,7 @@ interface ChatState {
   toggleSelectionMode: (force?: boolean) => void;
   toggleMessageSelection: (messageId: string) => void;
   clearSelection: () => void;
+  deleteChat: (chatId: string) => Promise<void>;
 }
 
 export const useChatStore = create<ChatState>((set, get) => ({
@@ -797,6 +799,28 @@ export const useChatStore = create<ChatState>((set, get) => ({
     }));
 
     await supabase.from('message_stars').delete().eq('user_id', user.id).eq('message_id', messageId);
+  },
+
+  deleteChat: async (chatId: string) => {
+    const supabase = getSupabaseBrowserClient();
+    const user = useAuthStore.getState().user;
+    if (!user) return;
+    
+    set((state) => ({
+      chats: state.chats.filter(c => c.id !== chatId),
+      activeChat: state.activeChatId === chatId ? null : state.activeChat,
+      activeChatId: state.activeChatId === chatId ? null : state.activeChatId,
+    }));
+
+    const { error } = await supabase
+      .from('chat_participants')
+      .delete()
+      .eq('chat_id', chatId)
+      .eq('user_id', user.id);
+      
+    if (error) {
+       console.error('Failed to delete chat', JSON.stringify(error, null, 2));
+    }
   },
 
   addReaction: async (messageId: string, emoji: string) => {

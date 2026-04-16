@@ -297,6 +297,15 @@ RETURNS SETOF uuid AS $$
   SELECT chat_id FROM chat_participants WHERE user_id = auth.uid();
 $$ LANGUAGE sql SECURITY DEFINER SET search_path = public;
 
+-- Function: Check if user is chat admin (Bypasses RLS to prevent infinite recursion)
+CREATE OR REPLACE FUNCTION public.is_chat_admin(c_id uuid)
+RETURNS BOOLEAN AS $$
+  SELECT EXISTS (
+    SELECT 1 FROM chat_participants 
+    WHERE chat_id = c_id AND user_id = auth.uid() AND role = 'admin'
+  );
+$$ LANGUAGE sql SECURITY DEFINER SET search_path = public;
+
 -- ============================================================
 -- 7. ROW LEVEL SECURITY (RLS) POLICIES
 -- ============================================================
@@ -368,10 +377,7 @@ CREATE POLICY "Chat admins can add participants"
   ON chat_participants FOR INSERT
   TO authenticated
   WITH CHECK (
-    chat_id IN (
-      SELECT chat_id FROM chat_participants
-      WHERE user_id = auth.uid() AND role = 'admin'
-    )
+    public.is_chat_admin(chat_id)
     OR user_id = auth.uid()
   );
 
@@ -380,10 +386,7 @@ CREATE POLICY "Chat admins can remove participants"
   ON chat_participants FOR DELETE
   TO authenticated
   USING (
-    chat_id IN (
-      SELECT chat_id FROM chat_participants
-      WHERE user_id = auth.uid() AND role = 'admin'
-    )
+    public.is_chat_admin(chat_id)
     OR user_id = auth.uid()
   );
 

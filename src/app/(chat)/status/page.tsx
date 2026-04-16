@@ -193,11 +193,7 @@ export default function StatusPage() {
               <StatusCard 
                 key={status.id} 
                 status={status} 
-                onAddContact={
-                  activeTab === 'public' && status.user_id !== profile?.id 
-                    ? handleAddContact 
-                    : undefined
-                } 
+                onRefresh={loadStatuses}
               />
             ))
           )}
