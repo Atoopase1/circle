@@ -9,7 +9,7 @@ export default function TermsOfServicePage() {
 
   const sections = [
     {
-      icon: <FileText size={22} />,
+      icon: <FileText size={26} />,
       title: '1. Acceptance of Terms',
       content: (
         <>
@@ -23,7 +23,7 @@ export default function TermsOfServicePage() {
       ),
     },
     {
-      icon: <UserCheck size={22} />,
+      icon: <UserCheck size={26} />,
       title: '2. Account Registration & Eligibility',
       content: (
         <>
@@ -39,7 +39,7 @@ export default function TermsOfServicePage() {
       ),
     },
     {
-      icon: <AlertTriangle size={22} />,
+      icon: <AlertTriangle size={26} />,
       title: '3. Acceptable Use Policy',
       content: (
         <>
@@ -61,7 +61,7 @@ export default function TermsOfServicePage() {
       ),
     },
     {
-      icon: <Shield size={22} />,
+      icon: <Shield size={26} />,
       title: '4. Intellectual Property & Content Ownership',
       content: (
         <>
@@ -75,7 +75,7 @@ export default function TermsOfServicePage() {
       ),
     },
     {
-      icon: <Scale size={22} />,
+      icon: <Scale size={26} />,
       title: '5. Limitation of Liability',
       content: (
         <>
@@ -89,7 +89,7 @@ export default function TermsOfServicePage() {
       ),
     },
     {
-      icon: <RefreshCw size={22} />,
+      icon: <RefreshCw size={26} />,
       title: '6. Modifications to Terms',
       content: (
         <p>
@@ -111,14 +111,14 @@ export default function TermsOfServicePage() {
               onClick={() => router.back()}
               className="p-2.5 bg-white/10 backdrop-blur-sm rounded-full text-white/70 hover:text-white hover:bg-white/20 transition-all"
             >
-              <ArrowLeft size={22} />
+              <ArrowLeft size={26} />
             </button>
             <CircleLogo size={44} />
           </div>
 
           <div className="flex items-center gap-3 mb-3">
             <div className="w-10 h-10 rounded-xl bg-[var(--emerald)]/20 flex items-center justify-center">
-              <FileText size={22} className="text-[var(--emerald)]" />
+              <FileText size={26} className="text-[var(--emerald)]" />
             </div>
             <h1 className="text-2xl font-bold text-white tracking-tight">Terms of Service</h1>
           </div>
@@ -145,7 +145,7 @@ export default function TermsOfServicePage() {
           <div className="px-6 sm:px-8 py-5 bg-[var(--bg-secondary)] border-t border-[var(--border-color)]">
             <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
               <div className="flex items-center gap-2 text-[14px] text-[var(--text-muted)]">
-                <Mail size={22} className="text-[var(--emerald)]" />
+                <Mail size={26} className="text-[var(--emerald)]" />
                 <span>Questions? Contact us at <strong className="text-[var(--text-primary)]">legal@circleapp.io</strong></span>
               </div>
               <div className="text-[14px] text-[var(--text-muted)] flex items-center gap-1.5">

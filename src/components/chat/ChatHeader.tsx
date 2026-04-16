@@ -37,7 +37,7 @@ export default function ChatHeader({ chat, onInfoClick }: ChatHeaderProps) {
           onClick={() => clearSelection()}
           className="p-2 -ml-2 rounded-xl text-[var(--text-primary)] hover:bg-[var(--bg-hover)] transition-all"
         >
-          <X size={22} />
+          <X size={26} />
         </button>
         <div className="flex-1 min-w-0">
           <h2 className="font-semibold text-[var(--text-primary)] text-[16px]">
@@ -51,28 +51,28 @@ export default function ChatHeader({ chat, onInfoClick }: ChatHeaderProps) {
             onClick={handleBulkDelete}
             title="Delete Selected"
           >
-            <Trash2 size={22} />
+            <Trash2 size={26} />
           </button>
           <button 
             disabled={selectedMessageIds.length === 0}
             className="p-2.5 rounded-xl text-[var(--text-muted)] hover:text-[var(--emerald)] hover:bg-[var(--emerald)]/10 disabled:opacity-50 transition-all"
             title="Forward Selected"
           >
-            <Forward size={22} />
+            <Forward size={26} />
           </button>
           <button 
             disabled={selectedMessageIds.length === 0}
             className="p-2.5 rounded-xl text-[var(--text-muted)] hover:text-[var(--gold)] hover:bg-[var(--gold)]/10 disabled:opacity-50 transition-all"
             title="Star Selected"
           >
-            <Star size={22} />
+            <Star size={26} />
           </button>
           <button 
             disabled={selectedMessageIds.length === 0}
             className="p-2.5 rounded-xl text-[var(--text-muted)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-hover)] disabled:opacity-50 transition-all"
             title="Copy Selected"
           >
-            <Copy size={22} />
+            <Copy size={26} />
           </button>
         </div>
       </div>
@@ -140,7 +140,7 @@ export default function ChatHeader({ chat, onInfoClick }: ChatHeaderProps) {
         onClick={() => router.push('/')}
         className="lg:hidden p-2 -ml-2 rounded-xl hover:bg-[var(--bg-hover)] transition-all duration-200 text-[var(--text-muted)] hover:text-[var(--text-primary)]"
       >
-        <ArrowLeft size={22} />
+        <ArrowLeft size={26} />
       </button>
 
       {/* Avatar */}
@@ -176,22 +176,22 @@ export default function ChatHeader({ chat, onInfoClick }: ChatHeaderProps) {
           <>
             <button
               onClick={handleVideoCall}
-              className="p-2.5 rounded-xl hover:bg-[var(--bg-hover)] transition-all duration-200 text-[var(--text-muted)] hover:text-[var(--emerald)]"
+              className="p-2.5 rounded-xl hover:bg-[var(--bg-hover)] transition-all duration-200 text-[var(--text-secondary)] hover:text-[var(--emerald)]"
               title="Video call"
             >
-              <Video size={19} />
+              <Video size={28} strokeWidth={2.2} />
             </button>
             <button
               onClick={handleAudioCall}
-              className="p-2.5 rounded-xl hover:bg-[var(--bg-hover)] transition-all duration-200 text-[var(--text-muted)] hover:text-[var(--emerald)]"
+              className="p-2.5 rounded-xl hover:bg-[var(--bg-hover)] transition-all duration-200 text-[var(--text-secondary)] hover:text-[var(--emerald)]"
               title="Audio call"
             >
-              <Phone size={19} />
+              <Phone size={28} strokeWidth={2.2} />
             </button>
           </>
         )}
-        <button className="p-2.5 rounded-xl hover:bg-[var(--bg-hover)] transition-all duration-200 text-[var(--text-muted)] hover:text-[var(--text-primary)]">
-          <Search size={19} />
+        <button className="p-2.5 rounded-xl hover:bg-[var(--bg-hover)] transition-all duration-200 text-[var(--text-secondary)] hover:text-[var(--text-primary)]">
+          <Search size={28} strokeWidth={2.2} />
         </button>
       </div>
     </div>

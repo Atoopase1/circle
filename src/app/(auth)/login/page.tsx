@@ -177,7 +177,7 @@ export default function LoginPage() {
                 : 'text-[var(--text-muted)] hover:text-[var(--text-primary)]'
             }`}
           >
-            <Mail size={19} />
+            <Mail size={23} />
             Email
           </button>
           <button
@@ -188,7 +188,7 @@ export default function LoginPage() {
                 : 'text-[var(--text-muted)] hover:text-[var(--text-primary)]'
             }`}
           >
-            <Phone size={19} />
+            <Phone size={23} />
             Phone
           </button>
         </div>
@@ -229,7 +229,7 @@ export default function LoginPage() {
                   onClick={() => setShowPassword(!showPassword)}
                   className="absolute inset-y-0 right-0 pr-4 flex items-center text-[var(--text-muted)] hover:text-[var(--text-primary)] transition-colors"
                 >
-                  {showPassword ? <EyeOff size={19} /> : <Eye size={19} />}
+                  {showPassword ? <EyeOff size={23} /> : <Eye size={23} />}
                 </button>
               </div>
               
@@ -246,7 +246,7 @@ export default function LoginPage() {
 
           <Button onClick={handleEmailAuth} isLoading={isLoading} className="w-full !rounded-xl" size="lg">
             {isForgotPassword ? 'Send Reset Link' : 'Sign In'}
-            <ArrowRight size={19} className="ml-2" />
+            <ArrowRight size={23} className="ml-2" />
           </Button>
           
           <p className="text-center text-[14px] text-[var(--text-muted)]">
@@ -298,19 +298,19 @@ export default function LoginPage() {
                   onClick={() => setShowPassword(!showPassword)}
                   className="absolute inset-y-0 right-0 pr-4 flex items-center text-[var(--text-muted)] hover:text-[var(--text-primary)] transition-colors"
                 >
-                  {showPassword ? <EyeOff size={19} /> : <Eye size={19} />}
+                  {showPassword ? <EyeOff size={23} /> : <Eye size={23} />}
                 </button>
               </div>
               <Button onClick={handlePhonePasswordAuth} isLoading={isLoading} className="w-full mt-5 !rounded-xl" size="lg">
                 Sign In
-                <ArrowRight size={19} className="ml-2" />
+                <ArrowRight size={23} className="ml-2" />
               </Button>
               <div className="mt-4 flex justify-center">
                 <button 
                   onClick={() => setUseOtp(true)}
                   className="text-[14px] font-medium text-[var(--text-muted)] hover:text-[var(--text-primary)] flex items-center transition-colors border border-[var(--border-color)] px-4 py-2 rounded-lg bg-[var(--bg-secondary)]"
                 >
-                  <Key size={22} className="mr-2" /> 
+                  <Key size={26} className="mr-2" /> 
                   Sign in with SMS Code instead
                 </button>
               </div>
@@ -344,7 +344,7 @@ export default function LoginPage() {
                 size="lg"
               >
                 {otpSent ? 'Verify OTP' : 'Send SMS Code'}
-                <ArrowRight size={19} className="ml-2" />
+                <ArrowRight size={23} className="ml-2" />
               </Button>
 
               <div className="mt-4 flex flex-col gap-3 justify-center">
@@ -442,7 +442,7 @@ export default function LoginPage() {
 
           {/* End-to-end encrypted badge */}
           <div className="flex items-center justify-center gap-2 mb-3">
-            <Shield size={19} className="text-[var(--text-muted)] opacity-60" />
+            <Shield size={23} className="text-[var(--text-muted)] opacity-60" />
             <span className="text-[14px] text-[var(--text-muted)] opacity-60 tracking-wide">
               End-to-end encrypted
             </span>
@@ -458,7 +458,7 @@ export default function LoginPage() {
       {isForgotPassword && (
         <div className="flex flex-col items-center justify-center gap-1.5 mt-6 pt-6 border-t border-[var(--border-color)]">
           <div className="flex items-center gap-1.5">
-            <Shield size={13} className="text-[var(--text-muted)]" />
+            <Shield size={17} className="text-[var(--text-muted)]" />
             <span className="text-[14px] text-[var(--text-muted)] tracking-wide">End-to-end encrypted</span>
           </div>
         </div>

@@ -30,7 +30,7 @@ export default function IncomingCallModal() {
             {incomingCall.caller.display_name}
           </h2>
           <p className="text-white/50 text-[14px] mt-2 flex items-center gap-2 justify-center">
-            {incomingCall.callType === 'video' && <Video size={22} className="text-white/40" />}
+            {incomingCall.callType === 'video' && <Video size={26} className="text-white/40" />}
             <span className="animate-pulse text-[var(--emerald)]">
               Incoming {incomingCall.callType} call…
             </span>
@@ -46,7 +46,7 @@ export default function IncomingCallModal() {
               className="w-16 h-16 rounded-full bg-red-500 text-white flex items-center justify-center hover:bg-red-600 transition-all duration-200 active:scale-95"
               style={{ boxShadow: '0 0 24px rgba(239, 68, 68, 0.4)' }}
             >
-              <PhoneOff size={24} />
+              <PhoneOff size={28} />
             </button>
             <span className="text-white/50 text-[14px] font-medium">Decline</span>
           </div>
@@ -60,7 +60,7 @@ export default function IncomingCallModal() {
                 boxShadow: '0 0 24px rgba(22, 163, 74, 0.4)',
               }}
             >
-              <Phone size={24} />
+              <Phone size={28} />
             </button>
             <span className="text-white/50 text-[14px] font-medium">Accept</span>
           </div>

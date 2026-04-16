@@ -54,7 +54,7 @@ export default function Modal({ isOpen, onClose, title, children, maxWidth = 'ma
             onClick={onClose}
             className="p-1.5 rounded-full hover:bg-[var(--bg-hover)] transition-all duration-200 text-[var(--text-muted)] hover:text-[var(--text-primary)] hover:rotate-90"
           >
-            <X size={22} />
+            <X size={26} />
           </button>
         </div>
         {/* Body */}

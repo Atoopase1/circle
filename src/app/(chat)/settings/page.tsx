@@ -72,7 +72,7 @@ export default function SettingsPage() {
             onClick={() => router.push('/')}
             className="p-2 rounded-xl hover:bg-[var(--bg-hover)] transition-all duration-200 text-[var(--text-muted)] hover:text-[var(--text-primary)]"
           >
-            <ArrowLeft size={22} />
+            <ArrowLeft size={26} />
           </button>
           <h1 className="text-[18px] font-semibold text-[var(--text-primary)]" style={{ fontFamily: 'var(--font-heading)' }}>Settings</h1>
         </div>
@@ -81,7 +81,7 @@ export default function SettingsPage() {
           {/* Profile Card */}
           <div className="surface-card p-6">
             <h2 className="text-[14px] font-semibold text-[var(--text-muted)] uppercase tracking-widest mb-5 flex items-center gap-2">
-              <User size={22} className="text-[var(--emerald)]" />
+              <User size={26} className="text-[var(--emerald)]" />
               Profile
             </h2>
             <ProfileEditor />
@@ -90,14 +90,14 @@ export default function SettingsPage() {
           {/* Appearance */}
           <div className="surface-card p-5">
             <h2 className="text-[14px] font-semibold text-[var(--text-muted)] uppercase tracking-widest mb-4 flex items-center gap-2">
-              <Palette size={22} className="text-[var(--emerald)]" />
+              <Palette size={26} className="text-[var(--emerald)]" />
               Appearance
             </h2>
             <div className="space-y-5">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-3">
                   <div className="w-9 h-9 rounded-xl bg-[var(--bg-secondary)] flex items-center justify-center">
-                    {isDark ? <Moon size={22} className="text-[var(--emerald)]" /> : <Sun size={22} className="text-[var(--gold)]" />}
+                    {isDark ? <Moon size={26} className="text-[var(--emerald)]" /> : <Sun size={26} className="text-[var(--gold)]" />}
                   </div>
                   <div>
                     <p className="text-[14px] font-medium text-[var(--text-primary)]">Dark Mode</p>
@@ -110,7 +110,7 @@ export default function SettingsPage() {
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-3">
                   <div className="w-9 h-9 rounded-xl bg-[var(--bg-secondary)] flex items-center justify-center">
-                    <Type size={22} className="text-[var(--text-muted)]" />
+                    <Type size={26} className="text-[var(--text-muted)]" />
                   </div>
                   <div>
                     <p className="text-[14px] font-medium text-[var(--text-primary)]">App Font</p>
@@ -135,14 +135,14 @@ export default function SettingsPage() {
           {/* Notifications */}
           <div className="surface-card p-5">
             <h2 className="text-[14px] font-semibold text-[var(--text-muted)] uppercase tracking-widest mb-4 flex items-center gap-2">
-              <Bell size={22} className="text-[var(--emerald)]" />
+              <Bell size={26} className="text-[var(--emerald)]" />
               Notifications
             </h2>
             <div className="space-y-4">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-3">
                   <div className="w-9 h-9 rounded-xl bg-[var(--bg-secondary)] flex items-center justify-center">
-                    <Bell size={22} className="text-[var(--text-muted)]" />
+                    <Bell size={26} className="text-[var(--text-muted)]" />
                   </div>
                   <div>
                     <p className="text-[14px] font-medium text-[var(--text-primary)]">Push Notifications</p>
@@ -154,7 +154,7 @@ export default function SettingsPage() {
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-3">
                   <div className="w-9 h-9 rounded-xl bg-[var(--bg-secondary)] flex items-center justify-center">
-                    <Bell size={22} className="text-[var(--text-muted)]" />
+                    <Bell size={26} className="text-[var(--text-muted)]" />
                   </div>
                   <div>
                     <p className="text-[14px] font-medium text-[var(--text-primary)]">Sound</p>
@@ -169,14 +169,14 @@ export default function SettingsPage() {
           {/* Privacy */}
           <div className="surface-card p-5">
             <h2 className="text-[14px] font-semibold text-[var(--text-muted)] uppercase tracking-widest mb-4 flex items-center gap-2">
-              <Lock size={22} className="text-[var(--emerald)]" />
+              <Lock size={26} className="text-[var(--emerald)]" />
               Privacy & Security
             </h2>
             <div className="space-y-4">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-3">
                   <div className="w-9 h-9 rounded-xl bg-[var(--bg-secondary)] flex items-center justify-center">
-                    <Lock size={22} className="text-[var(--text-muted)]" />
+                    <Lock size={26} className="text-[var(--text-muted)]" />
                   </div>
                   <div>
                     <p className="text-[14px] font-medium text-[var(--text-primary)]">Read Receipts</p>
@@ -188,7 +188,7 @@ export default function SettingsPage() {
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-3">
                   <div className="w-9 h-9 rounded-xl bg-[var(--bg-secondary)] flex items-center justify-center">
-                    <User size={22} className="text-[var(--text-muted)]" />
+                    <User size={26} className="text-[var(--text-muted)]" />
                   </div>
                   <div>
                     <p className="text-[14px] font-medium text-[var(--text-primary)]">Online Status</p>
@@ -203,12 +203,12 @@ export default function SettingsPage() {
           {/* Storage */}
           <div className="surface-card p-5">
             <h2 className="text-[14px] font-semibold text-[var(--text-muted)] uppercase tracking-widest mb-4 flex items-center gap-2">
-              <HardDrive size={22} className="text-[var(--emerald)]" />
+              <HardDrive size={26} className="text-[var(--emerald)]" />
               Storage & Data
             </h2>
             <div className="flex items-center gap-3">
               <div className="w-9 h-9 rounded-xl bg-[var(--bg-secondary)] flex items-center justify-center">
-                <HardDrive size={22} className="text-[var(--text-muted)]" />
+                <HardDrive size={26} className="text-[var(--text-muted)]" />
               </div>
               <div>
                 <p className="text-[14px] font-medium text-[var(--text-primary)]">Manage Storage</p>
@@ -220,7 +220,7 @@ export default function SettingsPage() {
           {/* About */}
           <div className="surface-card p-5">
             <h2 className="text-[14px] font-semibold text-[var(--text-muted)] uppercase tracking-widest mb-4 flex items-center gap-2">
-              <Info size={22} className="text-[var(--emerald)]" />
+              <Info size={26} className="text-[var(--emerald)]" />
               About
             </h2>
             <div className="space-y-2">
@@ -241,7 +241,7 @@ export default function SettingsPage() {
               onClick={handleSignOut}
               className="w-full flex items-center justify-center gap-2 p-4 rounded-xl bg-red-500/10 hover:bg-red-500/20 text-red-500 transition-all duration-200 font-medium surface-card border-red-500/20"
             >
-              <LogOut size={20} />
+              <LogOut size={24} />
               Log Out
             </button>
           </div>

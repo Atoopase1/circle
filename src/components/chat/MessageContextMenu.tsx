@@ -189,7 +189,7 @@ export default function MessageContextMenu(props: MessageContextMenuProps) {
           : 'text-[var(--text-primary)] hover:bg-[var(--bg-hover)] active:bg-[var(--bg-secondary)]'
       } ${disabled ? 'opacity-30 pointer-events-none' : ''}`}
     >
-      <Icon size={22} className={danger ? 'text-red-500' : (iconClass || 'text-[var(--text-muted)]')} />
+      <Icon size={26} className={danger ? 'text-red-500' : (iconClass || 'text-[var(--text-muted)]')} />
       <span className="text-[10px] font-medium leading-tight">{label}</span>
     </button>
   );

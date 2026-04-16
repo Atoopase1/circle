@@ -263,7 +263,7 @@ export default function ProfileViewPage() {
       {/* Header bar (Pinned) */}
       <div className="glass-header w-full flex-shrink-0 z-20 flex items-center justify-between px-5 py-3 border-b border-[var(--border-color)]">
         <button onClick={() => router.back()} className="p-2 rounded-xl hover:bg-[var(--bg-hover)] text-[var(--text-muted)] hover:text-[var(--text-primary)] transition-all duration-200">
-          <ArrowLeft size={22} />
+          <ArrowLeft size={26} />
         </button>
         
         <h1 className="text-[15px] font-semibold text-[var(--text-primary)] truncate max-w-[200px]">{author.display_name}</h1>
@@ -271,7 +271,7 @@ export default function ProfileViewPage() {
         <div className="flex items-center gap-1">
           {isMe ? (
             <button onClick={handleEditProfile} className="p-2 rounded-xl hover:bg-[var(--bg-hover)] text-[var(--text-muted)] hover:text-[var(--text-primary)] transition-all duration-200">
-              <Settings size={22} />
+              <Settings size={26} />
             </button>
           ) : (
             <div className="w-9" />
@@ -304,7 +304,7 @@ export default function ProfileViewPage() {
               onClick={() => coverInputRef.current?.click()}
               className="absolute right-4 bottom-4 bg-black/40 hover:bg-black/60 backdrop-blur-md px-3.5 py-2 rounded-full text-white transition-all border border-white/15 flex items-center gap-2 text-[13px] font-medium shadow-lg"
             >
-              <Camera size={22} />
+              <Camera size={26} />
               <span className="hidden sm:inline">Edit cover</span>
             </button>
           )}
@@ -332,7 +332,7 @@ export default function ProfileViewPage() {
                       }}
                       className="absolute inset-0 rounded-full bg-black/40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all duration-200 w-full h-full"
                     >
-                      <Camera size={24} className="text-white" />
+                      <Camera size={28} className="text-white" />
                     </button>
                   )}
 
@@ -351,7 +351,7 @@ export default function ProfileViewPage() {
                   onClick={() => !isUploadingAvatar && avatarInputRef.current?.click()}
                   className="absolute bottom-1 right-1 bg-[var(--wa-green)] hover:bg-[var(--wa-green-dark)] p-1.5 rounded-full text-white transition-all shadow-lg border-2 border-[var(--bg-app)]"
                 >
-                  <Pencil size={12} />
+                  <Pencil size={16} />
                 </button>
               )}
             </div>
@@ -360,10 +360,10 @@ export default function ProfileViewPage() {
             {!isMe && (
               <div className="flex gap-2 mb-2">
                 <Button variant={isFollowing ? 'secondary' : 'primary'} onClick={toggleFollow} size="sm">
-                  {isFollowing ? <><UserCheck size={19} className="mr-1.5" /> Following</> : <><UserPlus size={19} className="mr-1.5" /> Follow</>}
+                  {isFollowing ? <><UserCheck size={23} className="mr-1.5" /> Following</> : <><UserPlus size={23} className="mr-1.5" /> Follow</>}
                 </Button>
                 <Button variant="secondary" onClick={handleMessage} size="sm">
-                  <MessageSquare size={19} className="mr-1.5" /> Message
+                  <MessageSquare size={23} className="mr-1.5" /> Message
                 </Button>
               </div>
             )}
@@ -376,7 +376,7 @@ export default function ProfileViewPage() {
                 onClick={handleEditProfile}
                 className="absolute right-5 top-5 text-[var(--text-muted)] hover:text-[var(--text-primary)] transition-colors"
               >
-                <Pencil size={22} />
+                <Pencil size={26} />
               </button>
             )}
 

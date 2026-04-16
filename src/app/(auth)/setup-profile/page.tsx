@@ -117,7 +117,7 @@ export default function SetupProfilePage() {
 
         <Button onClick={handleComplete} isLoading={isLoading} className="w-full" size="lg">
           Get Started
-          <ArrowRight size={22} className="ml-2" />
+          <ArrowRight size={26} className="ml-2" />
         </Button>
       </div>
     </div>

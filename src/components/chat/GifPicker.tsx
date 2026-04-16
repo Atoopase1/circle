@@ -105,7 +105,7 @@ export default function GifPicker({ onGifSelect, onClose }: GifPickerProps) {
           {isUploading ? (
             <span className="w-3 h-3 border-2 border-[var(--emerald)] border-t-transparent rounded-full animate-spin" />
           ) : (
-            <Plus size={14} strokeWidth={2.5} />
+            <Plus size={18} strokeWidth={2.5} />
           )}
           {isUploading ? 'Uploading...' : 'Add'}
         </button>
@@ -158,7 +158,7 @@ export default function GifPicker({ onGifSelect, onClose }: GifPickerProps) {
                       className="absolute top-1 right-1 p-1.5 bg-black/50 text-white rounded-lg opacity-0 group-hover:opacity-100 transition-opacity hover:bg-red-500/80"
                       title="Remove from collection"
                     >
-                      <Trash2 size={14} />
+                      <Trash2 size={18} />
                     </button>
                   </div>
                 ))}

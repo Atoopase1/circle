@@ -28,7 +28,7 @@ export default function CallsPage() {
           <div 
             className="w-20 h-20 rounded-3xl flex items-center justify-center mb-5 bg-[var(--emerald)]/10"
           >
-            <Phone size={32} className="text-[var(--emerald)] opacity-50" />
+            <Phone size={36} className="text-[var(--emerald)] opacity-50" />
           </div>
           <h3 className="text-[16px] font-medium text-[var(--text-primary)] mb-2" style={{ fontFamily: 'var(--font-heading)' }}>
             No Recent Calls

@@ -81,7 +81,7 @@ export default function CallModal() {
           <span className="text-white text-[10px] font-mono bg-black/60 px-2 py-0.5 rounded-full backdrop-blur-sm">
             {status === 'connected' ? duration : 'Calling…'}
           </span>
-          <Maximize2 size={12} className="text-white opacity-0 group-hover:opacity-100 transition-opacity" />
+          <Maximize2 size={16} className="text-white opacity-0 group-hover:opacity-100 transition-opacity" />
         </div>
         <button
           onClick={(e) => { e.stopPropagation(); endCall(); }}
@@ -118,7 +118,7 @@ export default function CallModal() {
             />
             {isVideoOff && (
               <div className="w-full h-full flex items-center justify-center bg-[#1E293B]">
-                <VideoOff size={24} className="text-white/40" />
+                <VideoOff size={28} className="text-white/40" />
               </div>
             )}
           </div>
@@ -180,7 +180,7 @@ export default function CallModal() {
             }`}
             style={{ backdropFilter: 'blur(8px)' }}
           >
-            {isMuted ? <MicOff size={21} /> : <Mic size={21} />}
+            {isMuted ? <MicOff size={25} /> : <Mic size={25} />}
           </button>
 
           {/* Video toggle */}
@@ -194,7 +194,7 @@ export default function CallModal() {
               }`}
               style={{ backdropFilter: 'blur(8px)' }}
             >
-              {isVideoOff ? <VideoOff size={21} /> : <Video size={21} />}
+              {isVideoOff ? <VideoOff size={25} /> : <Video size={25} />}
             </button>
           )}
 
@@ -204,7 +204,7 @@ export default function CallModal() {
             className="w-14 h-14 rounded-full bg-white/10 text-white flex items-center justify-center hover:bg-white/20 transition-all duration-200 border border-white/10"
             style={{ backdropFilter: 'blur(8px)' }}
           >
-            <Minimize2 size={21} />
+            <Minimize2 size={25} />
           </button>
 
           {/* End call */}
@@ -213,7 +213,7 @@ export default function CallModal() {
             className="w-16 h-16 rounded-full bg-red-500 text-white flex items-center justify-center hover:bg-red-600 transition-all duration-200 active:scale-95"
             style={{ boxShadow: '0 0 24px rgba(239, 68, 68, 0.4)' }}
           >
-            <PhoneOff size={24} />
+            <PhoneOff size={28} />
           </button>
         </div>
       </div>

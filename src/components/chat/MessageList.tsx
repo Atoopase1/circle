@@ -166,7 +166,7 @@ export default function MessageList({ chatId, isGroup }: MessageListProps) {
       {/* Reconnecting banner */}
       {isReconnecting && (
         <div className="absolute top-0 left-0 right-0 z-30 bg-[var(--gold)]/90 text-[var(--navy)] text-[14px] py-1.5 text-center font-medium backdrop-blur-sm flex items-center justify-center gap-2">
-          <WifiOff size={13} />
+          <WifiOff size={17} />
           Waiting for network...
         </div>
       )}
@@ -184,7 +184,7 @@ export default function MessageList({ chatId, isGroup }: MessageListProps) {
             
             {/* Pin Icon Container */}
             <div className="w-9 h-9 rounded-[10px] bg-[var(--bg-secondary)] flex items-center justify-center shrink-0">
-              <Pin size={18} className="text-[var(--text-secondary)] fill-current" />
+              <Pin size={22} className="text-[var(--text-secondary)] fill-current" />
             </div>
 
             {/* Pinned Text */}
@@ -203,7 +203,7 @@ export default function MessageList({ chatId, isGroup }: MessageListProps) {
               className="p-1.5 rounded-lg hover:bg-[var(--bg-secondary)] text-[var(--text-muted)] hover:text-white transition-all shrink-0"
               title="Unpin"
             >
-              <X size={18} />
+              <X size={22} />
             </button>
           </div>
         </div>
@@ -283,7 +283,7 @@ export default function MessageList({ chatId, isGroup }: MessageListProps) {
           onClick={() => bottomRef.current?.scrollIntoView({ behavior: 'smooth' })}
           className="absolute bottom-4 right-4 z-50 p-3 bg-[var(--bg-primary)] border border-[var(--border-color)] rounded-full text-[var(--emerald)] shadow-lg hover:bg-[var(--bg-hover)] transition-all animate-scaleIn"
         >
-          <ChevronDown size={22} />
+          <ChevronDown size={26} />
         </button>
       )}
     </div>

@@ -129,14 +129,14 @@ export default function StatusUploader({ onStatusPosted }: { onStatusPosted: () 
         {/* Preview header */}
         <div className="flex items-center justify-between px-4 py-3 border-b border-[var(--border-color)] bg-[var(--bg-secondary)]">
           <div className="flex items-center gap-2 text-sm font-medium text-[var(--text-primary)]">
-            <Eye size={22} className="text-[var(--wa-green)]" />
+            <Eye size={26} className="text-[var(--wa-green)]" />
             Preview
           </div>
           <button
             onClick={handleBackToEdit}
             className="flex items-center gap-1.5 text-[13px] text-[var(--wa-green)] hover:underline font-medium"
           >
-            <Edit3 size={22} />
+            <Edit3 size={26} />
             Edit
           </button>
         </div>
@@ -169,13 +169,13 @@ export default function StatusUploader({ onStatusPosted }: { onStatusPosted: () 
 
           {file && !filePreviewUrl && (
             <div className="flex items-center gap-2 p-3 bg-[var(--bg-secondary)] rounded-lg mb-3 text-sm text-[var(--text-primary)]">
-              <FileText size={22} />
+              <FileText size={26} />
               {file.name}
             </div>
           )}
 
           <div className="flex items-center gap-2 text-[13px] text-[var(--text-muted)]">
-            <Sparkles size={12} />
+            <Sparkles size={16} />
             Posting as <span className="font-medium text-[var(--text-primary)]">{visibility}</span>
           </div>
         </div>
@@ -186,7 +186,7 @@ export default function StatusUploader({ onStatusPosted }: { onStatusPosted: () 
             onClick={handleBackToEdit}
             className="flex items-center gap-1.5 px-3 py-2 text-sm text-[var(--text-muted)] hover:text-[var(--text-primary)] transition-colors"
           >
-            <RotateCcw size={22} />
+            <RotateCcw size={26} />
             Back to edit
           </button>
           <Button
@@ -195,7 +195,7 @@ export default function StatusUploader({ onStatusPosted }: { onStatusPosted: () 
             className="flex items-center gap-2"
             size="sm"
           >
-            {isPosting ? <Spinner size="sm" /> : <Send size={22} />}
+            {isPosting ? <Spinner size="sm" /> : <Send size={26} />}
             Publish
           </Button>
         </div>
@@ -224,7 +224,7 @@ export default function StatusUploader({ onStatusPosted }: { onStatusPosted: () 
                 onClick={clearFile}
                 className="absolute top-1 right-1 bg-black/60 text-white rounded-full p-1 hover:bg-black/80 transition-colors"
               >
-                <X size={22} />
+                <X size={26} />
               </button>
             </div>
           )}
@@ -236,7 +236,7 @@ export default function StatusUploader({ onStatusPosted }: { onStatusPosted: () 
                 onClick={clearFile}
                 className="absolute top-1 right-1 bg-black/60 text-white rounded-full p-1 hover:bg-black/80 transition-colors"
               >
-                <X size={22} />
+                <X size={26} />
               </button>
               <div className="absolute bottom-1 left-1 bg-black/60 text-white rounded px-1.5 py-0.5 text-[10px]">
                 <Video size={10} className="inline mr-1" />Video
@@ -250,13 +250,13 @@ export default function StatusUploader({ onStatusPosted }: { onStatusPosted: () 
                 onClick={clearFile}
                 className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full p-1"
               >
-                <X size={22} />
+                <X size={26} />
               </button>
               <div className="flex items-center gap-2 text-sm text-[var(--text-primary)]">
                 {file.type.startsWith('audio/') ? (
                   <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg>
                 ) : (
-                  <FileText size={22} />
+                  <FileText size={26} />
                 )}
                 <span className="truncate max-w-[200px]">{file.name}</span>
               </div>
@@ -280,7 +280,7 @@ export default function StatusUploader({ onStatusPosted }: { onStatusPosted: () 
             disabled={isPosting}
             title="Add media"
           >
-            <ImageIcon size={22} />
+            <ImageIcon size={26} />
           </button>
           
           <select
@@ -301,7 +301,7 @@ export default function StatusUploader({ onStatusPosted }: { onStatusPosted: () 
           className="flex items-center gap-2"
           size="sm"
         >
-          <Eye size={22} />
+          <Eye size={26} />
           Preview & Post
         </Button>
       </div>

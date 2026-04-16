@@ -136,7 +136,7 @@ export default function CreateGroupModal({ isOpen, onClose }: CreateGroupModalPr
                           : 'border-[var(--text-muted)]/40'
                       }`}
                     >
-                      {isSelected && <Check size={12} className="text-white" />}
+                      {isSelected && <Check size={16} className="text-white" />}
                     </div>
                   </button>
                 );

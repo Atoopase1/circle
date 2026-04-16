@@ -118,7 +118,7 @@ export default function ContactsPage() {
             <h2 className="text-[var(--emerald)] font-semibold text-[14px] mb-4 uppercase tracking-widest flex items-center gap-2">
               {isSearching ? <Spinner size="sm" /> : (
                 <>
-                  <Search size={22} />
+                  <Search size={26} />
                   Global Search Results
                 </>
               )}
@@ -151,15 +151,15 @@ export default function ContactsPage() {
                       ) : (
                         <>
                           <Button variant="secondary" size="sm" onClick={() => handleAddContact(user.id, 'friend')} className="text-[14px]">
-                            <UserPlus size={13} className="mr-1" /> Friend
+                            <UserPlus size={17} className="mr-1" /> Friend
                           </Button>
                           <Button variant="primary" size="sm" onClick={() => handleAddContact(user.id, 'family')} className="text-[14px]">
-                            <Crown size={13} className="mr-1" /> Family
+                            <Crown size={17} className="mr-1" /> Family
                           </Button>
                         </>
                       )}
                       <Button variant="ghost" size="sm" onClick={() => handleMessage(user.id)} className="text-[14px]">
-                        <MessageSquare size={13} />
+                        <MessageSquare size={17} />
                       </Button>
                     </div>
                   </div>
@@ -183,7 +183,7 @@ export default function ContactsPage() {
                         : 'bg-[var(--bg-secondary)] text-[var(--text-muted)] hover:bg-[var(--bg-hover)] hover:text-[var(--text-primary)]'
                     }`}
                   >
-                    <Users size={22} />
+                    <Users size={26} />
                     Friends
                     <span className={`ml-1 px-2 py-0.5 rounded-full text-[14px] font-bold ${
                       activeTab === 'friend' 
@@ -201,7 +201,7 @@ export default function ContactsPage() {
                         : 'bg-[var(--bg-secondary)] text-[var(--text-muted)] hover:bg-[var(--bg-hover)] hover:text-[var(--text-primary)]'
                     }`}
                   >
-                    <Crown size={22} />
+                    <Crown size={26} />
                     Family
                     <span className={`ml-1 px-2 py-0.5 rounded-full text-[14px] font-bold ${
                       activeTab === 'family' 
@@ -218,7 +218,7 @@ export default function ContactsPage() {
                   {filteredContacts.length === 0 && (
                     <div className="p-8 text-center">
                       <div className="w-12 h-12 rounded-full bg-[var(--bg-secondary)] flex items-center justify-center mx-auto mb-3">
-                        {activeTab === 'friend' ? <Users size={22} className="text-[var(--text-muted)]" /> : <Crown size={22} className="text-[var(--text-muted)]" />}
+                        {activeTab === 'friend' ? <Users size={26} className="text-[var(--text-muted)]" /> : <Crown size={26} className="text-[var(--text-muted)]" />}
                       </div>
                       <p className="text-[var(--text-muted)] text-sm">
                         No {activeTab === 'friend' ? 'friends' : 'family members'} added yet.
@@ -238,7 +238,7 @@ export default function ContactsPage() {
                         </div>
                       </div>
                       <Button variant="ghost" size="sm" onClick={() => handleMessage(contact.contact_id)}>
-                        <MessageSquare size={22} />
+                        <MessageSquare size={26} />
                       </Button>
                     </div>
                   ))}

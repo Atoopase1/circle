@@ -9,37 +9,37 @@ export default function ServicesPage() {
 
   const coreServices = [
     {
-      icon: <MessageSquare size={22} />,
+      icon: <MessageSquare size={26} />,
       title: 'Instant Messaging',
       desc: 'Send text messages with real-time delivery and read receipts. Support for emoji reactions, message replies, forwarding, and starring.',
       badge: 'Core',
     },
     {
-      icon: <Video size={22} />,
+      icon: <Video size={26} />,
       title: 'Voice & Video Calls',
       desc: 'Make high-quality one-on-one audio and video calls with low-latency peer-to-peer signaling for crisp, natural conversations.',
       badge: 'Core',
     },
     {
-      icon: <Image size={22} />,
+      icon: <Image size={26} />,
       title: 'Media Sharing',
       desc: 'Share photos, videos, and documents in any conversation. Files are uploaded securely to cloud storage with optimized delivery.',
       badge: 'Core',
     },
     {
-      icon: <Mic size={22} />,
+      icon: <Mic size={26} />,
       title: 'Voice Notes',
       desc: 'Record and send voice messages directly within any chat. Playback with waveform visualization and variable speed control.',
       badge: 'Core',
     },
     {
-      icon: <Users size={22} />,
+      icon: <Users size={26} />,
       title: 'Group Conversations',
       desc: 'Create groups with custom names and icons. Manage members, assign admins, and collaborate with your team or community.',
       badge: 'Social',
     },
     {
-      icon: <Zap size={22} />,
+      icon: <Zap size={26} />,
       title: 'Status Updates',
       desc: 'Share what\'s on your mind with your circle. Post text, photos, and updates with likes, comments, and star ratings from your followers.',
       badge: 'Social',
@@ -48,32 +48,32 @@ export default function ServicesPage() {
 
   const platformFeatures = [
     {
-      icon: <Shield size={22} />,
+      icon: <Shield size={26} />,
       title: 'End-to-End Security',
       desc: 'All communications are encrypted in transit using TLS 1.3. Data at rest is protected with AES-256 encryption and Row Level Security policies.',
     },
     {
-      icon: <Smartphone size={22} />,
+      icon: <Smartphone size={26} />,
       title: 'Cross-Platform Access',
       desc: 'Access Circle from any device with a modern web browser. Your conversations, contacts, and settings sync seamlessly across all devices.',
     },
     {
-      icon: <Cloud size={22} />,
+      icon: <Cloud size={26} />,
       title: 'Cloud Infrastructure',
       desc: 'Built on Supabase and modern edge computing for global availability, automatic scaling, and reliable message delivery worldwide.',
     },
     {
-      icon: <Globe size={22} />,
+      icon: <Globe size={26} />,
       title: 'Real-Time Presence',
       desc: 'See who\'s online, typing indicators, and last-seen timestamps. Stay connected and know when your contacts are available.',
     },
     {
-      icon: <BarChart3 size={22} />,
+      icon: <BarChart3 size={26} />,
       title: 'Profile Analytics',
       desc: 'LinkedIn-style profile pages with follower counts, activity timelines, and cover photos to showcase your digital identity.',
     },
     {
-      icon: <MessageSquare size={22} />,
+      icon: <MessageSquare size={26} />,
       title: 'Smart Interactions',
       desc: 'Pin important messages, react with emojis, star favorites, forward to contacts, and select multiple messages for bulk actions.',
     },
@@ -91,14 +91,14 @@ export default function ServicesPage() {
               onClick={() => router.back()}
               className="p-2.5 bg-white/10 backdrop-blur-sm rounded-full text-white/70 hover:text-white hover:bg-white/20 transition-all"
             >
-              <ArrowLeft size={22} />
+              <ArrowLeft size={26} />
             </button>
             <CircleLogo size={44} />
           </div>
 
           <div className="flex items-center gap-3 mb-3">
             <div className="w-10 h-10 rounded-xl bg-[var(--emerald)]/20 flex items-center justify-center">
-              <Zap size={22} className="text-[var(--emerald)]" />
+              <Zap size={26} className="text-[var(--emerald)]" />
             </div>
             <h1 className="text-2xl font-bold text-white tracking-tight">Our Services</h1>
           </div>
@@ -187,7 +187,7 @@ export default function ServicesPage() {
           <div className="px-6 sm:px-8 py-5 bg-[var(--bg-secondary)] border-t border-[var(--border-color)]">
             <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
               <div className="flex items-center gap-2 text-[14px] text-[var(--text-muted)]">
-                <Mail size={22} className="text-[var(--emerald)]" />
+                <Mail size={26} className="text-[var(--emerald)]" />
                 <span>Service inquiries: <strong className="text-[var(--text-primary)]">support@circleapp.io</strong></span>
               </div>
               <div className="text-[14px] text-[var(--text-muted)] flex items-center gap-1.5">

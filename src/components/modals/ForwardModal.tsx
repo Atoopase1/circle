@@ -67,7 +67,7 @@ export default function ForwardModal({ message, onClose }: ForwardModalProps) {
         {/* Header */}
         <div className="px-5 py-4 border-b border-[var(--border-color)] flex items-center gap-3">
           <button onClick={onClose} className="p-2 -ml-2 rounded-xl hover:bg-[var(--bg-hover)] text-[var(--text-muted)] hover:text-[var(--text-primary)] transition-all duration-200">
-            <X size={19} />
+            <X size={23} />
           </button>
           <h2 className="text-[16px] font-semibold text-[var(--text-primary)] flex-1">Forward to...</h2>
         </div>
@@ -75,7 +75,7 @@ export default function ForwardModal({ message, onClose }: ForwardModalProps) {
         {/* Search */}
         <div className="p-4 border-b border-[var(--border-color)]">
           <div className="relative group">
-            <Search size={22} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-[var(--text-muted)] transition-colors group-focus-within:text-[var(--emerald)]" />
+            <Search size={26} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-[var(--text-muted)] transition-colors group-focus-within:text-[var(--emerald)]" />
             <input
               type="text"
               placeholder="Search chats"
@@ -109,7 +109,7 @@ export default function ForwardModal({ message, onClose }: ForwardModalProps) {
                         className="absolute -bottom-1 -right-1 w-5 h-5 bg-[var(--emerald)] rounded-full flex items-center justify-center border-2 border-[var(--bg-primary)]"
                         style={{ boxShadow: '0 0 6px rgba(22, 163, 74, 0.3)' }}
                       >
-                        <Check size={12} className="text-white" />
+                        <Check size={16} className="text-white" />
                       </div>
                     )}
                   </div>
@@ -134,7 +134,7 @@ export default function ForwardModal({ message, onClose }: ForwardModalProps) {
                 boxShadow: '0 4px 14px rgba(22, 163, 74, 0.25)',
               }}
             >
-              <Send size={19} className={isSending ? "animate-pulse" : ""} />
+              <Send size={23} className={isSending ? "animate-pulse" : ""} />
             </button>
           </div>
         )}

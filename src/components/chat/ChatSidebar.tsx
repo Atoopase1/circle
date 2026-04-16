@@ -111,7 +111,7 @@ export default function ChatSidebar() {
             <div
               className="w-full h-full flex items-center justify-center bg-[var(--emerald-dark,#15803D)]"
             >
-              <ImageIcon size={28} className="text-white/8" />
+              <ImageIcon size={32} className="text-white/8" />
             </div>
           )}
           {/* Gradient vignette at bottom for readability */}
@@ -151,7 +151,7 @@ export default function ChatSidebar() {
                   onClick={() => profile?.id && router.push(`/profile/${profile.id}`)}
                   className="flex items-center gap-1 group/followers min-w-0 flex-1"
                 >
-                  <Users size={12} className="shrink-0 text-[var(--text-muted)] group-hover/followers:text-[var(--text-primary)] transition-colors" />
+                  <Users size={16} className="shrink-0 text-[var(--text-muted)] group-hover/followers:text-[var(--text-primary)] transition-colors" />
                   <span className="text-[12px] text-[var(--text-muted)] font-medium tracking-wide group-hover/followers:text-[var(--text-primary)] transition-colors truncate">
                     {followerCount} {followerCount === 1 ? 'Follower' : 'Followers'}
                   </span>
@@ -164,31 +164,31 @@ export default function ChatSidebar() {
           <div className="flex items-center gap-1 sm:gap-1.5 pt-[40px]">
             <button
               onClick={() => setShowNewGroup(true)}
-              className="p-2 rounded-xl hover:bg-[var(--bg-hover)] transition-all duration-200 text-[var(--text-muted)] hover:text-[var(--text-primary)]"
+              className="p-2 rounded-xl hover:bg-[var(--bg-hover)] transition-all duration-200 text-[var(--text-secondary)] hover:text-[var(--text-primary)]"
               title="New group"
             >
-              <Users size={20} />
+              <Users size={28} strokeWidth={2.2} />
             </button>
             <button
               onClick={() => setShowNewChat(true)}
-              className="p-2 rounded-xl hover:bg-[var(--bg-hover)] transition-all duration-200 text-[var(--text-muted)] hover:text-[var(--text-primary)]"
+              className="p-2 rounded-xl hover:bg-[var(--bg-hover)] transition-all duration-200 text-[var(--text-secondary)] hover:text-[var(--text-primary)]"
               title="New chat"
             >
-              <MessageSquarePlus size={20} />
+              <MessageSquarePlus size={28} strokeWidth={2.2} />
             </button>
             <button
               onClick={() => router.push('/settings')}
-              className="p-2 rounded-xl hover:bg-[var(--bg-hover)] transition-all duration-200 text-[var(--text-muted)] hover:text-[var(--text-primary)]"
+              className="p-2 rounded-xl hover:bg-[var(--bg-hover)] transition-all duration-200 text-[var(--text-secondary)] hover:text-[var(--text-primary)]"
               title="Settings"
             >
-              <Settings size={20} />
+              <Settings size={28} strokeWidth={2.2} />
             </button>
             <button 
               onClick={() => setShowNotifications(!showNotifications)} 
-              className="p-2 rounded-xl hover:bg-[var(--bg-hover)] transition-all duration-200 text-[var(--text-muted)] hover:text-[var(--text-primary)] relative"
+              className="p-2 rounded-xl hover:bg-[var(--bg-hover)] transition-all duration-200 text-[var(--text-secondary)] hover:text-[var(--text-primary)] relative"
               title="Notifications"
             >
-              <Bell size={20} />
+              <Bell size={28} strokeWidth={2.2} />
               {unreadCount() > 0 && (
                 <span className="absolute -top-0.5 -right-0.5 bg-red-500 text-white text-[9px] font-bold w-[16px] h-[16px] rounded-full flex items-center justify-center border-[2px] border-[var(--bg-primary)]">
                   {unreadCount() > 9 ? '9+' : unreadCount()}
@@ -214,7 +214,7 @@ export default function ChatSidebar() {
         ) : filteredChats.length === 0 ? (
           <div className="flex flex-col items-center justify-center mt-20 text-[var(--text-muted)] px-6 text-center">
             <div className="w-16 h-16 rounded-2xl bg-[var(--bg-secondary)] flex items-center justify-center mb-4">
-              <MessageSquarePlus size={28} className="opacity-40" />
+              <MessageSquarePlus size={32} className="opacity-40" />
             </div>
             <p className="text-sm font-medium text-[var(--text-secondary)]">No conversations yet</p>
             <p className="text-[13px] mt-1.5 text-[var(--text-muted)]">Start a new chat to get going</p>

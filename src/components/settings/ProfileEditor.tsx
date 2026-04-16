@@ -116,7 +116,7 @@ export default function ProfileEditor() {
             <div 
               className="w-full h-full flex flex-col items-center justify-center gap-2 bg-[var(--emerald-dark,#15803D)]"
             >
-              <ImageIcon size={24} className="text-white/30" />
+              <ImageIcon size={28} className="text-white/30" />
               <span className="text-white/40 text-[13px]">Click to add cover photo</span>
             </div>
           )}
@@ -124,7 +124,7 @@ export default function ProfileEditor() {
           {/* Hover overlay */}
           {!isUploadingCover && (
             <div className="absolute inset-0 bg-black/40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all duration-200">
-              <Camera size={24} className="text-white" />
+              <Camera size={28} className="text-white" />
             </div>
           )}
 
@@ -141,7 +141,7 @@ export default function ProfileEditor() {
               onClick={(e) => { e.stopPropagation(); handleRemoveCover(); }}
               className="absolute top-2 right-2 bg-black/50 hover:bg-black/70 p-1.5 rounded-full text-white transition-all opacity-0 group-hover:opacity-100"
             >
-              <X size={22} />
+              <X size={26} />
             </button>
           )}
         </div>
@@ -167,7 +167,7 @@ export default function ProfileEditor() {
           )}
           {!isUploadingAvatar && (
             <div className="absolute inset-0 rounded-full bg-black/40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all duration-200">
-              <Camera size={24} className="text-white" />
+              <Camera size={28} className="text-white" />
             </div>
           )}
         </div>

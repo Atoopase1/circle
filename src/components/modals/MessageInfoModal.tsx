@@ -19,9 +19,9 @@ export default function MessageInfoModal({ message, chatParticipants, onClose }:
   const statuses = message.status || [];
   
   const getStatusIcon = (status: string) => {
-    if (status === 'seen') return <CheckCheck size={19} className="text-[var(--emerald)]" />;
-    if (status === 'delivered') return <CheckCheck size={19} className="text-[var(--text-muted)]" />;
-    return <Check size={19} className="text-[var(--text-muted)]" />;
+    if (status === 'seen') return <CheckCheck size={23} className="text-[var(--emerald)]" />;
+    if (status === 'delivered') return <CheckCheck size={23} className="text-[var(--text-muted)]" />;
+    return <Check size={23} className="text-[var(--text-muted)]" />;
   };
 
   const StatusSection = ({ title, filterStatus }: { title: string; filterStatus: string }) => {
@@ -65,7 +65,7 @@ export default function MessageInfoModal({ message, chatParticipants, onClose }:
         <div className="px-5 py-4 border-b border-[var(--border-color)] flex items-center justify-between">
           <h2 className="text-[16px] font-semibold text-[var(--text-primary)]">Message Info</h2>
           <button onClick={onClose} className="p-2 rounded-xl hover:bg-[var(--bg-hover)] text-[var(--text-muted)] hover:text-[var(--text-primary)] transition-all duration-200">
-            <X size={19} />
+            <X size={23} />
           </button>
         </div>
 

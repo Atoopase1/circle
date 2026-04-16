@@ -21,7 +21,7 @@ export default function SearchInput({
   return (
     <div className={`relative group ${className}`}>
       <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none">
-        <Search size={22} className="text-[var(--text-muted)] transition-colors group-focus-within:text-[var(--emerald)]" />
+        <Search size={26} className="text-[var(--text-muted)] transition-colors group-focus-within:text-[var(--emerald)]" />
       </div>
       <input
         type="text"
@@ -35,7 +35,7 @@ export default function SearchInput({
           onClick={() => onChange('')}
           className="absolute inset-y-0 right-0 pr-3.5 flex items-center text-[var(--text-muted)] hover:text-[var(--text-primary)] transition-colors"
         >
-          <X size={22} />
+          <X size={26} />
         </button>
       )}
     </div>

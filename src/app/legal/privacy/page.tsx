@@ -9,7 +9,7 @@ export default function PrivacyPolicyPage() {
 
   const sections = [
     {
-      icon: <Eye size={22} />,
+      icon: <Eye size={26} />,
       title: '1. Information We Collect',
       content: (
         <>
@@ -34,7 +34,7 @@ export default function PrivacyPolicyPage() {
       ),
     },
     {
-      icon: <Database size={22} />,
+      icon: <Database size={26} />,
       title: '2. How We Use Your Information',
       content: (
         <>
@@ -57,7 +57,7 @@ export default function PrivacyPolicyPage() {
       ),
     },
     {
-      icon: <Lock size={22} />,
+      icon: <Lock size={26} />,
       title: '3. Data Security',
       content: (
         <>
@@ -81,7 +81,7 @@ export default function PrivacyPolicyPage() {
       ),
     },
     {
-      icon: <Share2 size={22} />,
+      icon: <Share2 size={26} />,
       title: '4. Data Sharing & Third Parties',
       content: (
         <>
@@ -97,7 +97,7 @@ export default function PrivacyPolicyPage() {
       ),
     },
     {
-      icon: <Trash2 size={22} />,
+      icon: <Trash2 size={26} />,
       title: '5. Your Rights & Data Control',
       content: (
         <>
@@ -117,7 +117,7 @@ export default function PrivacyPolicyPage() {
       ),
     },
     {
-      icon: <Bell size={22} />,
+      icon: <Bell size={26} />,
       title: '6. Updates to This Policy',
       content: (
         <p>
@@ -139,14 +139,14 @@ export default function PrivacyPolicyPage() {
               onClick={() => router.back()}
               className="p-2.5 bg-white/10 backdrop-blur-sm rounded-full text-white/70 hover:text-white hover:bg-white/20 transition-all"
             >
-              <ArrowLeft size={22} />
+              <ArrowLeft size={26} />
             </button>
             <CircleLogo size={44} />
           </div>
 
           <div className="flex items-center gap-3 mb-3">
             <div className="w-10 h-10 rounded-xl bg-[var(--emerald)]/20 flex items-center justify-center">
-              <ShieldCheck size={22} className="text-[var(--emerald)]" />
+              <ShieldCheck size={26} className="text-[var(--emerald)]" />
             </div>
             <h1 className="text-2xl font-bold text-white tracking-tight">Privacy Policy</h1>
           </div>
@@ -159,7 +159,7 @@ export default function PrivacyPolicyPage() {
         <div className="bg-[var(--bg-primary)] rounded-2xl border border-[var(--border-color)] shadow-lg overflow-hidden">
           {/* Trust banner */}
           <div className="px-6 sm:px-8 py-4 bg-[var(--emerald)]/5 border-b border-[var(--emerald)]/10 flex items-center gap-3">
-            <ShieldCheck size={22} className="text-[var(--emerald)] shrink-0" />
+            <ShieldCheck size={26} className="text-[var(--emerald)] shrink-0" />
             <p className="text-[14.5px] text-[var(--text-secondary)]">
               Your privacy matters to us. Circle is designed to collect only the data necessary to deliver a secure, reliable messaging experience.
             </p>
@@ -181,7 +181,7 @@ export default function PrivacyPolicyPage() {
           <div className="px-6 sm:px-8 py-5 bg-[var(--bg-secondary)] border-t border-[var(--border-color)]">
             <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
               <div className="flex items-center gap-2 text-[14px] text-[var(--text-muted)]">
-                <Mail size={22} className="text-[var(--emerald)]" />
+                <Mail size={26} className="text-[var(--emerald)]" />
                 <span>Privacy inquiries: <strong className="text-[var(--text-primary)]">privacy@circleapp.io</strong></span>
               </div>
               <div className="text-[14px] text-[var(--text-muted)] flex items-center gap-1.5">

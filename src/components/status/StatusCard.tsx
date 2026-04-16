@@ -146,7 +146,7 @@ export default function StatusCard({ status, onAddContact }: StatusCardProps) {
                 : 'bg-[var(--wa-green)] text-white hover:bg-[var(--wa-green-dark)] shadow-sm'
             }`}
           >
-            {followed ? <UserCheck size={22} /> : <UserPlus size={22} />}
+            {followed ? <UserCheck size={26} /> : <UserPlus size={26} />}
             {followed ? 'Following' : 'Follow'}
           </button>
         )}
@@ -183,7 +183,7 @@ export default function StatusCard({ status, onAddContact }: StatusCardProps) {
             }`}
           >
             <Heart
-              size={22}
+              size={26}
               fill={liked ? 'currentColor' : 'none'}
               className={`transition-transform ${likeAnimating ? 'scale-125' : 'scale-100'}`}
             />
@@ -195,7 +195,7 @@ export default function StatusCard({ status, onAddContact }: StatusCardProps) {
             onClick={() => setShowComments(!showComments)}
             className="flex items-center gap-1.5 text-[var(--text-muted)] hover:text-[var(--text-primary)] transition-colors"
           >
-            <MessageSquare size={22} />
+            <MessageSquare size={26} />
             {comments.length > 0 && <span className="text-[13px] font-medium">{comments.length}</span>}
           </button>
 
@@ -203,7 +203,7 @@ export default function StatusCard({ status, onAddContact }: StatusCardProps) {
           <div className="flex items-center gap-1 sm:ml-2">
             {[1, 2, 3, 4, 5].map((star) => (
               <button key={star} onClick={() => handleRating(star)} className="focus:outline-none transition-transform hover:scale-110">
-                <Star size={22} className={`${star <= myRating ? 'text-yellow-400 fill-yellow-400' : 'text-[var(--text-muted)] hover:text-yellow-200'}`} />
+                <Star size={26} className={`${star <= myRating ? 'text-yellow-400 fill-yellow-400' : 'text-[var(--text-muted)] hover:text-yellow-200'}`} />
               </button>
             ))}
             {ratingCount > 0 && <span className="text-[13px] text-[var(--text-muted)] ml-1">({averageRating})</span>}
@@ -217,7 +217,7 @@ export default function StatusCard({ status, onAddContact }: StatusCardProps) {
             saved ? 'text-[var(--wa-green)]' : 'text-[var(--text-muted)] hover:text-[var(--wa-green)]'
           }`}
         >
-           {saved ? <BookmarkCheck size={22} /> : <Bookmark size={22} />}
+           {saved ? <BookmarkCheck size={26} /> : <Bookmark size={26} />}
         </button>
       </div>
 
@@ -239,7 +239,7 @@ export default function StatusCard({ status, onAddContact }: StatusCardProps) {
               disabled={isSubmittingComment || !commentText.trim()}
               className="bg-[var(--wa-green)] text-white p-2 rounded-xl disabled:opacity-50 hover:bg-[var(--wa-green-dark)] transition-colors"
             >
-              <Send size={22} />
+              <Send size={26} />
             </button>
           </div>
 

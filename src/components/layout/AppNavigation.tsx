@@ -17,6 +17,10 @@ export default function AppNavigation() {
     { name: 'Contacts', href: '/contacts', icon: Users },
   ];
 
+  // If path is not a main tab route, we are likely on a chat screen.
+  const isChatScreen = pathname !== '/' && !['/status', '/calls', '/contacts', '/settings', '/profile'].some(p => pathname.startsWith(p));
+
+
   return (
     <>
       {/* Desktop Navigation — Premium glass sidebar */}
@@ -31,10 +35,10 @@ export default function AppNavigation() {
               className={`p-3 rounded-xl transition-all duration-200 group relative ${
                 isActive
                   ? 'bg-[var(--emerald)]/10 text-[var(--emerald)]'
-                  : 'text-[var(--text-muted)] hover:bg-[var(--bg-hover)] hover:text-[var(--text-primary)]'
+                  : 'text-[var(--text-secondary)] group-hover:bg-[var(--bg-hover)]'
               }`}
             >
-              <Icon size={22} strokeWidth={isActive ? 2.2 : 1.8} className={`transition-all duration-200 ${isActive ? '' : 'opacity-70 group-hover:opacity-100'}`} />
+              <Icon size={26} strokeWidth={isActive ? 2.5 : 2.2} className="transition-all duration-200" />
               
               {/* Active indicator dot */}
               {isActive && (
@@ -55,7 +59,7 @@ export default function AppNavigation() {
 
       {/* Mobile Navigation — Premium glass bottom bar */}
       <div 
-        className="lg:hidden fixed bottom-0 left-0 right-0 h-16 glass-header border-t border-[var(--border-color)] flex items-center justify-around z-50"
+        className={`${isChatScreen ? 'hidden' : 'flex lg:hidden'} fixed bottom-0 left-0 right-0 h-16 glass-header border-t border-[var(--border-color)] items-center justify-around z-50`}
         style={{ paddingBottom: 'env(safe-area-inset-bottom, 0px)' }}
       >
         {tabs.map((tab) => {
@@ -66,10 +70,10 @@ export default function AppNavigation() {
               key={tab.name}
               onClick={() => router.push(tab.href)}
               className={`flex flex-col items-center justify-center w-full h-full gap-1 transition-all duration-200 relative ${
-                isActive ? 'text-[var(--emerald)]' : 'text-[var(--text-muted)]'
+                isActive ? 'text-[var(--emerald)]' : 'text-[var(--text-secondary)]'
               }`}
             >
-              <Icon size={21} strokeWidth={isActive ? 2.2 : 1.8} className={`transition-all duration-200 ${isActive ? '' : 'opacity-70'}`} />
+              <Icon size={25} strokeWidth={isActive ? 2.5 : 2.2} className="transition-all duration-200" />
               <span className={`text-[10px] transition-all duration-200 ${isActive ? 'font-semibold' : 'font-medium'}`}>{tab.name}</span>
               
               {/* Active indicator bar */}

@@ -61,7 +61,7 @@ export default function NotificationPanel({ isOpen, onClose }: NotificationPanel
         {/* Header */}
         <div className="flex items-center justify-between px-5 py-4 border-b border-[var(--border-color)] shrink-0">
           <div className="flex items-center gap-2.5">
-            <Bell size={18} className="text-[var(--emerald)]" />
+            <Bell size={22} className="text-[var(--emerald)]" />
             <h2 className="text-[16px] font-bold text-[var(--text-primary)]">Notifications</h2>
             {notifications.filter(n => !n.read).length > 0 && (
               <span className="bg-[var(--emerald)] text-white text-[11px] font-bold px-2 py-0.5 rounded-full min-w-[20px] text-center">
@@ -77,14 +77,14 @@ export default function NotificationPanel({ isOpen, onClose }: NotificationPanel
                   className="p-2 rounded-lg hover:bg-[var(--bg-hover)] text-[var(--text-muted)] hover:text-[var(--emerald)] transition-all"
                   title="Mark all read"
                 >
-                  <CheckCheck size={16} />
+                  <CheckCheck size={20} />
                 </button>
                 <button
                   onClick={clearAll}
                   className="p-2 rounded-lg hover:bg-red-500/10 text-[var(--text-muted)] hover:text-red-500 transition-all"
                   title="Clear all"
                 >
-                  <Trash2 size={16} />
+                  <Trash2 size={20} />
                 </button>
               </>
             )}
@@ -92,7 +92,7 @@ export default function NotificationPanel({ isOpen, onClose }: NotificationPanel
               onClick={onClose}
               className="p-2 rounded-lg hover:bg-[var(--bg-hover)] text-[var(--text-muted)] hover:text-[var(--text-primary)] transition-all"
             >
-              <X size={18} />
+              <X size={22} />
             </button>
           </div>
         </div>
@@ -102,7 +102,7 @@ export default function NotificationPanel({ isOpen, onClose }: NotificationPanel
           {notifications.length === 0 ? (
             <div className="flex flex-col items-center justify-center py-16 px-6 text-center">
               <div className="w-16 h-16 mb-4 rounded-full bg-[var(--bg-secondary)] flex items-center justify-center">
-                <BellOff size={28} className="text-[var(--text-muted)]" />
+                <BellOff size={32} className="text-[var(--text-muted)]" />
               </div>
               <p className="text-[15px] font-semibold text-[var(--text-primary)] mb-1">No notifications yet</p>
               <p className="text-[13px] text-[var(--text-muted)] leading-relaxed">
@@ -152,7 +152,7 @@ export default function NotificationPanel({ isOpen, onClose }: NotificationPanel
                     className="p-1.5 rounded-lg opacity-0 group-hover:opacity-100 hover:bg-red-500/10 text-[var(--text-muted)] hover:text-red-500 transition-all shrink-0"
                     title="Delete notification"
                   >
-                    <Trash2 size={14} />
+                    <Trash2 size={18} />
                   </button>
                 </div>
               ))}

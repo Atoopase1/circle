@@ -261,7 +261,7 @@ export default function MessageInput({ chatId }: MessageInputProps) {
             <audio src={previewUrl} controls className="h-10 w-[140px] shrink-0 sm:w-[200px]" />
           ) : (
             <div className="w-14 h-14 bg-[var(--bg-secondary)] rounded-xl flex items-center justify-center shrink-0">
-              <FileText size={22} className="text-[var(--text-muted)]" />
+              <FileText size={26} className="text-[var(--text-muted)]" />
             </div>
           )}
           <div className="flex-1 min-w-0">
@@ -274,7 +274,7 @@ export default function MessageInput({ chatId }: MessageInputProps) {
             onClick={clearFile}
             className="p-2 rounded-xl hover:bg-[var(--bg-hover)] text-[var(--text-muted)] transition-all"
           >
-            <X size={19} />
+            <X size={23} />
           </button>
         </div>
       )}
@@ -309,7 +309,7 @@ export default function MessageInput({ chatId }: MessageInputProps) {
             onClick={() => setReplyingTo(null)}
             className="p-2 ml-3 rounded-xl hover:bg-[var(--bg-hover)] text-[var(--text-muted)] transition-all"
           >
-            <X size={19} />
+            <X size={23} />
           </button>
         </div>
       )}
@@ -318,7 +318,7 @@ export default function MessageInput({ chatId }: MessageInputProps) {
       {editingMessage && (
         <div className="px-4 py-2.5 border-b border-[var(--border-color)] bg-[var(--bg-secondary)] flex items-center justify-between animate-slideUp">
           <div className="flex-1 min-w-0 flex items-start gap-3 pl-1">
-            <Pencil size={19} className="text-[var(--emerald)] mt-0.5 shrink-0" />
+            <Pencil size={23} className="text-[var(--emerald)] mt-0.5 shrink-0" />
             <div className="min-w-0">
               <p className="text-[14px] font-semibold text-[var(--emerald)] mb-0.5">
                 Edit message
@@ -335,13 +335,13 @@ export default function MessageInput({ chatId }: MessageInputProps) {
             }}
             className="p-2 ml-3 rounded-xl hover:bg-[var(--bg-hover)] text-[var(--text-muted)] transition-all"
           >
-            <X size={19} />
+            <X size={23} />
           </button>
         </div>
       )}
 
       {/* Input bar */}
-      <div className="flex items-end gap-2 px-4 py-3 relative">
+      <div className="flex items-end gap-1 sm:gap-2 px-2 sm:px-4 py-2 sm:py-3 relative">
         {showEmoji && (
           <div className="absolute bottom-[60px] left-4 z-50 animate-scaleIn">
             <EmojiPicker onEmojiClick={onEmojiClick} theme={Theme.AUTO} />
@@ -354,9 +354,9 @@ export default function MessageInput({ chatId }: MessageInputProps) {
             setShowEmoji(!showEmoji);
             setShowGifPicker(false);
           }}
-          className={`p-2.5 rounded-xl transition-all duration-200 shrink-0 mb-0.5 ${showEmoji ? 'bg-[var(--bg-hover)] text-[var(--text-primary)]' : 'text-[var(--text-muted)] hover:bg-[var(--bg-hover)] hover:text-[var(--text-primary)]'}`}
+          className={`p-1.5 sm:p-2 rounded-xl transition-all duration-200 shrink-0 mb-0.5 ${showEmoji ? 'bg-[var(--bg-hover)] text-[var(--text-primary)]' : 'text-[var(--text-secondary)] hover:bg-[var(--bg-hover)] hover:text-[var(--text-primary)]'}`}
         >
-          <Smile size={21} />
+          <Smile size={26} strokeWidth={2.2} />
         </button>
 
         {/* GIF button */}
@@ -365,7 +365,7 @@ export default function MessageInput({ chatId }: MessageInputProps) {
             setShowGifPicker(!showGifPicker);
             setShowEmoji(false);
           }}
-          className={`p-2.5 rounded-xl transition-all duration-200 shrink-0 mb-0.5 text-[14px] font-bold ${showGifPicker ? 'bg-[var(--bg-hover)] text-[var(--emerald)]' : 'text-[var(--text-muted)] hover:bg-[var(--bg-hover)] hover:text-[var(--text-primary)]'}`}
+          className={`p-1.5 sm:p-2 rounded-xl transition-all duration-200 shrink-0 mb-0.5 text-[14px] font-bold ${showGifPicker ? 'bg-[var(--bg-hover)] text-[var(--emerald)]' : 'text-[var(--text-muted)] hover:bg-[var(--bg-hover)] hover:text-[var(--text-primary)]'}`}
         >
           GIF
         </button>
@@ -380,13 +380,13 @@ export default function MessageInput({ chatId }: MessageInputProps) {
         <div className="relative shrink-0 mb-0.5">
           <button
             onClick={() => setShowAttachMenu(!showAttachMenu)}
-            className={`p-2.5 rounded-xl transition-all duration-200 ${
+            className={`p-1.5 sm:p-2.5 rounded-xl transition-all duration-200 ${
               showAttachMenu 
                 ? 'bg-[var(--bg-hover)] text-[var(--text-primary)] rotate-45' 
-                : 'hover:bg-[var(--bg-hover)] text-[var(--text-muted)] hover:text-[var(--text-primary)]'
+                : 'hover:bg-[var(--bg-hover)] text-[var(--text-secondary)] hover:text-[var(--text-primary)]'
             }`}
           >
-            <Paperclip size={21} />
+            <Paperclip size={26} strokeWidth={2.2} />
           </button>
           {showAttachMenu && (
             <div 
@@ -399,7 +399,7 @@ export default function MessageInput({ chatId }: MessageInputProps) {
                   onClick={() => handleFileSelect(opt.accept)}
                   className="w-full flex items-center gap-3 px-4 py-2.5 hover:bg-[var(--bg-hover)] transition-all duration-150 text-[14px] text-[var(--text-primary)]"
                 >
-                  <opt.icon size={22} className={opt.color} />
+                  <opt.icon size={26} className={opt.color} />
                   {opt.label}
                 </button>
               ))}
@@ -444,10 +444,10 @@ export default function MessageInput({ chatId }: MessageInputProps) {
         <button
           onClick={text.trim() || selectedFile ? handleSend : handleMicClick}
           disabled={isSending && !isRecording}
-          className={`p-2.5 rounded-xl transition-all duration-200 shrink-0 mb-0.5 ${
+          className={`p-2 sm:p-2.5 rounded-xl transition-all duration-200 shrink-0 mb-0.5 ${
             text.trim() || selectedFile || isRecording
               ? 'text-white hover:-translate-y-[1px] active:scale-95'
-              : 'text-[var(--text-muted)] hover:bg-[var(--bg-hover)] hover:text-[var(--text-primary)]'
+              : 'text-[var(--text-secondary)] hover:bg-[var(--bg-hover)] hover:text-[var(--text-primary)]'
           }`}
           style={text.trim() || selectedFile || isRecording ? {
             background: isRecording ? 'var(--gold)' : 'var(--emerald)',
@@ -455,9 +455,9 @@ export default function MessageInput({ chatId }: MessageInputProps) {
           } : undefined}
         >
           {text.trim() || selectedFile ? (
-            <Send size={19} className={isSending ? 'animate-pulse' : ''} />
+            <Send size={26} strokeWidth={2.2} className={isSending ? 'animate-pulse' : ''} />
           ) : (
-            isRecording ? <div className="w-3.5 h-3.5 bg-white rounded-[3px]" /> : <Mic size={21} />
+            isRecording ? <div className="w-3.5 h-3.5 bg-white rounded-[3px]" /> : <Mic size={26} strokeWidth={2.2} />
           )}
         </button>
       </div>

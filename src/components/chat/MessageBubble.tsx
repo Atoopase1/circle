@@ -26,17 +26,17 @@ interface MessageBubbleProps {
 function StatusIcon({ status }: { status?: MessageStatusType }) {
   switch (status) {
     case 'seen':
-      return <CheckCheck size={15} className="text-[#53bDEB] ml-0.5" strokeWidth={2.5} />;
+      return <CheckCheck size={19} className="text-[#53bDEB] ml-0.5" strokeWidth={2.5} />;
     case 'delivered':
-      return <CheckCheck size={15} className="text-[var(--bubble-out-meta,#667781)] ml-0.5 opacity-90" strokeWidth={2} />;
+      return <CheckCheck size={19} className="text-[var(--bubble-out-meta,#667781)] ml-0.5 opacity-90" strokeWidth={2} />;
     case 'sent':
-      return <Check size={15} className="text-[var(--bubble-out-meta,#667781)] ml-0.5 opacity-90" strokeWidth={2} />;
+      return <Check size={19} className="text-[var(--bubble-out-meta,#667781)] ml-0.5 opacity-90" strokeWidth={2} />;
     case 'failed':
-      return <AlertCircle size={13} className="text-red-500 ml-0.5" strokeWidth={2} />;
+      return <AlertCircle size={17} className="text-red-500 ml-0.5" strokeWidth={2} />;
     case 'queued':
-      return <Clock size={12} className="text-[var(--bubble-out-meta,#667781)] ml-0.5 opacity-80" strokeWidth={2} />;
+      return <Clock size={16} className="text-[var(--bubble-out-meta,#667781)] ml-0.5 opacity-80" strokeWidth={2} />;
     default:
-      return <Clock size={12} className="text-[var(--bubble-out-meta,#667781)] ml-0.5 opacity-80" strokeWidth={2} />;
+      return <Clock size={16} className="text-[var(--bubble-out-meta,#667781)] ml-0.5 opacity-80" strokeWidth={2} />;
   }
 }
 
@@ -107,7 +107,7 @@ const MessageBubble = React.memo(function MessageBubble({ message, isOwn, showSe
             className="opacity-0 group-hover:opacity-100 p-1 rounded-full hover:bg-red-500/10 text-red-400 hover:text-red-500 transition-all duration-200"
             title="Remove this message"
           >
-            <X size={14} />
+            <X size={18} />
           </button>
         </div>
       </div>
@@ -147,7 +147,7 @@ const MessageBubble = React.memo(function MessageBubble({ message, isOwn, showSe
           className={`shrink-0 w-5 h-5 rounded-full border-2 flex items-center justify-center cursor-pointer transition-colors ${isSelected ? 'bg-[var(--emerald)] border-[var(--emerald)]' : 'border-[var(--text-muted)] bg-transparent hover:border-[var(--text-primary)]'
             }`}
         >
-          {isSelected && <Check size={12} className="text-white" strokeWidth={3} />}
+          {isSelected && <Check size={16} className="text-white" strokeWidth={3} />}
         </div>
       )}
 
@@ -266,7 +266,7 @@ const MessageBubble = React.memo(function MessageBubble({ message, isOwn, showSe
                     />
                   ) : mediaError ? (
                     <div className="flex flex-col items-center justify-center p-6 text-red-400">
-                      <AlertCircle size={24} className="mb-2" />
+                      <AlertCircle size={28} className="mb-2" />
                       <span className="text-[13px]">Failed to load media</span>
                     </div>
                   ) : null}
@@ -296,7 +296,7 @@ const MessageBubble = React.memo(function MessageBubble({ message, isOwn, showSe
                   )}
                   {mediaError && (
                     <div className="flex flex-col items-center justify-center p-6 text-red-400">
-                      <AlertCircle size={24} className="mb-2" />
+                      <AlertCircle size={28} className="mb-2" />
                       <span className="text-[13px]">Failed to load video</span>
                     </div>
                   )}
@@ -304,7 +304,7 @@ const MessageBubble = React.memo(function MessageBubble({ message, isOwn, showSe
                   {mediaLoaded && !mediaError && (
                     <div className="absolute inset-0 flex items-center justify-center bg-black/30 hover:bg-black/40 transition-colors">
                       <div className="w-12 h-12 rounded-full bg-white/90 flex items-center justify-center shadow-lg">
-                        <Play size={22} className="text-gray-800 ml-0.5" fill="currentColor" />
+                        <Play size={26} className="text-gray-800 ml-0.5" fill="currentColor" />
                       </div>
                     </div>
                   )}
@@ -335,7 +335,7 @@ const MessageBubble = React.memo(function MessageBubble({ message, isOwn, showSe
                     }`}
                 >
                   <div className={`w-10 h-10 rounded-lg flex items-center justify-center ${isOwn ? 'bg-white/15' : 'bg-[var(--emerald)]/10'}`}>
-                    <FileText size={22} className={isOwn ? 'text-white/80' : 'text-[var(--emerald)]'} />
+                    <FileText size={26} className={isOwn ? 'text-white/80' : 'text-[var(--emerald)]'} />
                   </div>
                   <div className="flex-1 min-w-0">
                     <p className={`text-sm truncate font-medium ${isOwn ? 'text-white' : 'text-[var(--text-primary)]'}`}>
@@ -347,7 +347,7 @@ const MessageBubble = React.memo(function MessageBubble({ message, isOwn, showSe
                         : 'File'}
                     </p>
                   </div>
-                  <Download size={19} className={isOwn ? 'text-white/60' : 'text-[var(--text-muted)]'} />
+                  <Download size={23} className={isOwn ? 'text-white/60' : 'text-[var(--text-muted)]'} />
                 </div>
               )}
 
@@ -370,7 +370,7 @@ const MessageBubble = React.memo(function MessageBubble({ message, isOwn, showSe
                   className="text-red-400 hover:text-red-300 transition-colors rounded-full p-0.5 ml-0.5"
                   title="Retry sending"
                 >
-                  <RefreshCw size={12} />
+                  <RefreshCw size={16} />
                 </button>
               )}
               {isOwn && overallStatus !== 'failed' && <StatusIcon status={overallStatus as MessageStatusType | undefined} />}
@@ -424,14 +424,14 @@ const MessageBubble = React.memo(function MessageBubble({ message, isOwn, showSe
                     onClick={(e) => { e.stopPropagation(); setLightboxZoom(z => Math.max(0.5, z - 0.25)); }}
                     className="p-2 rounded-full bg-white/10 hover:bg-white/20 text-white transition-colors"
                   >
-                    <ZoomOut size={22} />
+                    <ZoomOut size={26} />
                   </button>
                   <span className="text-white/60 text-[13px] font-mono min-w-[40px] text-center">{Math.round(lightboxZoom * 100)}%</span>
                   <button
                     onClick={(e) => { e.stopPropagation(); setLightboxZoom(z => Math.min(3, z + 0.25)); }}
                     className="p-2 rounded-full bg-white/10 hover:bg-white/20 text-white transition-colors"
                   >
-                    <ZoomIn size={22} />
+                    <ZoomIn size={26} />
                   </button>
                 </>
               )}
@@ -443,13 +443,13 @@ const MessageBubble = React.memo(function MessageBubble({ message, isOwn, showSe
                 onClick={(e) => e.stopPropagation()}
                 className="p-2 rounded-full bg-white/10 hover:bg-white/20 text-white transition-colors"
               >
-                <Download size={22} />
+                <Download size={26} />
               </a>
               <button
                 onClick={closeLightbox}
                 className="p-2 rounded-full bg-white/10 hover:bg-white/20 text-white transition-colors"
               >
-                <X size={22} />
+                <X size={26} />
               </button>
             </div>
           </div>
@@ -482,7 +482,7 @@ const MessageBubble = React.memo(function MessageBubble({ message, isOwn, showSe
               onClick={(e) => e.stopPropagation()}
             >
               <div className="w-16 h-16 rounded-2xl bg-[var(--emerald)]/10 flex items-center justify-center mx-auto mb-4">
-                <FileText size={32} className="text-[var(--emerald)]" />
+                <FileText size={36} className="text-[var(--emerald)]" />
               </div>
               <p className="text-[var(--text-primary)] font-semibold text-lg mb-1">
                 {message.media_metadata?.filename || 'Document'}
@@ -500,7 +500,7 @@ const MessageBubble = React.memo(function MessageBubble({ message, isOwn, showSe
                   rel="noopener noreferrer"
                   className="flex-1 flex items-center justify-center gap-2 px-4 py-3 rounded-xl bg-[var(--bg-secondary)] text-[var(--text-primary)] font-medium text-sm hover:bg-[var(--bg-hover)] transition-colors"
                 >
-                  <FileText size={22} />
+                  <FileText size={26} />
                   Open
                 </a>
                 <a
@@ -510,7 +510,7 @@ const MessageBubble = React.memo(function MessageBubble({ message, isOwn, showSe
                   rel="noopener noreferrer"
                   className="flex-1 flex items-center justify-center gap-2 px-4 py-3 rounded-xl bg-[var(--emerald)] text-white font-medium text-sm hover:opacity-90 transition-opacity"
                 >
-                  <Download size={22} />
+                  <Download size={26} />
                   Download
                 </a>
               </div>

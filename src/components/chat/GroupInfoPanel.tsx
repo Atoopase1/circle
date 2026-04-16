@@ -33,7 +33,7 @@ export default function GroupInfoPanel({ chat, isOpen, onClose }: GroupInfoPanel
           onClick={onClose}
           className="p-2 rounded-xl hover:bg-[var(--bg-hover)] transition-all duration-200 text-[var(--text-muted)] hover:text-[var(--text-primary)]"
         >
-          <X size={19} />
+          <X size={23} />
         </button>
         <h2 className="font-semibold text-[var(--text-primary)] text-[15px]">Group info</h2>
       </div>

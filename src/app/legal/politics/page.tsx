@@ -9,7 +9,7 @@ export default function PoliticsPage() {
 
   const principles = [
     {
-      icon: <Globe size={22} />,
+      icon: <Globe size={26} />,
       title: '1. Neutrality & Non-Discrimination',
       highlight: true,
       content: (
@@ -19,7 +19,7 @@ export default function PoliticsPage() {
       ),
     },
     {
-      icon: <Shield size={22} />,
+      icon: <Shield size={26} />,
       title: '2. User Sovereignty',
       highlight: false,
       content: (
@@ -45,7 +45,7 @@ export default function PoliticsPage() {
       ),
     },
     {
-      icon: <Scale size={22} />,
+      icon: <Scale size={26} />,
       title: '3. Community Safety Standards',
       highlight: true,
       content: (
@@ -68,7 +68,7 @@ export default function PoliticsPage() {
       ),
     },
     {
-      icon: <Users size={22} />,
+      icon: <Users size={26} />,
       title: '4. Transparency & Accountability',
       highlight: false,
       content: (
@@ -78,7 +78,7 @@ export default function PoliticsPage() {
       ),
     },
     {
-      icon: <Heart size={22} />,
+      icon: <Heart size={26} />,
       title: '5. Inclusivity & Accessibility',
       highlight: true,
       content: (
@@ -88,7 +88,7 @@ export default function PoliticsPage() {
       ),
     },
     {
-      icon: <Flag size={22} />,
+      icon: <Flag size={26} />,
       title: '6. Our Commitment',
       highlight: false,
       content: (
@@ -111,14 +111,14 @@ export default function PoliticsPage() {
               onClick={() => router.back()}
               className="p-2.5 bg-white/10 backdrop-blur-sm rounded-full text-white/70 hover:text-white hover:bg-white/20 transition-all"
             >
-              <ArrowLeft size={22} />
+              <ArrowLeft size={26} />
             </button>
             <CircleLogo size={44} />
           </div>
 
           <div className="flex items-center gap-3 mb-3">
             <div className="w-10 h-10 rounded-xl bg-[var(--emerald)]/20 flex items-center justify-center">
-              <Flag size={22} className="text-[var(--emerald)]" />
+              <Flag size={26} className="text-[var(--emerald)]" />
             </div>
             <h1 className="text-2xl font-bold text-white tracking-tight">Platform Principles</h1>
           </div>
@@ -147,7 +147,7 @@ export default function PoliticsPage() {
           <div className="px-6 sm:px-8 py-5 bg-[var(--bg-secondary)] border-t border-[var(--border-color)]">
             <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
               <div className="flex items-center gap-2 text-[14px] text-[var(--text-muted)]">
-                <Mail size={22} className="text-[var(--emerald)]" />
+                <Mail size={26} className="text-[var(--emerald)]" />
                 <span>Policy questions: <strong className="text-[var(--text-primary)]">policy@circleapp.io</strong></span>
               </div>
               <div className="text-[14px] text-[var(--text-muted)] flex items-center gap-1.5">

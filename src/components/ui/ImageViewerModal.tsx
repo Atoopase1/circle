@@ -51,13 +51,13 @@ export default function ImageViewerModal({ isOpen, onClose, src, alt = 'Image', 
           rel="noopener noreferrer"
           className="p-2.5 rounded-full bg-white/10 text-white hover:bg-white/20 transition-all backdrop-blur-md border border-white/10"
         >
-          <Download size={24} />
+          <Download size={28} />
         </a>
         <button
           onClick={onClose}
           className="p-2.5 rounded-full bg-white/10 text-white hover:bg-white/20 hover:rotate-90 transition-all backdrop-blur-md border border-white/10"
         >
-          <X size={24} />
+          <X size={28} />
         </button>
       </div>
 

@@ -41,7 +41,7 @@ export default function ChatDefaultPage() {
           </p>
           <div className="flex flex-col items-center gap-4">
             <div className="flex items-center justify-center gap-2 text-[14px] text-[var(--text-muted)] bg-[var(--bg-primary)] rounded-full px-4 py-2 border border-[var(--border-color)] shadow-sm">
-              <Shield size={13} className="text-[var(--emerald)]" />
+              <Shield size={17} className="text-[var(--emerald)]" />
               <span>End-to-end encrypted</span>
             </div>
             

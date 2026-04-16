@@ -27,8 +27,8 @@
 
   /* Text */
   --text-primary: #111B21;
-  --text-secondary: #667781;
-  --text-muted: #8696A0;
+  --text-secondary: #54656F;
+  --text-muted: #667781;
 
   /* Borders */
   --border-color: #E9EDEF;
@@ -105,8 +105,8 @@
   --bg-glass-strong: rgba(11, 20, 26, 0.85);
 
   --text-primary: #E9EDEF;
-  --text-secondary: #8696A0;
-  --text-muted: #8696A0;
+  --text-secondary: #D1D7DB;
+  --text-muted: #667781;
 
   --border-color: #1E293B;
 
@@ -836,4 +836,18 @@ img, video, audio, iframe {
 .pinned-highlight {
   animation: pinnedFlash 2s ease-out;
   border-radius: 12px;
+}
+
+/* ============================================================
+   NATIVE APP FEEL
+   ============================================================ */
+* {
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  user-select: none;
+}
+
+input, textarea {
+  -webkit-user-select: auto;
+  user-select: auto;
 }

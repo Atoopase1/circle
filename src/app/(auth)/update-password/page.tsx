@@ -141,7 +141,7 @@ export default function UpdatePasswordPage() {
       <div className="p-10 flex flex-col items-center justify-center min-h-[400px]">
         <Toaster position="top-center" />
         <div className="w-16 h-16 bg-red-500/10 rounded-full flex items-center justify-center mb-6 text-red-500">
-           <AlertCircle size={32} />
+           <AlertCircle size={36} />
         </div>
         <h2 className="text-lg font-semibold text-[var(--text-primary)] mb-2 text-center">Invalid Reset Link</h2>
         <p className="text-sm text-[var(--text-muted)] text-center mb-8 max-w-[240px]">
@@ -186,7 +186,7 @@ export default function UpdatePasswordPage() {
               onClick={() => setShowPassword(!showPassword)}
               className="absolute inset-y-0 right-0 pr-4 flex items-center text-[var(--text-muted)] hover:text-[var(--text-primary)] transition-colors"
             >
-              {showPassword ? <EyeOff size={19} /> : <Eye size={19} />}
+              {showPassword ? <EyeOff size={23} /> : <Eye size={23} />}
             </button>
           </div>
         </div>
@@ -212,11 +212,11 @@ export default function UpdatePasswordPage() {
           size="lg"
         >
           Reset Password
-          <ArrowRight size={19} className="ml-2" />
+          <ArrowRight size={23} className="ml-2" />
         </Button>
 
         <div className="flex items-center justify-center gap-1.5 pt-6 mt-4 border-t border-[var(--border-color)] opacity-60">
-          <Shield size={13} className="text-[var(--text-muted)]" />
+          <Shield size={17} className="text-[var(--text-muted)]" />
           <span className="text-[13px] text-[var(--text-muted)]">Encrypted Session</span>
         </div>
       </div>
