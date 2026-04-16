@@ -3,17 +3,19 @@
 // ============================================================
 'use client';
 
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
 import { useParams, useRouter } from 'next/navigation';
-import { ArrowLeft, Settings, Pencil, Camera, UserCheck, UserPlus, Image as ImageIcon, MessageSquare } from 'lucide-react';
+import { ArrowLeft, Settings, Pencil, Camera, UserCheck, UserPlus, Image as ImageIcon, MessageSquare, Bell } from 'lucide-react';
 import Avatar from '@/components/ui/Avatar';
 import Button from '@/components/ui/Button';
 import Spinner from '@/components/ui/Spinner';
 import ImageViewerModal from '@/components/ui/ImageViewerModal';
+import NotificationPanel from '@/components/ui/NotificationPanel';
 import StatusCard from '@/components/status/StatusCard';
 import { getSupabaseBrowserClient } from '@/lib/supabase/client';
 import { useAuthStore } from '@/store/auth-store';
 import { useChatStore } from '@/store/chat-store';
+import { useNotificationStore } from '@/store/notification-store';
 import toast from 'react-hot-toast';
 
 export default function ProfileViewPage() {
@@ -37,6 +39,8 @@ export default function ProfileViewPage() {
   const [isFollowing, setIsFollowing] = useState(false);
   const [relationship, setRelationship] = useState<string | null>(null);
   const [showAvatarViewer, setShowAvatarViewer] = useState(false);
+
+  const addNotification = useNotificationStore(s => s.addNotification);
 
   const isMe = currentUser?.id === profileId;
 
@@ -104,6 +108,56 @@ export default function ProfileViewPage() {
       setAuthor((prev: any) => prev ? { ...prev, avatar_url: currentUser.avatar_url, cover_url: currentUser.cover_url, display_name: currentUser.display_name, bio: currentUser.bio } : prev);
     }
   }, [currentUser, isMe]);
+
+  // ── Real-time subscription for followed users' new statuses ──
+  useEffect(() => {
+    if (!currentUser) return;
+
+    // Subscribe to new statuses from ANY user (we'll filter by follows client-side)
+    const channel = supabase
+      .channel('followed-posts')
+      .on(
+        'postgres_changes',
+        { event: 'INSERT', schema: 'public', table: 'statuses' },
+        async (payload) => {
+          const newStatus = payload.new as any;
+          // Don't notify about own posts
+          if (newStatus.user_id === currentUser.id) return;
+
+          // Check if we follow this user
+          const { data: followCheck } = await supabase
+            .from('follows')
+            .select('id')
+            .eq('follower_id', currentUser.id)
+            .eq('following_id', newStatus.user_id)
+            .single();
+
+          if (!followCheck) return;
+
+          // Get the poster's profile
+          const { data: poster } = await supabase
+            .from('profiles')
+            .select('display_name, avatar_url')
+            .eq('id', newStatus.user_id)
+            .single();
+
+          if (poster) {
+            addNotification({
+              userId: newStatus.user_id,
+              userName: poster.display_name,
+              userAvatar: poster.avatar_url,
+              statusId: newStatus.id,
+              preview: newStatus.content || (newStatus.media_url ? '📷 Shared a photo' : 'New post'),
+            });
+          }
+        }
+      )
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
+  }, [currentUser, supabase, addNotification]);
 
   const toggleFollow = async () => {
     if (!currentUser) return;
@@ -214,13 +268,15 @@ export default function ProfileViewPage() {
         
         <h1 className="text-[15px] font-semibold text-[var(--text-primary)] truncate max-w-[200px]">{author.display_name}</h1>
 
-        {isMe ? (
-          <button onClick={handleEditProfile} className="p-2 rounded-xl hover:bg-[var(--bg-hover)] text-[var(--text-muted)] hover:text-[var(--text-primary)] transition-all duration-200">
-            <Settings size={22} />
-          </button>
-        ) : (
-          <div className="w-9" />
-        )}
+        <div className="flex items-center gap-1">
+          {isMe ? (
+            <button onClick={handleEditProfile} className="p-2 rounded-xl hover:bg-[var(--bg-hover)] text-[var(--text-muted)] hover:text-[var(--text-primary)] transition-all duration-200">
+              <Settings size={22} />
+            </button>
+          ) : (
+            <div className="w-9" />
+          )}
+        </div>
       </div>
 
       {/* Scrollable Body */}

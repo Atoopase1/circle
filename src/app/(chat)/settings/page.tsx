@@ -3,15 +3,22 @@
 // ============================================================
 'use client';
 
-import { ArrowLeft, Moon, Sun, Bell, Lock, HardDrive, Info, Palette, User, Type } from 'lucide-react';
+import { ArrowLeft, Moon, Sun, Bell, Lock, HardDrive, Info, Palette, User, Type, LogOut } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import ProfileEditor from '@/components/settings/ProfileEditor';
 import Toggle from '@/components/ui/Toggle';
 import ChatSidebar from '@/components/chat/ChatSidebar';
+import { useAuthStore } from '@/store/auth-store';
 
 export default function SettingsPage() {
   const router = useRouter();
+  const { signOut } = useAuthStore();
+
+  const handleSignOut = async () => {
+    await signOut();
+    router.push('/login');
+  };
   const [isDark, setIsDark] = useState(false);
   const [currentFont, setCurrentFont] = useState('var(--font-inter)');
 
@@ -226,6 +233,17 @@ export default function SettingsPage() {
                 <span className="text-[14px] text-[var(--text-muted)]">Premium</span>
               </div>
             </div>
+          </div>
+
+          {/* Log Out */}
+          <div className="pt-2 pb-6">
+            <button
+              onClick={handleSignOut}
+              className="w-full flex items-center justify-center gap-2 p-4 rounded-xl bg-red-500/10 hover:bg-red-500/20 text-red-500 transition-all duration-200 font-medium surface-card border-red-500/20"
+            >
+              <LogOut size={20} />
+              Log Out
+            </button>
           </div>
         </div>
       </div>

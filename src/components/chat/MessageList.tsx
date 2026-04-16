@@ -3,7 +3,7 @@
 // ============================================================
 'use client';
 
-import { useRef, useEffect, useCallback } from 'react';
+import { useRef, useEffect, useCallback, useState } from 'react';
 import MessageBubble from '@/components/chat/MessageBubble';
 import TypingIndicator from '@/components/chat/TypingIndicator';
 import MessageSkeleton from '@/components/chat/MessageSkeleton';
@@ -12,9 +12,10 @@ import { useChatStore } from '@/store/chat-store';
 import { useAuthStore } from '@/store/auth-store';
 import { usePresenceStore } from '@/store/presence-store';
 import { formatDateSeparator } from '@/lib/utils';
+import { getSupabaseBrowserClient } from '@/lib/supabase/client';
 import type { Message } from '@/types';
-import { Pin, WifiOff, ChevronDown } from 'lucide-react';
-import { useState } from 'react';
+import { Pin, WifiOff, ChevronDown, X } from 'lucide-react';
+import Avatar from '@/components/ui/Avatar';
 
 interface MessageListProps {
   chatId: string;
@@ -27,6 +28,7 @@ export default function MessageList({ chatId, isGroup }: MessageListProps) {
   const hasMoreMessages = useChatStore((s) => s.hasMoreMessages);
   const fetchMessages = useChatStore((s) => s.fetchMessages);
   const activeChat = useChatStore(s => s.activeChat);
+  const unpinMessage = useChatStore(s => s.unpinMessage);
   const user = useAuthStore((s) => s.user);
   const typingUsersAll = usePresenceStore((s) => s.typingUsers);
   const typingUsers = typingUsersAll.filter((t) => t.chat_id === chatId);
@@ -92,9 +94,68 @@ export default function MessageList({ chatId, isGroup }: MessageListProps) {
 
   const filteredTyping = typingUsers.filter((t) => t.user_id !== user?.id);
 
-  const pinnedMessage = activeChat?.pinned_message_id 
-    ? messages.find(m => m.id === activeChat.pinned_message_id) 
+  // ---- Pinned message: always-visible sticky banner ----
+  const pinnedMessageId = activeChat?.pinned_message_id ?? null;
+  const pinnedFromMessages = pinnedMessageId
+    ? messages.find((m) => m.id === pinnedMessageId) ?? null
     : null;
+  const [fetchedPinnedMsg, setFetchedPinnedMsg] = useState<Message | null>(null);
+
+  // Fetch pinned message from DB if not in currently loaded messages
+  useEffect(() => {
+    if (!pinnedMessageId) {
+      setFetchedPinnedMsg(null);
+      return;
+    }
+    // Already available in loaded messages — no fetch needed
+    if (pinnedFromMessages) {
+      setFetchedPinnedMsg(null);
+      return;
+    }
+
+    let cancelled = false;
+    const supabase = getSupabaseBrowserClient();
+
+    (async () => {
+      const { data } = await supabase
+        .from('messages')
+        .select('*, sender:profiles!messages_sender_id_fkey(*)')
+        .eq('id', pinnedMessageId)
+        .single();
+
+      if (!cancelled && data) {
+        setFetchedPinnedMsg(data as Message);
+      }
+    })();
+
+    return () => { cancelled = true; };
+  }, [pinnedMessageId, pinnedFromMessages]);
+
+  const pinnedMessage = pinnedFromMessages ?? fetchedPinnedMsg;
+
+  // Helper: get pinned message preview text
+  const getPinnedPreview = (msg: Message) => {
+    if (msg.content) return msg.content;
+    switch (msg.message_type) {
+      case 'image': return '📷 Photo';
+      case 'video': return '🎬 Video';
+      case 'audio': return '🎵 Audio';
+      case 'document': return '📄 Document';
+      default: return msg.media_url ? '📎 Media' : '';
+    }
+  };
+
+  // Scroll to the pinned message in the chat
+  const scrollToPinned = () => {
+    if (!pinnedMessage) return;
+    const el = document.getElementById(`msg-${pinnedMessage.id}`);
+    if (el) {
+      el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      // Flash highlight
+      el.classList.add('pinned-highlight');
+      setTimeout(() => el.classList.remove('pinned-highlight'), 2000);
+    }
+  };
 
   return (
     <div className="flex-1 flex flex-col relative overflow-hidden bg-[var(--bg-chat)]" style={{
@@ -110,16 +171,40 @@ export default function MessageList({ chatId, isGroup }: MessageListProps) {
         </div>
       )}
 
-      {/* Pinned message bar */}
+      {/* Pinned message bar — WhatsApp-style compact */}
       {pinnedMessage && (
         <div 
-          className={`absolute left-0 right-0 z-20 glass-header border-b border-[var(--border-color)] p-2.5 px-4 flex items-center gap-3 cursor-pointer hover:bg-[var(--bg-hover)] transition-all duration-200 ${isReconnecting ? 'top-8' : 'top-0'}`} 
-          onClick={() => {}}
+          className={`absolute left-0 right-0 z-20 bg-[var(--bg-primary)]/90 backdrop-blur-md shadow-sm border-b border-[var(--border-color)] cursor-pointer hover:bg-[var(--bg-hover)] transition-all duration-200 ${isReconnecting ? 'top-8' : 'top-0'}`}
+          style={{ animation: 'slideDown 0.2s ease-out' }}
+          onClick={scrollToPinned}
         >
-          <Pin size={19} className="text-[var(--emerald)] shrink-0" />
-          <div className="flex-1 min-w-0 border-l-3 border-[var(--emerald)] pl-2.5">
-            <p className="text-[14px] font-semibold text-[var(--emerald)] mb-0.5">Pinned Message</p>
-            <p className="text-[14px] text-[var(--text-secondary)] truncate">{pinnedMessage.content || (pinnedMessage.media_url ? '[Media]' : '')}</p>
+          <div className="flex items-center gap-3 px-3 py-2">
+            {/* Left accent line */}
+            <div className="w-[3px] h-6 rounded-full bg-white/80 dark:bg-[#E9EDEF] shrink-0" />
+            
+            {/* Pin Icon Container */}
+            <div className="w-9 h-9 rounded-[10px] bg-[var(--bg-secondary)] flex items-center justify-center shrink-0">
+              <Pin size={18} className="text-[var(--text-secondary)] fill-current" />
+            </div>
+
+            {/* Pinned Text */}
+            <div className="flex-1 min-w-0 pr-2">
+              <span className="text-[15px] font-medium text-[var(--text-primary)] block truncate">
+                {getPinnedPreview(pinnedMessage)}
+              </span>
+            </div>
+
+            {/* Unpin button (subtly placed) */}
+            <button
+              onClick={(e) => {
+                e.stopPropagation();
+                if (activeChat) unpinMessage(activeChat.id);
+              }}
+              className="p-1.5 rounded-lg hover:bg-[var(--bg-secondary)] text-[var(--text-muted)] hover:text-white transition-all shrink-0"
+              title="Unpin"
+            >
+              <X size={18} />
+            </button>
           </div>
         </div>
       )}
@@ -173,12 +258,13 @@ export default function MessageList({ chatId, isGroup }: MessageListProps) {
                 console.log(`[MessageList] Rendering optimistic message ${msg.id}: isOwn=${isMe} (sender=${msg.sender_id} user=${user?.id})`);
               }
               return (
-                <MessageBubble
-                  key={msg.id}
-                  message={msg}
-                  isOwn={isMe}
-                  showSenderName={isGroup}
-                />
+                <div key={msg.id} id={`msg-${msg.id}`}>
+                  <MessageBubble
+                    message={msg}
+                    isOwn={isMe}
+                    showSenderName={isGroup}
+                  />
+                </div>
               );
             })}
           </div>

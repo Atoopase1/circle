@@ -714,6 +714,9 @@ export const useChatStore = create<ChatState>((set, get) => ({
       chats: state.chats.map((c) => 
         c.id === chatId ? { ...c, pinned_message_id: messageId } : c
       ),
+      activeChat: state.activeChat?.id === chatId 
+        ? { ...state.activeChat, pinned_message_id: messageId } 
+        : state.activeChat,
     }));
     await supabase.from('chats').update({ pinned_message_id: messageId }).eq('id', chatId);
   },
@@ -724,6 +727,9 @@ export const useChatStore = create<ChatState>((set, get) => ({
       chats: state.chats.map((c) => 
         c.id === chatId ? { ...c, pinned_message_id: null } : c
       ),
+      activeChat: state.activeChat?.id === chatId 
+        ? { ...state.activeChat, pinned_message_id: null } 
+        : state.activeChat,
     }));
     await supabase.from('chats').update({ pinned_message_id: null }).eq('id', chatId);
   },

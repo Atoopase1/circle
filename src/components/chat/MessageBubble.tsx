@@ -11,7 +11,9 @@ import { Star, RefreshCw, AlertCircle } from 'lucide-react';
 import { useChatStore } from '@/store/chat-store';
 import { useAuthStore } from '@/store/auth-store';
 import { useInView } from '@/hooks/useInView';
+import toast from 'react-hot-toast';
 import MessageContextMenu from './MessageContextMenu';
+import { useGifStore } from '@/store/gif-store';
 import MessageInfoModal from '../modals/MessageInfoModal';
 import ForwardModal from '../modals/ForwardModal';
 
@@ -62,6 +64,7 @@ const MessageBubble = React.memo(function MessageBubble({ message, isOwn, showSe
 
   const currentUser = useAuthStore(s => s.user);
   const activeChat = useChatStore(s => s.activeChat);
+  const addGif = useGifStore(s => s.addGif);
   const {
     setReplyingTo,
     deleteMessageForMe,
@@ -168,7 +171,17 @@ const MessageBubble = React.memo(function MessageBubble({ message, isOwn, showSe
           isPinned={isPinned}
           onReply={() => setReplyingTo(message)}
           onEdit={() => setEditingMessage(message)}
-          onStar={() => isStarred ? unstarMessage(message.id) : starMessage(message.id)}
+          onStar={() => {
+            if (isStarred) {
+              unstarMessage(message.id);
+            } else {
+              starMessage(message.id);
+              if ((message.message_type === 'image' || message.media_metadata?.mime_type?.startsWith('image/') || message.media_metadata?.filename?.match(/\.(gif)$/i)) && message.media_url) {
+                addGif(message.media_url);
+                toast.success('Added to your GIF collection!');
+              }
+            }
+          }}
           onCopy={() => navigator.clipboard.writeText(message.content || message.media_url || '')}
           onInfo={() => setShowInfo(true)}
           onPin={() => isPinned ? unpinMessage(message.chat_id) : pinMessage(message.chat_id, message.id)}

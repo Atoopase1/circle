@@ -4,17 +4,19 @@
 'use client';
 
 import { useState, useEffect, useMemo } from 'react';
-import { MessageSquarePlus, Users, Settings, LogOut, Image as ImageIcon } from 'lucide-react';
+import { MessageSquarePlus, Users, Settings, LogOut, Image as ImageIcon, Bell } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import SearchInput from '@/components/ui/SearchInput';
 import ChatListItem from '@/components/chat/ChatListItem';
 import Avatar from '@/components/ui/Avatar';
 import Modal from '@/components/ui/Modal';
 import ImageViewerModal from '@/components/ui/ImageViewerModal';
+import NotificationPanel from '@/components/ui/NotificationPanel';
 import Spinner from '@/components/ui/Spinner';
 import CreateGroupModal from '@/components/chat/CreateGroupModal';
 import { useChatStore } from '@/store/chat-store';
 import { useAuthStore } from '@/store/auth-store';
+import { useNotificationStore } from '@/store/notification-store';
 import { getSupabaseBrowserClient } from '@/lib/supabase/client';
 import type { Profile } from '@/types';
 
@@ -26,12 +28,31 @@ export default function ChatSidebar() {
   const [showNewChat, setShowNewChat] = useState(false);
   const [showNewGroup, setShowNewGroup] = useState(false);
   const [showAvatarViewer, setShowAvatarViewer] = useState(false);
+  const [showNotifications, setShowNotifications] = useState(false);
   const [searchUsers, setSearchUsers] = useState<Profile[]>([]);
   const [isSearching, setIsSearching] = useState(false);
+  const [followerCount, setFollowerCount] = useState<number>(0);
+
+  const unreadCount = useNotificationStore(s => s.unreadCount);
 
   useEffect(() => {
     fetchChats();
   }, [fetchChats]);
+
+  // Fetch follower count
+  useEffect(() => {
+    if (!profile?.id) return;
+    const fetchFollowers = async () => {
+      const supabase = getSupabaseBrowserClient();
+      const { count } = await supabase
+        .from('follows')
+        .select('*', { count: 'exact', head: true })
+        .eq('following_id', profile.id);
+      
+      setFollowerCount(count || 0);
+    };
+    fetchFollowers();
+  }, [profile?.id]);
 
   // Search users for new chat
   useEffect(() => {
@@ -68,11 +89,6 @@ export default function ChatSidebar() {
       setShowNewChat(false);
       router.push(`/${chatId}`);
     }
-  };
-
-  const handleSignOut = async () => {
-    await signOut();
-    router.push('/login');
   };
 
   return (
@@ -116,7 +132,7 @@ export default function ChatSidebar() {
                 size="xl"
               />
             </button>
-            <div className="pt-[38px] flex flex-col">
+            <div className="pt-[42px] flex flex-col">
               <button
                 onClick={() => profile?.id && router.push(`/profile/${profile.id}`)}
                 className="text-left group"
@@ -125,15 +141,27 @@ export default function ChatSidebar() {
                   {profile?.display_name || 'User'}
                 </span>
               </button>
-              <div className="flex items-center gap-1.5 mt-1.5">
-                <span className="w-1.5 h-1.5 rounded-full bg-[var(--emerald)] shadow-[0_0_5px_var(--emerald)] animate-pulse" />
-                <span className="text-[13px] text-[var(--text-muted)] font-medium tracking-wide">Online</span>
+              <div className="flex items-center gap-2 mt-3.5 min-w-0">
+                <div className="flex items-center gap-1.5 shrink-0">
+                  <span className="w-1.5 h-1.5 rounded-full bg-[var(--emerald)] shadow-[0_0_5px_var(--emerald)] animate-pulse" />
+                  <span className="text-[12px] text-[var(--emerald)] font-semibold tracking-wide">Online</span>
+                </div>
+                <div className="w-1 h-1 rounded-full bg-[var(--text-muted)] opacity-50 shrink-0" />
+                <button 
+                  onClick={() => profile?.id && router.push(`/profile/${profile.id}`)}
+                  className="flex items-center gap-1 group/followers min-w-0 flex-1"
+                >
+                  <Users size={12} className="shrink-0 text-[var(--text-muted)] group-hover/followers:text-[var(--text-primary)] transition-colors" />
+                  <span className="text-[12px] text-[var(--text-muted)] font-medium tracking-wide group-hover/followers:text-[var(--text-primary)] transition-colors truncate">
+                    {followerCount} {followerCount === 1 ? 'Follower' : 'Followers'}
+                  </span>
+                </button>
               </div>
             </div>
           </div>
 
           {/* Action buttons */}
-          <div className="flex items-center gap-0.5 pt-[38px]">
+          <div className="flex items-center gap-1 sm:gap-1.5 pt-[40px]">
             <button
               onClick={() => setShowNewGroup(true)}
               className="p-2 rounded-xl hover:bg-[var(--bg-hover)] transition-all duration-200 text-[var(--text-muted)] hover:text-[var(--text-primary)]"
@@ -155,12 +183,17 @@ export default function ChatSidebar() {
             >
               <Settings size={20} />
             </button>
-            <button
-              onClick={handleSignOut}
-              className="p-2 rounded-xl hover:bg-[var(--bg-hover)] transition-all duration-200 text-[var(--text-muted)] hover:text-red-500"
-              title="Log out"
+            <button 
+              onClick={() => setShowNotifications(!showNotifications)} 
+              className="p-2 rounded-xl hover:bg-[var(--bg-hover)] transition-all duration-200 text-[var(--text-muted)] hover:text-[var(--text-primary)] relative"
+              title="Notifications"
             >
-              <LogOut size={20} />
+              <Bell size={20} />
+              {unreadCount() > 0 && (
+                <span className="absolute -top-0.5 -right-0.5 bg-red-500 text-white text-[9px] font-bold w-[16px] h-[16px] rounded-full flex items-center justify-center border-[2px] border-[var(--bg-primary)]">
+                  {unreadCount() > 9 ? '9+' : unreadCount()}
+                </span>
+              )}
             </button>
           </div>
         </div>
@@ -236,6 +269,9 @@ export default function ChatSidebar() {
         src={profile?.avatar_url} 
         align="left"
       />
+
+      {/* Notification Panel */}
+      <NotificationPanel isOpen={showNotifications} onClose={() => setShowNotifications(false)} />
     </div>
   );
 }

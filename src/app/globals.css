@@ -812,3 +812,28 @@ html, body {
 img, video, audio, iframe {
   max-width: 100%;
 }
+
+/* ============================================================
+   ANIMATIONS — Pinned Message & Notifications
+   ============================================================ */
+
+@keyframes slideDown {
+  from { transform: translateY(-100%); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
+}
+
+@keyframes slideUp {
+  from { transform: translateY(20px); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
+}
+
+@keyframes pinnedFlash {
+  0%, 100% { background: transparent; }
+  25% { background: rgba(0, 168, 132, 0.12); }
+  75% { background: rgba(0, 168, 132, 0.06); }
+}
+
+.pinned-highlight {
+  animation: pinnedFlash 2s ease-out;
+  border-radius: 12px;
+}

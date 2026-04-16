@@ -10,6 +10,7 @@ import { useTypingIndicator } from '@/hooks/usePresence';
 import { uploadMedia, getMessageTypeFromFile } from '@/lib/media';
 import toast from 'react-hot-toast';
 import EmojiPicker, { Theme } from 'emoji-picker-react';
+import GifPicker from '@/components/chat/GifPicker';
 
 interface MessageInputProps {
   chatId: string;
@@ -23,6 +24,7 @@ export default function MessageInput({ chatId }: MessageInputProps) {
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
   const [uploadProgress, setUploadProgress] = useState(0);
   const [showEmoji, setShowEmoji] = useState(false);
+  const [showGifPicker, setShowGifPicker] = useState(false);
   const [isRecording, setIsRecording] = useState(false);
   const [recordingTime, setRecordingTime] = useState(0);
   
@@ -108,6 +110,21 @@ export default function MessageInput({ chatId }: MessageInputProps) {
     if (e.key === 'Enter' && !e.shiftKey) {
       e.preventDefault();
       handleSend();
+    }
+  };
+
+  const handleGifSelect = (url: string) => {
+    sendMessage(
+      chatId,
+      '',
+      'image',
+      url,
+      { mime_type: 'image/gif', filename: 'giphy.gif' },
+      replyingTo?.id
+    );
+    setShowGifPicker(false);
+    if (replyingTo) {
+      setReplyingTo(null);
     }
   };
 
@@ -333,11 +350,31 @@ export default function MessageInput({ chatId }: MessageInputProps) {
 
         {/* Emoji button */}
         <button 
-          onClick={() => setShowEmoji(!showEmoji)}
+          onClick={() => {
+            setShowEmoji(!showEmoji);
+            setShowGifPicker(false);
+          }}
           className={`p-2.5 rounded-xl transition-all duration-200 shrink-0 mb-0.5 ${showEmoji ? 'bg-[var(--bg-hover)] text-[var(--text-primary)]' : 'text-[var(--text-muted)] hover:bg-[var(--bg-hover)] hover:text-[var(--text-primary)]'}`}
         >
           <Smile size={21} />
         </button>
+
+        {/* GIF button */}
+        <button 
+          onClick={() => {
+            setShowGifPicker(!showGifPicker);
+            setShowEmoji(false);
+          }}
+          className={`p-2.5 rounded-xl transition-all duration-200 shrink-0 mb-0.5 text-[14px] font-bold ${showGifPicker ? 'bg-[var(--bg-hover)] text-[var(--emerald)]' : 'text-[var(--text-muted)] hover:bg-[var(--bg-hover)] hover:text-[var(--text-primary)]'}`}
+        >
+          GIF
+        </button>
+
+        {showGifPicker && (
+          <div className="absolute bottom-[60px] left-4 z-50 animate-scaleIn">
+            <GifPicker onGifSelect={handleGifSelect} />
+          </div>
+        )}
 
         {/* Attachment button */}
         <div className="relative shrink-0 mb-0.5">
