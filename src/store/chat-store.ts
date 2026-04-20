@@ -192,7 +192,7 @@ export const useChatStore = create<ChatState>((set, get) => ({
       set({ activeChat: chat });
     }
 
-    // Fetch messages
+    // ALWAYS fetch messages fresh to ensure consistency — don't skip based on cache
     await get().fetchMessages(chatId);
     // Mark as read
     await get().markAsRead(chatId);
@@ -225,13 +225,6 @@ export const useChatStore = create<ChatState>((set, get) => ({
         return q;
       };
 
-      // 8 second timeout fallback
-      let isTimeout = false;
-      const timeoutId = setTimeout(() => {
-        isTimeout = true;
-        set({ isLoadingMessages: false });
-      }, 8000);
-
       let { data, error } = await buildQuery(true);
       
       // Fallback to basic query if advanced tables don't exist
@@ -242,9 +235,6 @@ export const useChatStore = create<ChatState>((set, get) => ({
         error = result.error;
       }
 
-      clearTimeout(timeoutId);
-
-      if (isTimeout) return;
       if (error) throw error;
 
       const user = useAuthStore.getState().user;
@@ -294,7 +284,12 @@ export const useChatStore = create<ChatState>((set, get) => ({
       }
     } catch (err: any) {
       console.error('fetchMessages error:', err?.message || JSON.stringify(err) || err);
-      set({ isLoadingMessages: false });
+      // CRITICAL: Always mark as fetched even on error so realtime can still subscribe
+      // This prevents the chat from being permanently stuck with no realtime updates
+      set((state) => ({ 
+        isLoadingMessages: false,
+        _fetchedChats: { ...state._fetchedChats, [chatId]: true }
+      }));
     }
   },
 

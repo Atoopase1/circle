@@ -251,7 +251,7 @@ export default function MessageInput({ chatId }: MessageInputProps) {
   ];
 
   return (
-    <div className="glass-header border-t border-[var(--border-color)]">
+    <div className="glass-header border-t border-[var(--border-color)] relative z-[200]">
       {/* File preview */}
       {selectedFile && (
         <div className="px-4 py-3 border-b border-[var(--border-color)] flex items-center gap-3 animate-slideUp overflow-hidden">
@@ -343,7 +343,7 @@ export default function MessageInput({ chatId }: MessageInputProps) {
       {/* Input bar */}
       <div className="flex items-end gap-1 sm:gap-2 px-2 sm:px-4 py-2 sm:py-3 relative">
         {showEmoji && (
-          <div className="absolute bottom-[60px] left-4 z-50 animate-scaleIn">
+          <div className="absolute bottom-[60px] left-4 z-[9000] animate-scaleIn">
             <EmojiPicker onEmojiClick={onEmojiClick} theme={Theme.AUTO} />
           </div>
         )}
@@ -371,7 +371,7 @@ export default function MessageInput({ chatId }: MessageInputProps) {
         </button>
 
         {showGifPicker && (
-          <div className="absolute bottom-[60px] left-4 z-50 animate-scaleIn">
+          <div className="absolute bottom-[60px] left-4 z-[9000] animate-scaleIn">
             <GifPicker onGifSelect={handleGifSelect} />
           </div>
         )}

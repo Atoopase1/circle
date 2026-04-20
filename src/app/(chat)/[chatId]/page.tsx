@@ -27,12 +27,16 @@ export default function ChatPage() {
 
   useEffect(() => {
     if (!chatId) return;
+    let stale = false;
     
     const initChat = async () => {
       // If chats never fetched, fetch them first
-      if (!hasFetchedOnce) {
+      if (!useChatStore.getState()._hasFetchedOnce) {
         await fetchChats();
       }
+      
+      // Only proceed if this effect hasn't been superseded
+      if (stale) return;
       
       // Now set the active chat (it will fetch messages inside)
       await setActiveChat(chatId);
@@ -41,7 +45,7 @@ export default function ChatPage() {
     initChat();
 
     return () => {
-      // Don't clear active chat on unmount to prevent flicker
+      stale = true;
     };
   }, [chatId, hasFetchedOnce, fetchChats, setActiveChat]);
 

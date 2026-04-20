@@ -322,7 +322,7 @@ const MessageBubble = React.memo(function MessageBubble({ message, isOwn, showSe
                       onLoad={() => setMediaLoaded(true)}
                       onError={() => setMediaError(true)}
                       loading="lazy"
-                      onClick={() => openLightbox('image')}
+                      onClick={(e) => { e.stopPropagation(); openLightbox('image'); }}
                     />
                   ) : mediaError ? (
                     <div className="flex flex-col items-center justify-center p-6 text-red-400">
@@ -340,7 +340,7 @@ const MessageBubble = React.memo(function MessageBubble({ message, isOwn, showSe
             {((message.message_type === 'video') ||
               (message.message_type !== 'audio' && message.message_type !== 'image' && message.message_type !== 'document' && (message.media_metadata?.mime_type?.startsWith('video/') ||
                 message.media_metadata?.filename?.match(/\.(mp4|webm|ogg|mov)$/i)))) && message.media_url && (
-                <div ref={mediaRef} className="mb-1.5 -mx-1 -mt-0.5 min-h-[150px] overflow-hidden rounded-xl bg-[var(--bg-hover)] relative cursor-pointer" onClick={() => openLightbox('video')}>
+                <div ref={mediaRef} className="mb-1.5 -mx-1 -mt-0.5 min-h-[150px] overflow-hidden rounded-xl bg-[var(--bg-hover)] relative cursor-pointer" onClick={(e) => { e.stopPropagation(); openLightbox('video'); }}>
                   {isMediaInView ? (
                     <video
                       src={message.media_url}
@@ -390,7 +390,7 @@ const MessageBubble = React.memo(function MessageBubble({ message, isOwn, showSe
               !message.media_metadata?.filename?.match(/\.(mp3|wav|ogg|m4a)$/i) &&
               message.media_url && (
                 <div
-                  onClick={() => openLightbox('document')}
+                  onClick={(e) => { e.stopPropagation(); openLightbox('document'); }}
                   className={`flex items-center gap-3 mb-1.5 p-3 rounded-xl hover:opacity-80 transition-opacity cursor-pointer ${isOwn ? 'bg-white/10' : 'bg-[var(--bg-secondary)]'
                     }`}
                 >

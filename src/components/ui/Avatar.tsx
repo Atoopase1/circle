@@ -34,14 +34,11 @@ export default function Avatar({ src, name, size = 'md', isOnline, className = '
           className={`${s.container} rounded-full object-cover ring-1 ring-[var(--border-color)] transition-all duration-200`}
         />
       ) : (
-        <div
-          className={`${s.container} rounded-full flex items-center justify-center text-white font-semibold ${s.text} ring-1 ring-white/20`}
-          style={{ 
-            background: bgColor,
-          }}
-        >
-          {getInitials(name)}
-        </div>
+        <img
+          src="/logo.jpg"
+          alt={name}
+          className={`${s.container} rounded-full object-cover ring-1 ring-[var(--border-color)] transition-all duration-200`}
+        />
       )}
       {isOnline !== undefined && (
         <span

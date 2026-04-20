@@ -156,7 +156,7 @@ export function useRealtimeMessages(chatId: string | null) {
     return () => {
       supabase.removeChannel(channel);
     };
-  }, [chatId, addMessage]);
+  }, [chatId, isFetched, addMessage]);
 }
 
 /**

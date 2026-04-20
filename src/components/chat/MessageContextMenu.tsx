@@ -41,6 +41,7 @@ interface MessageContextMenuProps {
 
 export default function MessageContextMenu(props: MessageContextMenuProps) {
   const [isOpen, setIsOpen] = useState(false);
+  const [isClosing, setIsClosing] = useState(false);
   const [menuPos, setMenuPos] = useState<{ top: number; left: number; openUp: boolean } | null>(null);
   const triggerRef = useRef<HTMLDivElement>(null);
   const menuRef = useRef<HTMLDivElement>(null);
@@ -105,6 +106,12 @@ export default function MessageContextMenu(props: MessageContextMenuProps) {
 
   const handleClose = useCallback(() => {
     setIsOpen(false);
+    // Keep invisible backdrop briefly to absorb ghost clicks on touch devices
+    setIsClosing(true);
+    setTimeout(() => {
+      setIsClosing(false);
+      setMenuPos(null);
+    }, 350);
   }, []);
 
   // Close on outside click
@@ -181,7 +188,7 @@ export default function MessageContextMenu(props: MessageContextMenuProps) {
     icon: any; label: string; onClick: () => void; danger?: boolean; iconClass?: string; disabled?: boolean 
   }) => (
     <button 
-      onClick={() => { onClick(); handleClose(); }} 
+      onClick={(e) => { e.stopPropagation(); e.preventDefault(); onClick(); handleClose(); }} 
       disabled={disabled}
       className={`flex flex-col items-center justify-center gap-1 p-2 rounded-xl text-center transition-all duration-150 flex-1 min-w-0 ${
         danger 
@@ -231,15 +238,17 @@ export default function MessageContextMenu(props: MessageContextMenuProps) {
         {props.children}
       </div>
 
-      {isOpen && menuPos && typeof document !== 'undefined' && createPortal(
+      {(isOpen || isClosing) && menuPos && typeof document !== 'undefined' && createPortal(
         <>
-          {/* Invisible backdrop to catch taps */}
+          {/* Invisible backdrop to catch taps + ghost click shield */}
           <div 
             className="fixed inset-0 z-[9990]" 
-            onClick={(e) => { e.stopPropagation(); handleClose(); }} 
+            onClick={(e) => { e.stopPropagation(); e.preventDefault(); if (isOpen) handleClose(); }} 
+            onTouchEnd={(e) => { e.stopPropagation(); e.preventDefault(); }}
           />
           
-          {/* Floating card — WhatsApp style */}
+          {/* Floating card — WhatsApp style (only visible when open, not during closing shield) */}
+          {isOpen && (
           <div 
             ref={menuRef}
             className={`fixed z-[9991] w-[240px] bg-[var(--bg-primary)] border border-[var(--border-color)] rounded-2xl overflow-hidden ${
@@ -254,13 +263,14 @@ export default function MessageContextMenu(props: MessageContextMenuProps) {
               maxHeight: 'calc(100vh - 32px)',
               overflowY: 'auto',
             }}
+            onClick={(e) => e.stopPropagation()}
           >
             {/* Emoji reaction row */}
             <div className="flex items-center justify-between px-2 py-2 border-b border-[var(--border-color)]">
               {EMOJIS.map(e => (
                 <button
                   key={e}
-                  onClick={() => { props.onReact(e); handleClose(); }}
+                  onClick={(ev) => { ev.stopPropagation(); ev.preventDefault(); props.onReact(e); handleClose(); }}
                   className="text-[20px] p-1.5 rounded-full hover:bg-[var(--bg-hover)] active:scale-125 transition-all duration-150"
                 >
                   {e}
@@ -318,6 +328,7 @@ export default function MessageContextMenu(props: MessageContextMenuProps) {
               </Row>
             </div>
           </div>
+          )}
         </>,
         document.body
       )}
