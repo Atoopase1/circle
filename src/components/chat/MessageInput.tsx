@@ -4,6 +4,7 @@
 'use client';
 
 import { useState, useRef, useCallback, useEffect } from 'react';
+import { createPortal } from 'react-dom';
 import { Send, Paperclip, Smile, Mic, X, ImageIcon, FileText, Video, Camera, Pencil } from 'lucide-react';
 import { useChatStore } from '@/store/chat-store';
 import { useTypingIndicator } from '@/hooks/usePresence';
@@ -341,14 +342,77 @@ export default function MessageInput({ chatId }: MessageInputProps) {
       )}
 
       {/* Input bar */}
-      <div className="flex items-end gap-1 sm:gap-2 px-2 sm:px-4 py-2 sm:py-3 relative">
-        {showEmoji && (
-          <div className="absolute bottom-[60px] left-4 z-[9000] animate-scaleIn">
-            <EmojiPicker onEmojiClick={onEmojiClick} theme={Theme.AUTO} />
-          </div>
+      <div className="flex items-end gap-1 sm:gap-1.5 px-2 sm:px-4 py-2 sm:py-3 relative">
+        {/* Emoji picker — portaled to body for guaranteed top-layer rendering */}
+        {showEmoji && typeof document !== 'undefined' && createPortal(
+          <>
+            <div className="fixed inset-0 z-[9998]" onClick={() => setShowEmoji(false)} />
+            <div 
+              className="fixed z-[9999] animate-scaleIn" 
+              style={{ bottom: '70px', left: '16px' }}
+              onClick={(e) => e.stopPropagation()}
+            >
+              <EmojiPicker onEmojiClick={onEmojiClick} theme={Theme.AUTO} />
+            </div>
+          </>,
+          document.body
         )}
 
-        {/* Emoji button */}
+        {/* GIF picker — portaled to body for guaranteed top-layer rendering */}
+        {showGifPicker && typeof document !== 'undefined' && createPortal(
+          <>
+            <div className="fixed inset-0 z-[9998]" onClick={() => setShowGifPicker(false)} />
+            <div 
+              className="fixed z-[9999] animate-scaleIn" 
+              style={{ bottom: '70px', left: '16px' }}
+              onClick={(e) => e.stopPropagation()}
+            >
+              <GifPicker onGifSelect={handleGifSelect} />
+            </div>
+          </>,
+          document.body
+        )}
+
+        {/* Attachment button (swapped — now first) */}
+        <div className="relative shrink-0 mb-0.5">
+          <button
+            onClick={() => setShowAttachMenu(!showAttachMenu)}
+            className={`p-1.5 sm:p-2 rounded-xl transition-all duration-200 ${
+              showAttachMenu 
+                ? 'bg-[var(--bg-hover)] text-[var(--text-primary)] rotate-45' 
+                : 'hover:bg-[var(--bg-hover)] text-[var(--text-secondary)] hover:text-[var(--text-primary)]'
+            }`}
+          >
+            <Paperclip size={22} strokeWidth={2.2} />
+          </button>
+          {showAttachMenu && typeof document !== 'undefined' && createPortal(
+            <>
+              <div className="fixed inset-0 z-[9998]" onClick={() => setShowAttachMenu(false)} />
+              <div 
+                className="fixed z-[9999] bg-[var(--bg-primary)] rounded-2xl border border-[var(--border-color)] py-2 min-w-[190px] animate-scaleIn origin-bottom-left"
+                style={{ bottom: '70px', left: '16px', boxShadow: 'var(--shadow-xl)' }}
+                onClick={(e) => e.stopPropagation()}
+              >
+                {attachOptions.map(opt => (
+                  <button
+                    key={opt.label}
+                    onClick={() => {
+                      handleFileSelect(opt.accept);
+                      setShowAttachMenu(false);
+                    }}
+                    className="w-full flex items-center gap-3 px-4 py-2.5 hover:bg-[var(--bg-hover)] transition-all duration-150 text-[14px] text-[var(--text-primary)]"
+                  >
+                    <opt.icon size={22} className={opt.color} />
+                    {opt.label}
+                  </button>
+                ))}
+              </div>
+            </>,
+            document.body
+          )}
+        </div>
+
+        {/* Emoji button (swapped — now second) */}
         <button 
           onClick={() => {
             setShowEmoji(!showEmoji);
@@ -356,56 +420,8 @@ export default function MessageInput({ chatId }: MessageInputProps) {
           }}
           className={`p-1.5 sm:p-2 rounded-xl transition-all duration-200 shrink-0 mb-0.5 ${showEmoji ? 'bg-[var(--bg-hover)] text-[var(--text-primary)]' : 'text-[var(--text-secondary)] hover:bg-[var(--bg-hover)] hover:text-[var(--text-primary)]'}`}
         >
-          <Smile size={26} strokeWidth={2.2} />
+          <Smile size={22} strokeWidth={2.2} />
         </button>
-
-        {/* GIF button */}
-        <button 
-          onClick={() => {
-            setShowGifPicker(!showGifPicker);
-            setShowEmoji(false);
-          }}
-          className={`p-1.5 sm:p-2 rounded-xl transition-all duration-200 shrink-0 mb-0.5 text-[14px] font-bold ${showGifPicker ? 'bg-[var(--bg-hover)] text-[var(--emerald)]' : 'text-[var(--text-muted)] hover:bg-[var(--bg-hover)] hover:text-[var(--text-primary)]'}`}
-        >
-          GIF
-        </button>
-
-        {showGifPicker && (
-          <div className="absolute bottom-[60px] left-4 z-[9000] animate-scaleIn">
-            <GifPicker onGifSelect={handleGifSelect} />
-          </div>
-        )}
-
-        {/* Attachment button */}
-        <div className="relative shrink-0 mb-0.5">
-          <button
-            onClick={() => setShowAttachMenu(!showAttachMenu)}
-            className={`p-1.5 sm:p-2.5 rounded-xl transition-all duration-200 ${
-              showAttachMenu 
-                ? 'bg-[var(--bg-hover)] text-[var(--text-primary)] rotate-45' 
-                : 'hover:bg-[var(--bg-hover)] text-[var(--text-secondary)] hover:text-[var(--text-primary)]'
-            }`}
-          >
-            <Paperclip size={26} strokeWidth={2.2} />
-          </button>
-          {showAttachMenu && (
-            <div 
-              className="absolute bottom-14 left-0 bg-[var(--bg-primary)] rounded-2xl border border-[var(--border-color)] py-2 min-w-[190px] animate-scaleIn z-10"
-              style={{ boxShadow: 'var(--shadow-xl)' }}
-            >
-              {attachOptions.map(opt => (
-                <button
-                  key={opt.label}
-                  onClick={() => handleFileSelect(opt.accept)}
-                  className="w-full flex items-center gap-3 px-4 py-2.5 hover:bg-[var(--bg-hover)] transition-all duration-150 text-[14px] text-[var(--text-primary)]"
-                >
-                  <opt.icon size={26} className={opt.color} />
-                  {opt.label}
-                </button>
-              ))}
-            </div>
-          )}
-        </div>
 
         {/* Hidden file input */}
         <input
@@ -415,7 +431,7 @@ export default function MessageInput({ chatId }: MessageInputProps) {
           onChange={handleFileChange}
         />
 
-        {/* Text input */}
+        {/* Text input with GIF button inside on right edge */}
         <div className="flex-1 relative min-h-[44px] flex items-center">
           {isRecording ? (
             <div className="w-full flex items-center justify-between px-4 py-2 bg-[var(--bg-secondary)] rounded-2xl h-full border border-transparent">
@@ -428,15 +444,27 @@ export default function MessageInput({ chatId }: MessageInputProps) {
               </span>
             </div>
           ) : (
-            <textarea
-              ref={textareaRef}
-              value={text}
-              onChange={handleTextChange}
-              onKeyDown={handleKeyDown}
-              placeholder="Type a message"
-              rows={1}
-              className="w-full px-4 py-2.5 bg-[var(--bg-secondary)] text-[var(--text-primary)] rounded-2xl text-[14px] placeholder:text-[var(--text-muted)] focus:outline-none focus:ring-2 focus:ring-[var(--emerald)]/20 focus:bg-[var(--bg-primary)] border border-transparent focus:border-[var(--emerald)]/15 resize-none max-h-[150px] leading-5 transition-all duration-200"
-            />
+            <>
+              <textarea
+                ref={textareaRef}
+                value={text}
+                onChange={handleTextChange}
+                onKeyDown={handleKeyDown}
+                placeholder="Type a message"
+                rows={1}
+                className="w-full px-4 pr-12 py-2.5 bg-[var(--bg-secondary)] text-[var(--text-primary)] rounded-2xl text-[14px] placeholder:text-[var(--text-muted)] focus:outline-none focus:ring-2 focus:ring-[var(--emerald)]/20 focus:bg-[var(--bg-primary)] border border-transparent focus:border-[var(--emerald)]/15 resize-none max-h-[150px] leading-5 transition-all duration-200"
+              />
+              {/* GIF button — inside input on right edge */}
+              <button 
+                onClick={() => {
+                  setShowGifPicker(!showGifPicker);
+                  setShowEmoji(false);
+                }}
+                className={`absolute right-2 bottom-1/2 translate-y-1/2 px-1.5 py-0.5 rounded-lg transition-all duration-200 text-[12px] font-bold border ${showGifPicker ? 'bg-[var(--emerald)]/15 text-[var(--emerald)] border-[var(--emerald)]/30' : 'text-[var(--text-muted)] border-[var(--text-muted)]/30 hover:text-[var(--text-primary)] hover:border-[var(--text-primary)]/30'}`}
+              >
+                GIF
+              </button>
+            </>
           )}
         </div>
 
@@ -455,9 +483,9 @@ export default function MessageInput({ chatId }: MessageInputProps) {
           } : undefined}
         >
           {text.trim() || selectedFile ? (
-            <Send size={26} strokeWidth={2.2} className={isSending ? 'animate-pulse' : ''} />
+            <Send size={22} strokeWidth={2.2} className={isSending ? 'animate-pulse' : ''} />
           ) : (
-            isRecording ? <div className="w-3.5 h-3.5 bg-white rounded-[3px]" /> : <Mic size={26} strokeWidth={2.2} />
+            isRecording ? <div className="w-3.5 h-3.5 bg-white rounded-[3px]" /> : <Mic size={22} strokeWidth={2.2} />
           )}
         </button>
       </div>

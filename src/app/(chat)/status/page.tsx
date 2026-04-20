@@ -22,6 +22,7 @@ export default function StatusPage() {
   // Search & Filter State
   const [searchQuery, setSearchQuery] = useState('');
   const [filterType, setFilterType] = useState<'all' | 'media' | 'text'>('all');
+  const [followingIds, setFollowingIds] = useState<string[]>([]);
 
   const loadStatuses = useCallback(async () => {
     setIsLoading(true);
@@ -57,8 +58,21 @@ export default function StatusPage() {
     }
     
     if (data) setStatuses(data);
+
+    // Also fetch the current user's contacts/follows to accurately set the Follow button states
+    if (profile) {
+      const { data: contactsData } = await supabase
+        .from('contacts')
+        .select('contact_id')
+        .eq('user_id', profile.id);
+      
+      if (contactsData) {
+        setFollowingIds(contactsData.map(c => c.contact_id));
+      }
+    }
+
     setIsLoading(false);
-  }, [activeTab, supabase]);
+  }, [activeTab, supabase, profile]);
 
   useEffect(() => {
     loadStatuses();
@@ -84,6 +98,8 @@ export default function StatusPage() {
       toast.error(error.message);
     } else {
       toast.success(`Added as ${category}!`);
+      // Update local state to instantly reflect the follow status
+      setFollowingIds(prev => Array.from(new Set([...prev, contactId])));
     }
   };
 
@@ -194,6 +210,8 @@ export default function StatusPage() {
                 key={status.id} 
                 status={status} 
                 onRefresh={loadStatuses}
+                onAddContact={handleAddContact}
+                initialFollowed={followingIds.includes(status.user_id)}
               />
             ))
           )}

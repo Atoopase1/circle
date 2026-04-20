@@ -3,7 +3,7 @@
 // ============================================================
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { formatDistanceToNow } from 'date-fns';
 import { UserPlus, UserCheck, Bookmark, BookmarkCheck, Download, Heart, MessageSquare, Star, Send, MoreVertical, Trash2, Edit, Check, X } from 'lucide-react';
 import Avatar from '@/components/ui/Avatar';
@@ -16,9 +16,10 @@ interface StatusCardProps {
   status: any;
   onAddContact?: (id: string, category: 'friend' | 'family') => void;
   onRefresh?: () => void;
+  initialFollowed?: boolean;
 }
 
-export default function StatusCard({ status, onAddContact, onRefresh }: StatusCardProps) {
+export default function StatusCard({ status, onAddContact, onRefresh, initialFollowed = false }: StatusCardProps) {
   const router = useRouter();
   const { profile } = useAuthStore();
   const supabase = getSupabaseBrowserClient();
@@ -45,7 +46,11 @@ export default function StatusCard({ status, onAddContact, onRefresh }: StatusCa
   const [comments, setComments] = useState<any[]>(status.status_comments || []);
   const [isSubmittingComment, setIsSubmittingComment] = useState(false);
 
-  const [followed, setFollowed] = useState(false);
+  const [followed, setFollowed] = useState(initialFollowed);
+
+  useEffect(() => {
+    setFollowed(initialFollowed);
+  }, [initialFollowed]);
   const [saved, setSaved] = useState(false);
   const [showMenu, setShowMenu] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
@@ -147,9 +152,9 @@ export default function StatusCard({ status, onAddContact, onRefresh }: StatusCa
   };
 
   const handleFollow = async () => {
-    if (!profile || isOwnPost) return;
-    if (!followed && onAddContact) onAddContact(status.user_id, 'friend');
-    setFollowed(!followed);
+    if (!profile || isOwnPost || followed) return; // Prevent following twice
+    if (onAddContact) onAddContact(status.user_id, 'friend');
+    setFollowed(true);
   };
 
   const handleDownload = async () => { /* ...existing download handler... */ };
@@ -207,13 +212,14 @@ export default function StatusCard({ status, onAddContact, onRefresh }: StatusCa
         ) : (
           <button
             onClick={handleFollow}
+            disabled={followed}
             className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-[13px] font-semibold transition-all ${
               followed
-                ? 'bg-[var(--wa-green)]/10 text-[var(--wa-green)] border border-[var(--wa-green)]/30'
+                ? 'bg-[var(--wa-green)]/10 text-[var(--wa-green)] border border-[var(--wa-green)]/30 cursor-default'
                 : 'bg-[var(--wa-green)] text-white hover:bg-[var(--wa-green-dark)] shadow-sm'
             }`}
           >
-            {followed ? <UserCheck size={26} /> : <UserPlus size={26} />}
+            {followed ? <UserCheck size={18} /> : <UserPlus size={18} />}
             {followed ? 'Following' : 'Follow'}
           </button>
         )}
