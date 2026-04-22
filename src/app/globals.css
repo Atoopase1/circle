@@ -871,3 +871,17 @@ input, textarea {
 .animate-bounceOut {
   animation: bounceOut 0.3s ease-in forwards;
 }
+
+@keyframes shake {
+  0%, 100% { transform: rotate(0deg); }
+  15% { transform: rotate(15deg); }
+  30% { transform: rotate(-15deg); }
+  45% { transform: rotate(15deg); }
+  60% { transform: rotate(-15deg); }
+  75% { transform: rotate(15deg); }
+  90% { transform: rotate(-15deg); }
+}
+
+.animate-shake {
+  animation: shake 1s ease-in-out;
+}

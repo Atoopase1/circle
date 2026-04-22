@@ -4,7 +4,8 @@ import { useAuthStore } from '@/store/auth-store';
 import { useNotificationStore } from '@/store/notification-store';
 import toast from 'react-hot-toast';
 import React from 'react';
-import { BellRing } from 'lucide-react';
+import { BellRing, MessageSquare } from 'lucide-react';
+import { useChatStore } from '@/store/chat-store';
 import Avatar from '@/components/ui/Avatar';
 import { useRouter } from 'next/navigation';
 
@@ -235,12 +236,67 @@ export function useAppNotifications() {
       );
     };
 
+    const handleNewChatMessage = async (payload: any) => {
+      const msg = payload.new;
+      if (msg.sender_id === profile.id) return; // Don't notify self
+
+      // Check if we are currently looking at this chat
+      const activeChatId = useChatStore.getState().activeChatId;
+      if (activeChatId === msg.chat_id) return;
+
+      // Get sender profile
+      const { data: actor } = await supabase
+        .from('profiles')
+        .select('display_name, avatar_url')
+        .eq('id', msg.sender_id)
+        .single();
+        
+      if (!actor) return;
+
+      playSound();
+
+      toast.custom(
+        (t) => (
+          <div
+            className={`${
+              t.visible ? 'animate-bounceIn' : 'animate-bounceOut'
+            } max-w-sm w-full bg-[var(--bg-primary)] shadow-[var(--shadow-xl)] rounded-2xl pointer-events-auto flex ring-1 ring-black/5 overflow-hidden border border-[var(--border-color)] cursor-pointer`}
+            onClick={() => {
+              toast.dismiss(t.id);
+              router.push(`/${msg.chat_id}`);
+            }}
+          >
+            <div className="flex-1 w-0 p-4">
+              <div className="flex items-start">
+                <div className="flex-shrink-0 pt-0.5 relative">
+                  <Avatar src={actor.avatar_url} name={actor.display_name} size="md" />
+                  <div className="absolute -bottom-1 -right-1 bg-[var(--emerald)] rounded-full p-1 border-2 border-[var(--bg-primary)]">
+                    <MessageSquare size={12} className="text-white fill-current" />
+                  </div>
+                </div>
+                <div className="ml-3 flex-1">
+                  <p className="text-sm font-semibold text-[var(--emerald)]">
+                    New message from {actor.display_name}
+                  </p>
+                  <p className="mt-1 text-[13px] text-[var(--text-primary)] font-medium line-clamp-1">
+                    {msg.content || (msg.media_url ? '📷 Sent an image' : 'Sent a message')}
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+        ),
+        { duration: 5000, position: 'top-center' }
+      );
+    };
+
     const channel = supabase.channel('app-notifications')
       .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'statuses' }, handleNewPost)
       .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'status_comments' }, payload => handleNewInteraction(payload, 'comment'))
       .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'status_likes' }, payload => handleNewInteraction(payload, 'like'))
       .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'status_ratings' }, payload => handleNewInteraction(payload, 'rating'))
       .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'follows' }, handleNewFollow)
+      .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'messages' }, handleNewChatMessage)
       .subscribe();
 
     return () => {

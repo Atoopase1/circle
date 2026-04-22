@@ -29,6 +29,7 @@ interface ChatState {
   fetchChats: () => Promise<void>;
   setActiveChat: (chatId: string | null) => Promise<void>;
   fetchMessages: (chatId: string, before?: string) => Promise<void>;
+  lastNewMessageAt: number | null;
   sendMessage: (chatId: string, content: string, messageType?: string, mediaUrl?: string, mediaMetadata?: Record<string, unknown>, replyToId?: string) => Promise<Message | null>;
   markAsRead: (chatId: string) => Promise<void>;
   addMessage: (message: Message) => void;
@@ -74,6 +75,7 @@ export const useChatStore = create<ChatState>((set, get) => ({
   editingMessage: null,
   selectionMode: false,
   selectedMessageIds: [],
+  lastNewMessageAt: null,
 
   fetchChats: async () => {
     const hasCachedChats = get().chats.length > 0;
@@ -187,8 +189,13 @@ export const useChatStore = create<ChatState>((set, get) => ({
         _hasFetchedOnce: true,
         ...(updatedActiveChat ? { activeChat: updatedActiveChat } : {}),
       });
-    } catch (err) {
-      console.error('fetchChats error:', err);
+    } catch (err: any) {
+      const errMsg = err?.message || err?.toString?.() || JSON.stringify(err) || String(err);
+      if (typeof errMsg === 'string' && errMsg.toLowerCase().includes('fetch')) {
+        console.warn('Network offline or Failed to fetch chats (will retry naturally later).');
+      } else {
+        console.warn('fetchChats error (non-fetch):', errMsg);
+      }
       set({ isLoadingChats: false });
     }
   },
@@ -307,7 +314,12 @@ export const useChatStore = create<ChatState>((set, get) => ({
         });
       }
     } catch (err: any) {
-      console.error('fetchMessages error:', err?.message || JSON.stringify(err) || err);
+      const errMsg = err?.message || err?.toString?.() || JSON.stringify(err) || String(err);
+      if (typeof errMsg === 'string' && errMsg.toLowerCase().includes('fetch')) {
+        console.warn('Network offline or Failed to fetch messages (will retry naturally later).');
+      } else {
+        console.warn('fetchMessages error (non-fetch):', errMsg);
+      }
       // CRITICAL: Always mark as fetched even on error so realtime can still subscribe
       // This prevents the chat from being permanently stuck with no realtime updates
       set((state) => ({ 
@@ -475,6 +487,10 @@ export const useChatStore = create<ChatState>((set, get) => ({
 
   incrementUnreadCount: (chatId: string) => {
     const activeChatId = get().activeChatId;
+    
+    // Trigger global shake for new message arrival
+    set({ lastNewMessageAt: Date.now() });
+
     // Don't increment if we're currently viewing this chat
     if (activeChatId === chatId) return;
 

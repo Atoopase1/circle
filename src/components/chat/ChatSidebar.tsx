@@ -34,12 +34,23 @@ export default function ChatSidebar() {
   const [isSearching, setIsSearching] = useState(false);
   const [followerCount, setFollowerCount] = useState<number>(0);
   const [showFollowers, setShowFollowers] = useState(false);
+  const [isBellShaking, setIsBellShaking] = useState(false);
 
   const unreadCount = useNotificationStore(s => s.unreadCount);
+  const lastNewMessageAt = useChatStore(s => s.lastNewMessageAt);
 
   useEffect(() => {
     fetchChats();
   }, [fetchChats]);
+
+  // Shake bell on new message
+  useEffect(() => {
+    if (lastNewMessageAt) {
+      setIsBellShaking(true);
+      const timer = setTimeout(() => setIsBellShaking(false), 1000);
+      return () => clearTimeout(timer);
+    }
+  }, [lastNewMessageAt]);
 
   // Fetch follower count
   useEffect(() => {
@@ -195,7 +206,7 @@ export default function ChatSidebar() {
               className="p-2 rounded-xl hover:bg-[var(--bg-hover)] transition-all duration-200 text-[var(--text-secondary)] hover:text-[var(--text-primary)] relative"
               title="Notifications"
             >
-              <Bell size={28} strokeWidth={2.2} />
+              <Bell size={28} strokeWidth={2.2} className={isBellShaking ? 'animate-shake text-[var(--emerald)]' : ''} />
               {unreadCount() > 0 && (
                 <span className="absolute -top-0.5 -right-0.5 bg-red-500 text-white text-[9px] font-bold w-[16px] h-[16px] rounded-full flex items-center justify-center border-[2px] border-[var(--bg-primary)]">
                   {unreadCount() > 9 ? '9+' : unreadCount()}

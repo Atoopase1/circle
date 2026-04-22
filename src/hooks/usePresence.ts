@@ -91,9 +91,11 @@ export function usePresence() {
           },
           body,
           keepalive: true,
+        }).catch(() => {
+          // Best-effort on unload, ignore network/adblocker fetch failures
         });
-      } catch {
-        // Best-effort on unload
+      } catch (e) {
+        // Ignore synchronous errors
       }
     };
 
