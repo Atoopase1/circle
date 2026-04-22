@@ -194,17 +194,19 @@ export default function StatusCard({ status, onToggleFollow, onRefresh, initialF
   return (
     <div className="bg-[var(--bg-primary)] rounded-xl shadow-sm border border-[var(--border-color)] mb-4 overflow-hidden">
       {/* Header */}
-      <div className="flex items-center justify-between p-4 pb-2">
-        <div className="flex items-center gap-3 cursor-pointer" onClick={() => router.push(`/profile/${status.user_id}`)}>
-          <Avatar src={profiles.avatar_url} name={profiles.display_name} />
-          <div>
+      <div className="flex items-center justify-between p-4 pb-2 gap-3">
+        <div className="flex items-center gap-3 cursor-pointer flex-1 min-w-0" onClick={() => router.push(`/profile/${status.user_id}`)}>
+          <div className="shrink-0">
+            <Avatar src={profiles.avatar_url} name={profiles.display_name} />
+          </div>
+          <div className="flex-1 min-w-0">
             <div className="flex items-center gap-2">
-              <span className="font-semibold text-[var(--text-primary)] text-sm truncate max-w-[150px]">{profiles.display_name}</span>
-              <span className="text-[10px] uppercase bg-[var(--bg-secondary)] px-1.5 py-0.5 rounded text-[var(--text-muted)]">
+              <span className="font-semibold text-[var(--text-primary)] text-sm truncate">{profiles.display_name}</span>
+              <span className="text-[10px] uppercase bg-[var(--bg-secondary)] px-1.5 py-0.5 rounded text-[var(--text-muted)] shrink-0">
                 {visibility}
               </span>
             </div>
-            <span className="text-[13px] text-[var(--text-muted)]">
+            <span className="text-[13px] text-[var(--text-muted)] block truncate mt-0.5">
               {formatDistanceToNow(new Date(created_at), { addSuffix: true })}
             </span>
           </div>
@@ -212,7 +214,7 @@ export default function StatusCard({ status, onToggleFollow, onRefresh, initialF
 
         {/* Actions for owner or follow for others */}
         {isOwnPost ? (
-          <div className="relative">
+          <div className="relative shrink-0">
             <button
               onClick={() => setShowMenu(!showMenu)}
               className="p-1.5 rounded-full hover:bg-[var(--bg-hover)] text-[var(--text-muted)] hover:text-[var(--text-primary)] transition-colors"
@@ -243,7 +245,7 @@ export default function StatusCard({ status, onToggleFollow, onRefresh, initialF
         ) : (
           <button
             onClick={handleFollow}
-            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-[13px] font-semibold transition-all ${
+            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-[13px] font-semibold transition-all shrink-0 ${
               followed
                 ? 'bg-[var(--wa-green)]/10 text-[var(--wa-green)] border border-[var(--wa-green)]/30 hover:bg-[var(--wa-green)]/20'
                 : 'bg-[var(--wa-green)] text-white hover:bg-[var(--wa-green-dark)] shadow-sm'

@@ -202,6 +202,8 @@ export const useChatStore = create<ChatState>((set, get) => ({
 
   setActiveChat: async (chatId: string | null) => {
     if (!chatId) {
+      // Only clear the view state — preserve message cache + fetched flags
+      // so re-entering a chat loads instantly from cache without a full network round trip
       set({ activeChat: null, activeChatId: null, messages: [] });
       return;
     }

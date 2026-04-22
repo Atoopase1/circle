@@ -47,6 +47,8 @@ export default function ChatPage() {
 
     return () => {
       stale = true;
+      // Clear active chat when leaving the page to prevent background state contamination
+      setActiveChat(null);
     };
   }, [chatId, hasFetchedOnce, fetchChats, setActiveChat]);
 

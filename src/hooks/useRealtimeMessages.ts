@@ -33,128 +33,237 @@ export function useRealtimeConnection() {
 
 export function useRealtimeMessages(chatId: string | null) {
   const addMessage = useChatStore((s) => s.addMessage);
-  const isFetched = useChatStore((s) => chatId ? s._fetchedChats[chatId] : false);
   const channelRef = useRef<ReturnType<ReturnType<typeof getSupabaseBrowserClient>['channel']> | null>(null);
+  const reconnectTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const reconnectAttemptsRef = useRef(0);
+  const isUnmountedRef = useRef(false);
 
   useEffect(() => {
-    // Only subscribe AFTER we have successfully fetched the initial historical messages for this chat
-    if (!chatId || !isFetched) return;
+    if (!chatId) return;
+    isUnmountedRef.current = false;
 
     const supabase = getSupabaseBrowserClient();
 
-    // Clean up previous subscription before creating a new one
-    if (channelRef.current) {
-      supabase.removeChannel(channelRef.current);
-      channelRef.current = null;
-    }
+    const subscribe = () => {
+      // If already unmounted (navigated away), bail out
+      if (isUnmountedRef.current) return;
 
-    const channel = supabase
-      .channel(`messages:${chatId}`)
-      .on('system', { event: '*' }, (_payload) => {
-        // Connection health monitoring — no-op handler
-      })
-      // ── New messages ──────────────────────────────────────────────────────
-      .on(
-        'postgres_changes',
-        {
-          event: 'INSERT',
-          schema: 'public',
-          table: 'messages',
-          filter: `chat_id=eq.${chatId}`,
-        },
-        async (payload) => {
-          const newMessage = payload.new as Message;
-          const currentUser = useAuthStore.getState().user;
+      // Clean up any previous channel before creating a new one
+      if (channelRef.current) {
+        supabase.removeChannel(channelRef.current);
+        channelRef.current = null;
+      }
 
-          console.log(`[Realtime] New message received: ${newMessage.id} from ${newMessage.sender_id}`);
+      // Unique channel name prevents stale duplicate conflicts on rapid remounts
+      const uniqueChannelName = `messages:${chatId}:${Math.random().toString(36).substring(2, 9)}`;
 
-          // If the message is from me, I already have the profile in the store
-          if (newMessage.sender_id === currentUser?.id) {
-            const currentProfile = useAuthStore.getState().profile;
-            addMessage({ ...newMessage, sender: currentProfile || undefined } as Message);
-            return;
+      const channel = supabase
+        .channel(uniqueChannelName)
+        // ── New messages ──────────────────────────────────────────────────
+        .on(
+          'postgres_changes',
+          {
+            event: 'INSERT',
+            schema: 'public',
+            table: 'messages',
+            filter: `chat_id=eq.${chatId}`,
+          },
+          async (payload) => {
+            const newMessage = payload.new as Message;
+            const currentUser = useAuthStore.getState().user;
+
+            console.log(`[Realtime] New message: ${newMessage.id}`);
+
+            if (newMessage.sender_id === currentUser?.id) {
+              const currentProfile = useAuthStore.getState().profile;
+              addMessage({ ...newMessage, sender: currentProfile || undefined } as Message);
+              return;
+            }
+
+            let senderProfile = undefined;
+            try {
+              const { data: sender, error } = await supabase
+                .from('profiles')
+                .select('*')
+                .eq('id', newMessage.sender_id)
+                .single();
+              if (!error && sender) senderProfile = sender;
+            } catch (e) {
+              console.warn('[Realtime] Failed to fetch sender profile for active message', e);
+            }
+
+            // Reconstruct the reply_to relation because Supabase realtime INSERT events 
+            // only provide the raw row (reply_to_id) and not joined relations.
+            let replyToData = undefined;
+            if (newMessage.reply_to_id) {
+              const store = useChatStore.getState();
+              // First try to grab the replied message from our local cache (very fast)
+              const cachedMsg = store.messagesByChat[newMessage.chat_id]?.find(m => m.id === newMessage.reply_to_id);
+              
+              if (cachedMsg) {
+                replyToData = [cachedMsg];
+              } else {
+                // If it's an old message not in cache, fetch it from DB
+                try {
+                  const { data: repliedMsg } = await supabase
+                    .from('messages')
+                    .select('*, sender:profiles(*)')
+                    .eq('id', newMessage.reply_to_id)
+                    .single();
+                  if (repliedMsg) replyToData = [repliedMsg];
+                } catch (e) {
+                  console.warn('[Realtime] Failed to fetch reply_to context', e);
+                }
+              }
+            }
+
+            addMessage({ 
+              ...newMessage, 
+              sender: senderProfile || undefined,
+              reply_to: replyToData
+            } as Message);
           }
+        )
+        // ── Edited / unsent messages ──────────────────────────────────────
+        .on(
+          'postgres_changes',
+          {
+            event: 'UPDATE',
+            schema: 'public',
+            table: 'messages',
+            filter: `chat_id=eq.${chatId}`,
+          },
+          async (payload) => {
+            const updatedMessage = payload.new as Message;
+            const existingMsg = useChatStore.getState().messages.find(m => m.id === updatedMessage.id);
+            useChatStore.getState().updateMessageInList({
+              ...updatedMessage,
+              sender: existingMsg?.sender,
+              status: existingMsg?.status,
+              stars: existingMsg?.stars,
+              reactions: existingMsg?.reactions,
+            } as Message);
+          }
+        )
+        // ── Message status (read receipts / delivery ticks) ───────────────
+        .on(
+          'postgres_changes',
+          { event: 'INSERT', schema: 'public', table: 'message_status' },
+          (payload) => {
+            const s = payload.new as Record<string, any>;
+            if (s?.message_id) applyStatusUpdate(s);
+          }
+        )
+        .on(
+          'postgres_changes',
+          { event: 'UPDATE', schema: 'public', table: 'message_status' },
+          (payload) => {
+            const s = payload.new as Record<string, any>;
+            if (s?.message_id) applyStatusUpdate(s);
+          }
+        )
+        .subscribe((status) => {
+          if (isUnmountedRef.current) return;
 
-          // Fetch sender profile for incoming messages
-          const { data: sender } = await supabase
-            .from('profiles')
-            .select('*')
-            .eq('id', newMessage.sender_id)
-            .single();
+          if (status === 'SUBSCRIBED') {
+            setGlobalConnectionState(false);
+            reconnectAttemptsRef.current = 0; // Reset on success
+            console.log(`[Realtime] ✅ Subscribed: ${uniqueChannelName}`);
 
-          addMessage({ ...newMessage, sender: sender || undefined } as Message);
-        }
-      )
-      // ── Edited / unsent messages ──────────────────────────────────────────
-      .on(
-        'postgres_changes',
-        {
-          event: 'UPDATE',
-          schema: 'public',
-          table: 'messages',
-          filter: `chat_id=eq.${chatId}`,
-        },
-        async (payload) => {
-          const updatedMessage = payload.new as Message;
+          } else if (status === 'CLOSED' || status === 'CHANNEL_ERROR' || status === 'TIMED_OUT') {
+            setGlobalConnectionState(true);
+            console.warn(`[Realtime] ⚠️ Channel ${status} — scheduling reconnect`);
 
-          // Preserve existing sender profile — no need to re-fetch on simple edits
-          const existingMsg = useChatStore.getState().messages.find(m => m.id === updatedMessage.id);
-          useChatStore.getState().updateMessageInList({
-            ...updatedMessage,
-            sender: existingMsg?.sender,
-            status: existingMsg?.status,
-            stars: existingMsg?.stars,
-            reactions: existingMsg?.reactions,
-          } as Message);
-        }
-      )
-      // ── Message status (read receipts / delivery ticks) ───────────────────
-      // Handles both INSERT (first delivery) and UPDATE (seen) events.
-      // We listen globally (no filter) because message_status has no chat_id;
-      // we scope updates client-side by checking if message_id is in our list.
-      .on(
-        'postgres_changes',
-        {
-          event: 'INSERT',
-          schema: 'public',
-          table: 'message_status',
-        },
-        (payload) => {
-          const newStatus = payload.new as Record<string, any>;
-          if (!newStatus?.message_id) return;
-          applyStatusUpdate(newStatus);
-        }
-      )
-      .on(
-        'postgres_changes',
-        {
-          event: 'UPDATE',
-          schema: 'public',
-          table: 'message_status',
-        },
-        (payload) => {
-          const updatedStatus = payload.new as Record<string, any>;
-          if (!updatedStatus?.message_id) return;
-          applyStatusUpdate(updatedStatus);
-        }
-      )
-      .subscribe((status) => {
-        if (status === 'SUBSCRIBED') {
-          setGlobalConnectionState(false);
-          console.log(`[Realtime] Subscribed to messages:${chatId}`);
-        } else if (status === 'CLOSED' || status === 'CHANNEL_ERROR' || status === 'TIMED_OUT') {
-          setGlobalConnectionState(true);
-          console.warn(`[Realtime] Channel issue: ${status}`);
-        }
-      });
+            // Exponential backoff: 1s, 2s, 4s, 8s, max 15s
+            const delay = Math.min(1000 * Math.pow(2, reconnectAttemptsRef.current), 15_000);
+            reconnectAttemptsRef.current += 1;
 
-    channelRef.current = channel;
+            reconnectTimerRef.current = setTimeout(() => {
+              console.log(`[Realtime] 🔄 Reconnecting (attempt ${reconnectAttemptsRef.current})...`);
+              subscribe();
+            }, delay);
+          }
+        });
+
+      channelRef.current = channel;
+    };
+
+    subscribe();
+
+    // ── Tab Focus Synchronization ───────────────────────────────────────
+    let syncLock = false;
+    let lastSyncTime = Date.now();
+    let debounceTimer: ReturnType<typeof setTimeout> | null = null;
+
+    const handleFocusSync = () => {
+      if (isUnmountedRef.current || !chatId) return;
+
+      if (debounceTimer) clearTimeout(debounceTimer);
+
+      debounceTimer = setTimeout(async () => {
+        const now = Date.now();
+        // Skip if a sync just happened (<3s)
+        if (now - lastSyncTime < 3000) return;
+        // Block concurrent sync
+        if (syncLock) return;
+        
+        syncLock = true;
+        try {
+          console.log('[Realtime] App focused, forcing hard sync for active chat...');
+          
+          // 1. Immediately unsubscribe from existing listener
+          if (channelRef.current) {
+            supabase.removeChannel(channelRef.current);
+            channelRef.current = null;
+          }
+          
+          // 2 & 3. Force fetch latest messages & merge into local state
+          await useChatStore.getState().fetchMessages(chatId);
+          
+          // 4. Re-subscribe to real-time updates
+          subscribe();
+          
+          lastSyncTime = Date.now();
+        } catch (err) {
+          console.warn('[Realtime] Focus sync failed:', err);
+        } finally {
+          syncLock = false;
+        }
+      }, 300); // 300ms debounce
+    };
+
+    const onVisibilityChange = () => {
+      if (document.visibilityState === 'visible') {
+        handleFocusSync();
+      }
+    };
+
+    window.addEventListener('focus', handleFocusSync);
+    window.addEventListener('online', handleFocusSync);
+    document.addEventListener('visibilitychange', onVisibilityChange);
 
     return () => {
-      supabase.removeChannel(channel);
-      channelRef.current = null;
+      isUnmountedRef.current = true;
+
+      window.removeEventListener('focus', handleFocusSync);
+      window.removeEventListener('online', handleFocusSync);
+      document.removeEventListener('visibilitychange', onVisibilityChange);
+
+      if (debounceTimer) clearTimeout(debounceTimer);
+
+      // Cancel any pending reconnect timer
+      if (reconnectTimerRef.current) {
+        clearTimeout(reconnectTimerRef.current);
+        reconnectTimerRef.current = null;
+      }
+
+      // Remove the active channel
+      if (channelRef.current) {
+        supabase.removeChannel(channelRef.current);
+        channelRef.current = null;
+      }
     };
-  }, [chatId, isFetched, addMessage]);
+  }, [chatId, addMessage]);
 }
 
 /**
@@ -210,64 +319,171 @@ export function useRealtimeChatList() {
     if (!user) return;
 
     const supabase = getSupabaseBrowserClient();
+    let channelRef: ReturnType<typeof supabase.channel> | null = null;
+    let reconnectTimer: ReturnType<typeof setTimeout> | null = null;
+    let attempts = 0;
+    let isUnmounted = false;
 
-    const channel = supabase
-      .channel('chat-list-realtime')
-      // Listen for new messages across ALL chats — instant chat list reorder
-      .on(
-        'postgres_changes',
-        {
-          event: 'INSERT',
-          schema: 'public',
-          table: 'messages',
-        },
-        async (payload) => {
-          const msg = payload.new as Message;
+    const subscribe = () => {
+      if (isUnmounted) return;
+      if (channelRef) {
+        supabase.removeChannel(channelRef);
+        channelRef = null;
+      }
 
-          // Optimistically update chat list with new message preview + timestamp
-          updateChatWithNewMessage(msg.chat_id, msg);
+      const channel = supabase
+        .channel(`chat-list-realtime:${user.id}`)
+        .on(
+          'postgres_changes',
+          { event: 'INSERT', schema: 'public', table: 'messages' },
+          async (payload) => {
+            const msg = payload.new as Message;
+            
+            // Fetch sender profile so the message renders correctly in the cache
+            let senderProfile = undefined;
+            if (msg.sender_id === user.id) {
+              senderProfile = useAuthStore.getState().profile;
+            } else {
+              try {
+                const { data: sender, error } = await supabase
+                  .from('profiles')
+                  .select('*')
+                  .eq('id', msg.sender_id)
+                  .single();
+                if (!error && sender) senderProfile = sender;
+              } catch (e) {
+                console.warn('[Realtime] Failed to fetch sender profile for background message', e);
+              }
+            }
 
-          // Increment unread count if the message is from someone else
-          if (msg.sender_id !== user.id) {
-            incrementUnreadCount(msg.chat_id);
+            // Reconstruct the reply_to relation for the background listener
+            let replyToData = undefined;
+            if (msg.reply_to_id) {
+              const store = useChatStore.getState();
+              const cachedMsg = store.messagesByChat[msg.chat_id]?.find(m => m.id === msg.reply_to_id);
+              
+              if (cachedMsg) {
+                replyToData = [cachedMsg];
+              } else {
+                try {
+                  const { data: repliedMsg } = await supabase
+                    .from('messages')
+                    .select('*, sender:profiles(*)')
+                    .eq('id', msg.reply_to_id)
+                    .single();
+                  if (repliedMsg) replyToData = [repliedMsg];
+                } catch (e) {
+                  console.warn('[Realtime] Failed to fetch reply_to context for background message', e);
+                }
+              }
+            }
+
+            // addMessage handles updating the chat list AND inserting into the message cache
+            // so when the user returns to the chat, the message is there instantly!
+            const addMessage = useChatStore.getState().addMessage;
+            addMessage({ 
+              ...msg, 
+              sender: senderProfile || undefined,
+              reply_to: replyToData
+            } as Message);
+            
+            if (msg.sender_id !== user.id) {
+              incrementUnreadCount(msg.chat_id);
+            }
           }
+        )
+        .on(
+          'postgres_changes',
+          { event: '*', schema: 'public', table: 'chat_participants' },
+          () => { fetchChats(); }
+        )
+        .on(
+          'postgres_changes',
+          { event: 'UPDATE', schema: 'public', table: 'chats' },
+          () => { fetchChats(); }
+        )
+        .subscribe((status) => {
+          if (isUnmounted) return;
+          if (status === 'SUBSCRIBED') {
+            setGlobalConnectionState(false);
+            attempts = 0;
+            console.log('[Realtime] ✅ Chat list subscribed');
+          } else if (status === 'CLOSED' || status === 'CHANNEL_ERROR' || status === 'TIMED_OUT') {
+            setGlobalConnectionState(true);
+            console.warn(`[Realtime] ⚠️ Chat list channel ${status} — scheduling reconnect`);
+            const delay = Math.min(1000 * Math.pow(2, attempts), 15_000);
+            attempts += 1;
+            reconnectTimer = setTimeout(() => { subscribe(); }, delay);
+          }
+        });
+
+      channelRef = channel;
+    };
+
+    subscribe();
+
+    // ── Tab Focus Synchronization ───────────────────────────────────────
+    let syncLock = false;
+    let lastSyncTime = Date.now();
+    let debounceTimer: ReturnType<typeof setTimeout> | null = null;
+
+    const handleFocusSync = () => {
+      if (isUnmounted || !user) return;
+
+      if (debounceTimer) clearTimeout(debounceTimer);
+
+      debounceTimer = setTimeout(async () => {
+        const now = Date.now();
+        // Skip if a sync just happened (<3s)
+        if (now - lastSyncTime < 3000) return;
+        // Block concurrent sync
+        if (syncLock) return;
+        
+        syncLock = true;
+        try {
+          console.log('[Realtime] App focused, forcing hard sync for chat list...');
+          
+          // 1. Immediately unsubscribe from existing listener
+          if (channelRef) {
+            supabase.removeChannel(channelRef);
+            channelRef = null;
+          }
+          
+          // 2 & 3. Force fetch latest chats (bypasses cache due to our client.ts config)
+          await useChatStore.getState().fetchChats();
+          
+          // 4. Re-subscribe to real-time updates
+          subscribe();
+          
+          lastSyncTime = Date.now();
+        } catch (err) {
+          console.warn('[Realtime] Global focus sync failed:', err);
+        } finally {
+          syncLock = false;
         }
-      )
-      // Listen for chat participant changes (added/removed from chats)
-      .on(
-        'postgres_changes',
-        {
-          event: '*',
-          schema: 'public',
-          table: 'chat_participants',
-        },
-        () => {
-          // Full refresh needed — new chat appeared or we left a chat
-          fetchChats();
-        }
-      )
-      // Listen for chat metadata changes (group name, icon, etc.)
-      .on(
-        'postgres_changes',
-        {
-          event: 'UPDATE',
-          schema: 'public',
-          table: 'chats',
-        },
-        () => {
-          fetchChats();
-        }
-      )
-      .subscribe((status) => {
-        if (status === 'SUBSCRIBED') {
-          setGlobalConnectionState(false);
-        } else if (status === 'CLOSED' || status === 'CHANNEL_ERROR' || status === 'TIMED_OUT') {
-          setGlobalConnectionState(true);
-        }
-      });
+      }, 300); // 300ms debounce
+    };
+
+    const onVisibilityChange = () => {
+      if (document.visibilityState === 'visible') {
+        handleFocusSync();
+      }
+    };
+
+    window.addEventListener('focus', handleFocusSync);
+    window.addEventListener('online', handleFocusSync);
+    document.addEventListener('visibilitychange', onVisibilityChange);
 
     return () => {
-      supabase.removeChannel(channel);
+      isUnmounted = true;
+
+      window.removeEventListener('focus', handleFocusSync);
+      window.removeEventListener('online', handleFocusSync);
+      document.removeEventListener('visibilitychange', onVisibilityChange);
+
+      if (debounceTimer) clearTimeout(debounceTimer);
+      if (reconnectTimer) clearTimeout(reconnectTimer);
+      if (channelRef) supabase.removeChannel(channelRef);
     };
   }, [user, fetchChats, updateChatWithNewMessage, incrementUnreadCount]);
 }

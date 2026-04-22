@@ -290,17 +290,47 @@ export function useAppNotifications() {
       );
     };
 
-    const channel = supabase.channel('app-notifications')
-      .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'statuses' }, handleNewPost)
-      .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'status_comments' }, payload => handleNewInteraction(payload, 'comment'))
-      .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'status_likes' }, payload => handleNewInteraction(payload, 'like'))
-      .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'status_ratings' }, payload => handleNewInteraction(payload, 'rating'))
-      .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'follows' }, handleNewFollow)
-      .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'messages' }, handleNewChatMessage)
-      .subscribe();
+    let channelRef: ReturnType<typeof supabase.channel> | null = null;
+    let reconnectTimer: ReturnType<typeof setTimeout> | null = null;
+    let attempts = 0;
+    let isUnmounted = false;
+
+    const subscribe = () => {
+      if (isUnmounted) return;
+      if (channelRef) {
+        supabase.removeChannel(channelRef);
+        channelRef = null;
+      }
+
+      const channel = supabase.channel(`app-notifications:${profile.id}`)
+        .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'statuses' }, handleNewPost)
+        .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'status_comments' }, payload => handleNewInteraction(payload, 'comment'))
+        .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'status_likes' }, payload => handleNewInteraction(payload, 'like'))
+        .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'status_ratings' }, payload => handleNewInteraction(payload, 'rating'))
+        .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'follows' }, handleNewFollow)
+        .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'messages' }, handleNewChatMessage)
+        .subscribe((status) => {
+          if (isUnmounted) return;
+          if (status === 'SUBSCRIBED') {
+            attempts = 0;
+            console.log('[Realtime] ✅ App notifications subscribed');
+          } else if (status === 'CLOSED' || status === 'CHANNEL_ERROR' || status === 'TIMED_OUT') {
+            console.warn(`[Realtime] ⚠️ Notifications channel ${status} — scheduling reconnect`);
+            const delay = Math.min(1000 * Math.pow(2, attempts), 15_000);
+            attempts += 1;
+            reconnectTimer = setTimeout(() => { subscribe(); }, delay);
+          }
+        });
+
+      channelRef = channel;
+    };
+
+    subscribe();
 
     return () => {
-      supabase.removeChannel(channel);
+      isUnmounted = true;
+      if (reconnectTimer) clearTimeout(reconnectTimer);
+      if (channelRef) supabase.removeChannel(channelRef);
     };
   }, [profile, addNotification, supabase, router]);
 }
