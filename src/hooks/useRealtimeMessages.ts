@@ -42,18 +42,18 @@ export function useRealtimeMessages(chatId: string | null) {
 
     const supabase = getSupabaseBrowserClient();
 
-    // Clean up previous subscription
+    // Clean up previous subscription before creating a new one
     if (channelRef.current) {
       supabase.removeChannel(channelRef.current);
+      channelRef.current = null;
     }
 
     const channel = supabase
       .channel(`messages:${chatId}`)
-      .on('system', { event: '*' }, (payload) => {
-        if (payload.extension === 'postgres_changes' && payload.extra?.status === 'error') {
-          // You could also specifically look for CHANNEL_ERROR or disconnected
-        }
+      .on('system', { event: '*' }, (_payload) => {
+        // Connection health monitoring — no-op handler
       })
+      // ── New messages ──────────────────────────────────────────────────────
       .on(
         'postgres_changes',
         {
@@ -85,6 +85,7 @@ export function useRealtimeMessages(chatId: string | null) {
           addMessage({ ...newMessage, sender: sender || undefined } as Message);
         }
       )
+      // ── Edited / unsent messages ──────────────────────────────────────────
       .on(
         'postgres_changes',
         {
@@ -95,59 +96,55 @@ export function useRealtimeMessages(chatId: string | null) {
         },
         async (payload) => {
           const updatedMessage = payload.new as Message;
-          
-          // Re-fetch sender since it's just updating message content
-          const { data: sender } = await supabase
-            .from('profiles')
-            .select('*')
-            .eq('id', updatedMessage.sender_id)
-            .single();
 
-          useChatStore.getState().updateMessageInList({ ...updatedMessage, sender: sender || undefined });
+          // Preserve existing sender profile — no need to re-fetch on simple edits
+          const existingMsg = useChatStore.getState().messages.find(m => m.id === updatedMessage.id);
+          useChatStore.getState().updateMessageInList({
+            ...updatedMessage,
+            sender: existingMsg?.sender,
+            status: existingMsg?.status,
+            stars: existingMsg?.stars,
+            reactions: existingMsg?.reactions,
+          } as Message);
+        }
+      )
+      // ── Message status (read receipts / delivery ticks) ───────────────────
+      // Handles both INSERT (first delivery) and UPDATE (seen) events.
+      // We listen globally (no filter) because message_status has no chat_id;
+      // we scope updates client-side by checking if message_id is in our list.
+      .on(
+        'postgres_changes',
+        {
+          event: 'INSERT',
+          schema: 'public',
+          table: 'message_status',
+        },
+        (payload) => {
+          const newStatus = payload.new as Record<string, any>;
+          if (!newStatus?.message_id) return;
+          applyStatusUpdate(newStatus);
         }
       )
       .on(
         'postgres_changes',
         {
-          event: '*',
+          event: 'UPDATE',
           schema: 'public',
           table: 'message_status',
         },
         (payload) => {
-          // @ts-ignore - explicitly suppressing any potential nested typing complaints
           const updatedStatus = payload.new as Record<string, any>;
-          if (!updatedStatus || !updatedStatus.message_id) return;
-
-          // Update the specific message's status securely in the Zustand store
-          useChatStore.getState().messages.forEach((msg) => {
-            if (msg.id === updatedStatus.message_id) {
-              // Remove temp optimistic statuses
-              const existingStatuses = (msg.status || []).filter((s) => s.id !== 'temp');
-              let found = false;
-              
-              const newStatuses = existingStatuses.map((s) => {
-                if (s.user_id === updatedStatus.user_id) {
-                  found = true;
-                  return { ...s, status: updatedStatus.status };
-                }
-                return s;
-              });
-
-              if (!found && updatedStatus.status) {
-                newStatuses.push(updatedStatus);
-              }
-
-              // Optimistically update message list
-              useChatStore.getState().updateMessageInList({ ...msg, status: newStatuses });
-            }
-          });
+          if (!updatedStatus?.message_id) return;
+          applyStatusUpdate(updatedStatus);
         }
       )
       .subscribe((status) => {
         if (status === 'SUBSCRIBED') {
           setGlobalConnectionState(false);
+          console.log(`[Realtime] Subscribed to messages:${chatId}`);
         } else if (status === 'CLOSED' || status === 'CHANNEL_ERROR' || status === 'TIMED_OUT') {
           setGlobalConnectionState(true);
+          console.warn(`[Realtime] Channel issue: ${status}`);
         }
       });
 
@@ -155,8 +152,45 @@ export function useRealtimeMessages(chatId: string | null) {
 
     return () => {
       supabase.removeChannel(channel);
+      channelRef.current = null;
     };
   }, [chatId, isFetched, addMessage]);
+}
+
+/**
+ * Merge an incoming message_status row into the matching message in the store.
+ * Works for both INSERT (first delivery record) and UPDATE (seen/delivered change).
+ */
+function applyStatusUpdate(updatedStatus: Record<string, any>) {
+  const store = useChatStore.getState();
+
+  // Only process if this message is in the current active chat's list
+  const targetMsg = store.messages.find((msg) => msg.id === updatedStatus.message_id);
+  if (!targetMsg) return;
+
+  // Remove any optimistic 'temp' statuses, then merge the real one
+  const existingStatuses = (targetMsg.status || []).filter((s) => s.id !== 'temp');
+  let found = false;
+
+  const newStatuses = existingStatuses.map((s) => {
+    if (s.user_id === updatedStatus.user_id) {
+      found = true;
+      return { ...s, status: updatedStatus.status, updated_at: updatedStatus.updated_at };
+    }
+    return s;
+  });
+
+  if (!found && updatedStatus.status) {
+    newStatuses.push({
+      id: updatedStatus.id || 'rt',
+      message_id: updatedStatus.message_id,
+      user_id: updatedStatus.user_id,
+      status: updatedStatus.status,
+      updated_at: updatedStatus.updated_at || new Date().toISOString(),
+    });
+  }
+
+  store.updateMessageInList({ ...targetMsg, status: newStatuses });
 }
 
 /**

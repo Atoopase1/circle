@@ -140,6 +140,8 @@ export const useChatStore = create<ChatState>((set, get) => ({
       }
 
       // Build ChatWithDetails
+      const currentActiveChatId = get().activeChatId;
+
       const chats: ChatWithDetails[] = chatsData.map((chat) => {
         const participants = (allParticipants || []).filter(
           (p) => p.chat_id === chat.id
@@ -154,6 +156,12 @@ export const useChatStore = create<ChatState>((set, get) => ({
           (m) => m.id === chat.last_message_id
         );
 
+        // If this is the currently active (open) chat, always treat unread_count
+        // as 0 — the user is reading it right now. This prevents a background
+        // fetchChats() from restoring a stale DB-incremented count.
+        const effectiveUnreadCount =
+          chat.id === currentActiveChatId ? 0 : (myParticipant?.unread_count ?? 0);
+
         return {
           ...chat,
           participants,
@@ -162,7 +170,7 @@ export const useChatStore = create<ChatState>((set, get) => ({
             ? otherParticipant.profile
             : undefined,
           my_participant: myParticipant
-            ? { ...myParticipant, id: '', chat_id: chat.id, user_id: user.id, joined_at: '' }
+            ? { ...myParticipant, id: '', chat_id: chat.id, user_id: user.id, joined_at: '', unread_count: effectiveUnreadCount }
             : undefined,
         } as ChatWithDetails;
       });
@@ -192,9 +200,14 @@ export const useChatStore = create<ChatState>((set, get) => ({
       set({ activeChat: chat });
     }
 
+    // IMMEDIATELY clear the unread badge — don't wait for the async DB call.
+    // This prevents the race where a background fetchChats() reloads the
+    // DB-incremented count before markAsRead has had a chance to reset it.
+    get().resetUnreadCount(chatId);
+
     // ALWAYS fetch messages fresh to ensure consistency — don't skip based on cache
     await get().fetchMessages(chatId);
-    // Mark as read
+    // Mark as read (resets DB count + marks statuses as seen)
     await get().markAsRead(chatId);
   },
 
@@ -380,7 +393,12 @@ export const useChatStore = create<ChatState>((set, get) => ({
     const user = useAuthStore.getState().user;
     if (!user) return;
 
-    // Reset unread count
+    // Reset local unread badge IMMEDIATELY (optimistic) before any async work.
+    // This ensures the badge disappears the instant you open the chat and never
+    // reappears due to a background fetchChats() loading the stale DB value.
+    get().resetUnreadCount(chatId);
+
+    // Reset unread count in DB
     await supabase
       .from('chat_participants')
       .update({ unread_count: 0 })
@@ -406,9 +424,6 @@ export const useChatStore = create<ChatState>((set, get) => ({
         .update({ status: 'seen', updated_at: new Date().toISOString() })
         .in('id', unreadStatuses.map((s) => s.id));
     }
-
-    // Update local state
-    get().resetUnreadCount(chatId);
   },
 
   addMessage: (message: Message) => {
@@ -505,43 +520,27 @@ export const useChatStore = create<ChatState>((set, get) => ({
     const user = useAuthStore.getState().user;
     if (!user) return null;
 
-    // Create chat
-    const { data: chat, error: chatError } = await supabase
-      .from('chats')
-      .insert({
-        is_group: true,
-        group_name: name,
-        group_description: description || null,
-        created_by: user.id,
-      })
-      .select()
-      .single();
+    // Use SECURITY DEFINER RPC to atomically create the group and add all participants
+    // in one server-side transaction. This avoids the RLS deadlock where
+    // is_chat_admin() returns false because the creator record doesn't exist yet
+    // at the time the first chat_participants INSERT is evaluated.
+    const { data: chatId, error } = await supabase.rpc('create_group_chat_with_members', {
+      p_name: name,
+      p_description: description || null,
+      p_member_ids: participantIds,
+    });
 
-    if (chatError || !chat) {
-      console.error('createGroupChat error:', chatError);
+    if (error || !chatId) {
+      console.error('createGroupChat RPC error:', error);
+      if (typeof window !== 'undefined') {
+        const toast = (await import('react-hot-toast')).default;
+        toast.error(`Failed to create group: ${error?.message || 'Unknown error'}`);
+      }
       return null;
     }
 
-    // Add creator as admin
-    await supabase.from('chat_participants').insert({
-      chat_id: chat.id,
-      user_id: user.id,
-      role: 'admin',
-    });
-
-    // Add other participants
-    const participants = participantIds.map((id) => ({
-      chat_id: chat.id,
-      user_id: id,
-      role: 'member' as const,
-    }));
-
-    if (participants.length) {
-      await supabase.from('chat_participants').insert(participants);
-    }
-
     await get().fetchChats();
-    return chat.id;
+    return chatId as string;
   },
 
   resetUnreadCount: (chatId: string) => {

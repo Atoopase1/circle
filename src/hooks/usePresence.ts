@@ -115,12 +115,19 @@ export function usePresence() {
 }
 
 /**
- * Hook to send "typing" indicator to a specific chat
+ * Hook to send and receive "typing" indicators for a specific chat.
+ *
+ * FIX: The previous implementation had a race condition where the broadcast
+ * listener was attached AFTER subscribe() was called. The channel must be
+ * fully configured (all .on() calls) before .subscribe() is invoked.
+ * Additionally, the cleanup was incorrectly removing the new channel instead
+ * of the previous one stored in channelRef.current.
  */
 export function useTypingIndicator(chatId: string | null) {
   const user = useAuthStore((s) => s.user);
   const profile = useAuthStore((s) => s.profile);
-  const { addTypingUser } = usePresenceStore();
+  const { addTypingUser, removeTypingUser } = usePresenceStore();
+  // Store the channel ref so we can clean it up correctly
   const channelRef = useRef<ReturnType<ReturnType<typeof getSupabaseBrowserClient>['channel']> | null>(null);
   const lastTypingRef = useRef<number>(0);
 
@@ -128,27 +135,50 @@ export function useTypingIndicator(chatId: string | null) {
     if (!chatId || !user) return;
 
     const supabase = getSupabaseBrowserClient();
+    const channelName = `typing:${chatId}`;
 
-    const channel = supabase.channel(`typing:${chatId}`);
+    // Always clean up the PREVIOUS channel before creating a new one.
+    // The old code was calling supabase.removeChannel(channel) at cleanup time,
+    // but `channel` referred to the newly created variable — not the old one.
+    if (channelRef.current) {
+      supabase.removeChannel(channelRef.current);
+      channelRef.current = null;
+    }
+
+    // Create and configure the channel BEFORE subscribing — all .on() handlers
+    // must be registered before .subscribe() so no events are missed.
+    const channel = supabase.channel(channelName);
 
     channel
       .on('broadcast', { event: 'typing' }, ({ payload }) => {
-        if (payload.user_id !== user.id) {
-          addTypingUser({
-            user_id: payload.user_id,
-            display_name: payload.display_name,
-            chat_id: chatId,
-          });
-        }
+        if (!payload || payload.user_id === user.id) return;
+        addTypingUser({
+          user_id: payload.user_id,
+          display_name: payload.display_name,
+          chat_id: chatId,
+        });
       })
-      .subscribe();
+      .on('broadcast', { event: 'stop_typing' }, ({ payload }) => {
+        // Immediately remove the typing indicator when the sender clears
+        if (!payload || payload.user_id === user.id) return;
+        removeTypingUser(payload.user_id, chatId);
+      })
+      .subscribe((status) => {
+        if (status === 'SUBSCRIBED') {
+          console.log(`[Typing] Subscribed to ${channelName}`);
+        }
+      });
 
     channelRef.current = channel;
 
     return () => {
-      supabase.removeChannel(channel);
+      // Remove the channel we stored in the ref — guaranteed to be this effect's channel
+      if (channelRef.current) {
+        supabase.removeChannel(channelRef.current);
+        channelRef.current = null;
+      }
     };
-  }, [chatId, user, addTypingUser]);
+  }, [chatId, user, addTypingUser, removeTypingUser]);
 
   const sendTyping = useCallback(() => {
     if (!channelRef.current || !user || !chatId) return;
@@ -168,5 +198,18 @@ export function useTypingIndicator(chatId: string | null) {
     });
   }, [user, profile, chatId]);
 
-  return { sendTyping };
+  const sendStopTyping = useCallback(() => {
+    if (!channelRef.current || !user || !chatId) return;
+    lastTypingRef.current = 0; // Reset so next sendTyping fires immediately
+
+    channelRef.current.send({
+      type: 'broadcast',
+      event: 'stop_typing',
+      payload: {
+        user_id: user.id,
+      },
+    });
+  }, [user, chatId]);
+
+  return { sendTyping, sendStopTyping };
 }

@@ -41,7 +41,7 @@ export default function MessageInput({ chatId }: MessageInputProps) {
   const editingMessage = useChatStore((s) => s.editingMessage);
   const setEditingMessage = useChatStore((s) => s.setEditingMessage);
   const editMessage = useChatStore((s) => s.editMessage);
-  const { sendTyping } = useTypingIndicator(chatId);
+  const { sendTyping, sendStopTyping } = useTypingIndicator(chatId);
 
   // Populate text when editing starts
   useEffect(() => {
@@ -78,6 +78,8 @@ export default function MessageInput({ chatId }: MessageInputProps) {
         await editMessage(editingMessage.id, trimmed);
         setEditingMessage(null);
       } else {
+        // Stop the typing indicator immediately on the other end
+        sendStopTyping();
         // Fire and forget, database handles it asynchronously
         sendMessage(
           chatId,
