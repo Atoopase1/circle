@@ -168,7 +168,7 @@ export default function StatusCard({ status, onAddContact, onRefresh, initialFol
           <Avatar src={profiles.avatar_url} name={profiles.display_name} />
           <div>
             <div className="flex items-center gap-2">
-              <span className="font-semibold text-[var(--text-primary)] text-sm">{profiles.display_name}</span>
+              <span className="font-semibold text-[var(--text-primary)] text-sm truncate max-w-[150px]">{profiles.display_name}</span>
               <span className="text-[10px] uppercase bg-[var(--bg-secondary)] px-1.5 py-0.5 rounded text-[var(--text-muted)]">
                 {visibility}
               </span>
@@ -347,7 +347,7 @@ export default function StatusCard({ status, onAddContact, onRefresh, initialFol
               <div key={comment.id} className="flex gap-2">
                 <Avatar src={comment.profiles?.avatar_url} name={comment.profiles?.display_name || '?'} size="sm" />
                 <div className="bg-[var(--bg-primary)] p-2 px-3 rounded-2xl rounded-tl-sm border border-[var(--border-color)]">
-                  <p className="text-[13px] font-semibold text-[var(--text-primary)] mb-0.5">{comment.profiles?.display_name || 'Unknown User'}</p>
+                  <p className="text-[13px] font-semibold text-[var(--text-primary)] truncate max-w-[150px] mb-0.5">{comment.profiles?.display_name || 'Unknown User'}</p>
                   <p className="text-sm text-[var(--text-primary)]">{comment.content}</p>
                 </div>
               </div>

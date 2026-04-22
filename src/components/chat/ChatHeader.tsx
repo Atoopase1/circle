@@ -171,7 +171,7 @@ export default function ChatHeader({ chat, onInfoClick }: ChatHeaderProps) {
       </button>
 
       {/* Actions */}
-      <div className="flex items-center gap-0.5">
+      <div className="flex items-center gap-0.5 shrink-0">
         {!chat.is_group && (
           <>
             <button

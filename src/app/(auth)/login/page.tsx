@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { Mail, Phone, Eye, EyeOff, ArrowRight, Shield, Key } from 'lucide-react';
+import { Mail, Phone, Eye, EyeOff, ArrowRight, Shield, Key, Check } from 'lucide-react';
 import Button from '@/components/ui/Button';
 import CircleLogo from '@/components/ui/CircleLogo';
 import { getSupabaseBrowserClient } from '@/lib/supabase/client';
@@ -27,6 +27,8 @@ export default function LoginPage() {
   const [otpSent, setOtpSent] = useState(false);
 
   const [isLoading, setIsLoading] = useState(false);
+  const [rememberMe, setRememberMe] = useState(true);
+  const [acceptTerms, setAcceptTerms] = useState(false);
 
   const supabase = getSupabaseBrowserClient();
 
@@ -38,6 +40,10 @@ export default function LoginPage() {
     }
 
     if (isForgotPassword) {
+      if (!acceptTerms) {
+        toast.error('Please accept the Terms and Privacy Policy');
+        return;
+      }
       setIsLoading(true);
       try {
         const { error } = await supabase.auth.resetPasswordForEmail(email, {
@@ -56,6 +62,11 @@ export default function LoginPage() {
 
     if (!password) {
       toast.error('Please enter your password');
+      return;
+    }
+
+    if (!acceptTerms) {
+      toast.error('Please accept the Terms and Privacy Policy');
       return;
     }
 
@@ -87,6 +98,11 @@ export default function LoginPage() {
       return;
     }
 
+    if (!acceptTerms) {
+      toast.error('Please accept the Terms and Privacy Policy');
+      return;
+    }
+
     setIsLoading(true);
     try {
       // Direct Login (No Sign Up allowed via Email/Phone anymore)
@@ -105,6 +121,11 @@ export default function LoginPage() {
   const handleSendOtp = async () => {
     if (!phone) {
       toast.error('Enter your phone number');
+      return;
+    }
+
+    if (!acceptTerms) {
+      toast.error('Please accept the Terms and Privacy Policy');
       return;
     }
 
@@ -233,8 +254,21 @@ export default function LoginPage() {
                 </button>
               </div>
               
-              <div className="mt-2 flex justify-end">
+              <div className="mt-2 flex items-center justify-between">
+                <label className="flex items-center gap-2 cursor-pointer group">
+                  <div className="relative flex items-center">
+                    <input
+                      type="checkbox"
+                      checked={rememberMe}
+                      onChange={(e) => setRememberMe(e.target.checked)}
+                      className="peer appearance-none w-5 h-5 rounded-md border-2 border-[var(--border-color)] checked:bg-[var(--emerald)] checked:border-[var(--emerald)] transition-all duration-200"
+                    />
+                    <Check className="absolute w-3.5 h-3.5 text-white opacity-0 peer-checked:opacity-100 left-0.5 pointer-events-none transition-opacity" strokeWidth={4} />
+                  </div>
+                  <span className="text-[14px] font-medium text-[var(--text-muted)] group-hover:text-[var(--text-primary)] transition-colors">Remember me</span>
+                </label>
                 <button
+                  type="button"
                   onClick={() => setIsForgotPassword(true)}
                   className="text-[14px] font-medium text-[var(--emerald)] hover:underline"
                 >
@@ -243,6 +277,27 @@ export default function LoginPage() {
               </div>
             </div>
           )}
+
+          {/* Accept Terms Checkbox */}
+          <div className="pt-2">
+            <label className="flex items-start gap-3 cursor-pointer group">
+              <div className="relative flex items-center mt-0.5 shrink-0">
+                <input
+                  type="checkbox"
+                  checked={acceptTerms}
+                  onChange={(e) => setAcceptTerms(e.target.checked)}
+                  className="peer appearance-none w-5 h-5 rounded-md border-2 border-[var(--border-color)] checked:bg-[var(--emerald)] checked:border-[var(--emerald)] transition-all duration-200"
+                />
+                <Check className="absolute w-3.5 h-3.5 text-white opacity-0 peer-checked:opacity-100 left-0.5 pointer-events-none transition-opacity" strokeWidth={4} />
+              </div>
+              <span className="text-[13.5px] leading-snug text-[var(--text-muted)] group-hover:text-[var(--text-primary)] transition-colors">
+                I accept the{' '}
+                <Link href="/legal/terms" className="text-[var(--emerald)] font-semibold hover:underline">Terms of Service</Link>
+                {' '}and{' '}
+                <Link href="/legal/privacy" className="text-[var(--emerald)] font-semibold hover:underline">Privacy Policy</Link>
+              </span>
+            </label>
+          </div>
 
           <Button onClick={handleEmailAuth} isLoading={isLoading} className="w-full !rounded-xl" size="lg">
             {isForgotPassword ? 'Send Reset Link' : 'Sign In'}
@@ -367,6 +422,27 @@ export default function LoginPage() {
             </div>
           )}
           
+          {/* Accept Terms Checkbox (Phone) */}
+          <div className="pt-2">
+            <label className="flex items-start gap-3 cursor-pointer group">
+              <div className="relative flex items-center mt-0.5 shrink-0">
+                <input
+                  type="checkbox"
+                  checked={acceptTerms}
+                  onChange={(e) => setAcceptTerms(e.target.checked)}
+                  className="peer appearance-none w-5 h-5 rounded-md border-2 border-[var(--border-color)] checked:bg-[var(--emerald)] checked:border-[var(--emerald)] transition-all duration-200"
+                />
+                <Check className="absolute w-3.5 h-3.5 text-white opacity-0 peer-checked:opacity-100 left-0.5 pointer-events-none transition-opacity" strokeWidth={4} />
+              </div>
+              <span className="text-[13.5px] leading-snug text-[var(--text-muted)] group-hover:text-[var(--text-primary)] transition-colors">
+                I accept the{' '}
+                <Link href="/legal/terms" className="text-[var(--emerald)] font-semibold hover:underline">Terms of Service</Link>
+                {' '}and{' '}
+                <Link href="/legal/privacy" className="text-[var(--emerald)] font-semibold hover:underline">Privacy Policy</Link>
+              </span>
+            </label>
+          </div>
+
           <p className="text-center mt-3 text-[14px] text-[var(--text-muted)]">
             <span>Don't have an account? Sign up with Google below.</span>
           </p>
@@ -417,24 +493,7 @@ export default function LoginPage() {
       {!isForgotPassword && (
         <div className="mt-10 animate-fadeIn">
           <p className="text-[14.5px] text-[var(--text-muted)] text-center leading-relaxed px-2">
-            By signing in or creating an account, you agree to
-            our{' '}
-            <button
-              onClick={() => router.push('/legal/terms')}
-              className="font-bold text-[var(--emerald)] hover:underline cursor-pointer relative z-20 focus:outline-none bg-transparent border-none p-0 inline"
-              type="button"
-            >
-              Terms of Service
-            </button>{' '}
-            and{' '}
-            <button
-              onClick={() => router.push('/legal/privacy')}
-              className="font-bold text-[var(--emerald)] hover:underline cursor-pointer relative z-20 focus:outline-none bg-transparent border-none p-0 inline"
-              type="button"
-            >
-              Privacy Policy
-            </button>
-            .
+            Secure login with industry-standard encryption.
           </p>
 
           {/* Subtle gradient divider */}

@@ -1,6 +1,7 @@
 'use client';
 
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
+import { createPortal } from 'react-dom';
 import { X, Download } from 'lucide-react';
 
 interface ImageViewerModalProps {
@@ -13,6 +14,11 @@ interface ImageViewerModalProps {
 
 export default function ImageViewerModal({ isOpen, onClose, src, alt = 'Image', align = 'center' }: ImageViewerModalProps) {
   const overlayRef = useRef<HTMLDivElement>(null);
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   useEffect(() => {
     const handleEsc = (e: KeyboardEvent) => {
@@ -28,13 +34,13 @@ export default function ImageViewerModal({ isOpen, onClose, src, alt = 'Image', 
     };
   }, [isOpen, onClose]);
 
-  if (!isOpen || !src) return null;
+  if (!isOpen || !src || !mounted) return null;
 
   const alignClass = align === 'left'
     ? 'items-center justify-center lg:justify-start lg:pl-[40%] lg:-translate-x-[20%]'
     : 'items-center justify-center';
 
-  return (
+  return createPortal(
     <div
       ref={overlayRef}
       className="fixed inset-0 z-[100] flex flex-col p-4 sm:p-8 animate-fadeIn"
@@ -72,6 +78,7 @@ export default function ImageViewerModal({ isOpen, onClose, src, alt = 'Image', 
           className="max-w-full max-h-full object-contain select-none animate-scaleIn shadow-2xl rounded-2xl"
         />
       </div>
-    </div>
+    </div>,
+    document.body
   );
 }

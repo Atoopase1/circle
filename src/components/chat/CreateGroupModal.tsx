@@ -104,7 +104,7 @@ export default function CreateGroupModal({ isOpen, onClose }: CreateGroupModalPr
                     onClick={() => toggleUser(id)}
                     className="flex items-center gap-1.5 px-3 py-1.5 bg-[var(--emerald)]/10 rounded-full text-[14px] text-[var(--emerald)] font-medium hover:bg-[var(--emerald)]/20 transition-colors"
                   >
-                    {u?.display_name || 'User'}
+                    <span className="truncate max-w-[100px]">{u?.display_name || 'User'}</span>
                     <span className="text-[10px] opacity-60">✕</span>
                   </button>
                 );
@@ -126,7 +126,7 @@ export default function CreateGroupModal({ isOpen, onClose }: CreateGroupModalPr
                   >
                     <Avatar src={user.avatar_url} name={user.display_name} size="md" />
                     <div className="flex-1 text-left">
-                      <p className="text-[14px] font-medium text-[var(--text-primary)]">{user.display_name}</p>
+                      <p className="text-[14px] font-medium text-[var(--text-primary)] truncate">{user.display_name}</p>
                       <p className="text-[14px] text-[var(--text-muted)]">{user.bio || 'Hey there!'}</p>
                     </div>
                     <div

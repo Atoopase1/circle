@@ -50,7 +50,7 @@ export default function GroupInfoPanel({ chat, isOpen, onClose }: GroupInfoPanel
               />
             </div>
           </div>
-          <h3 className="mt-4 text-[18px] font-semibold text-[var(--text-primary)]" style={{ fontFamily: 'var(--font-heading)' }}>
+          <h3 className="mt-4 text-[18px] font-semibold text-[var(--text-primary)] truncate w-full text-center px-4" style={{ fontFamily: 'var(--font-heading)' }}>
             {chat.group_name || 'Group'}
           </h3>
           <p className="text-[14px] text-[var(--text-muted)] mt-1">

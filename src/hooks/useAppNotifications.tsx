@@ -118,7 +118,7 @@ export function useAppNotifications() {
       // Check if we follow this user
       const { data: followCheck } = await supabase
         .from('follows')
-        .select('id')
+        .select('follower_id')
         .eq('follower_id', profile.id)
         .eq('following_id', newStatus.user_id)
         .single();
@@ -178,11 +178,69 @@ export function useAppNotifications() {
       );
     };
 
+    const handleNewFollow = async (payload: any) => {
+      const record = payload.new;
+      if (record.following_id !== profile.id) return; // Only notify if we are being followed
+
+      // Get follower's profile
+      const { data: actor } = await supabase
+        .from('profiles')
+        .select('display_name, avatar_url')
+        .eq('id', record.follower_id)
+        .single();
+        
+      if (!actor) return;
+
+      playSound();
+      addNotification({
+        userId: record.follower_id,
+        userName: actor.display_name,
+        userAvatar: actor.avatar_url,
+        statusId: 'profile', // No status ID for follow
+        preview: `started following you`,
+      });
+
+      toast.custom(
+        (t) => (
+          <div
+            className={`${
+              t.visible ? 'animate-enter' : 'animate-leave'
+            } max-w-sm w-full bg-[var(--bg-primary)] shadow-[var(--shadow-xl)] rounded-2xl pointer-events-auto flex ring-1 ring-black/5 overflow-hidden border border-[var(--border-color)] cursor-pointer`}
+            onClick={() => {
+              toast.dismiss(t.id);
+              router.push(`/profile/${record.follower_id}`);
+            }}
+          >
+            <div className="flex-1 w-0 p-4">
+              <div className="flex items-start">
+                <div className="flex-shrink-0 pt-0.5 relative">
+                  <Avatar src={actor.avatar_url} name={actor.display_name} size="md" />
+                  <div className="absolute -bottom-1 -right-1 bg-[var(--wa-green)] rounded-full p-1 border-2 border-[var(--bg-primary)]">
+                    <BellRing size={12} className="text-white" />
+                  </div>
+                </div>
+                <div className="ml-3 flex-1">
+                  <p className="text-sm font-semibold text-[var(--emerald)]">
+                    New Follower
+                  </p>
+                  <p className="mt-1 text-[13px] text-[var(--text-primary)] font-medium line-clamp-1">
+                    {actor.display_name} started following you
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+        ),
+        { duration: 6000, position: 'top-center' }
+      );
+    };
+
     const channel = supabase.channel('app-notifications')
       .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'statuses' }, handleNewPost)
       .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'status_comments' }, payload => handleNewInteraction(payload, 'comment'))
       .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'status_likes' }, payload => handleNewInteraction(payload, 'like'))
       .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'status_ratings' }, payload => handleNewInteraction(payload, 'rating'))
+      .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'follows' }, handleNewFollow)
       .subscribe();
 
     return () => {

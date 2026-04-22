@@ -4,7 +4,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { useParams } from 'next/navigation';
+import { useParams, useRouter } from 'next/navigation';
 import ChatHeader from '@/components/chat/ChatHeader';
 import MessageList from '@/components/chat/MessageList';
 import MessageInput from '@/components/chat/MessageInput';
@@ -16,6 +16,7 @@ import { useRealtimeMessages } from '@/hooks/useRealtimeMessages';
 import { useMessageStatus } from '@/hooks/useMessageStatus';
 export default function ChatPage() {
   const params = useParams();
+  const router = useRouter();
   const chatId = params.chatId as string;
   const { activeChat, setActiveChat, fetchChats, chats } = useChatStore();
   const hasFetchedOnce = useChatStore((s) => s._hasFetchedOnce);
@@ -52,13 +53,18 @@ export default function ChatPage() {
   // Check if chat actually exists to prevent race conditions during load
   const isChatValid = chats.some((c) => c.id === chatId);
 
+  // Auto-redirect if chat is deleted or invalid
+  useEffect(() => {
+    if (hasFetchedOnce && !isChatValid) {
+      router.replace('/');
+    }
+  }, [hasFetchedOnce, isChatValid, router]);
+
   if (hasFetchedOnce && !isChatValid) {
     return (
       <div className="flex-1 flex flex-col items-center justify-center bg-[var(--bg-chat)] h-full">
-        <p className="text-[var(--text-muted)] text-sm mb-4">Chat not found.</p>
-        <button onClick={() => window.location.href = '/'} className="px-4 py-2 bg-[#09A5DB] text-white rounded-lg text-sm">
-          Return to Chats
-        </button>
+        <LottieLoader size={100} />
+        <p className="text-[var(--text-muted)] text-sm mt-4 animate-pulse">Redirecting to chats...</p>
       </div>
     );
   }

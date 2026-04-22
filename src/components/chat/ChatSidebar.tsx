@@ -12,6 +12,7 @@ import Avatar from '@/components/ui/Avatar';
 import Modal from '@/components/ui/Modal';
 import ImageViewerModal from '@/components/ui/ImageViewerModal';
 import NotificationPanel from '@/components/ui/NotificationPanel';
+import FollowersModal from '@/components/modals/FollowersModal';
 import Spinner from '@/components/ui/Spinner';
 import CreateGroupModal from '@/components/chat/CreateGroupModal';
 import { useChatStore } from '@/store/chat-store';
@@ -32,6 +33,7 @@ export default function ChatSidebar() {
   const [searchUsers, setSearchUsers] = useState<Profile[]>([]);
   const [isSearching, setIsSearching] = useState(false);
   const [followerCount, setFollowerCount] = useState<number>(0);
+  const [showFollowers, setShowFollowers] = useState(false);
 
   const unreadCount = useNotificationStore(s => s.unreadCount);
 
@@ -44,12 +46,17 @@ export default function ChatSidebar() {
     if (!profile?.id) return;
     const fetchFollowers = async () => {
       const supabase = getSupabaseBrowserClient();
-      const { count } = await supabase
+      await supabase.auth.getSession(); // Ensure auth context is loaded for RLS
+      const { data: followRows, error } = await supabase
         .from('follows')
-        .select('*', { count: 'exact', head: true })
+        .select('follower_id')
         .eq('following_id', profile.id);
       
-      setFollowerCount(count || 0);
+      if (error) {
+        console.error('[Sidebar] Follower count error:', error);
+      }
+      console.log('[Sidebar] Followers for', profile.id, ':', followRows);
+      setFollowerCount(followRows?.length || 0);
     };
     fetchFollowers();
   }, [profile?.id]);
@@ -121,7 +128,7 @@ export default function ChatSidebar() {
         {/* Profile Info — overlapping the cover */}
         <div className="relative px-4 -mt-8 flex justify-between items-start">
           {/* Avatar + Name */}
-          <div className="flex gap-3">
+          <div className="flex gap-3 min-w-0">
             <button
               onClick={() => profile?.avatar_url && setShowAvatarViewer(true)}
               className="shrink-0 rounded-full border-[4px] border-[var(--bg-primary)] shadow-lg hover:shadow-xl transition-shadow relative z-10 bg-[var(--bg-primary)]"
@@ -132,12 +139,12 @@ export default function ChatSidebar() {
                 size="xl"
               />
             </button>
-            <div className="pt-[42px] flex flex-col">
+            <div className="pt-[42px] flex flex-col min-w-0">
               <button
                 onClick={() => profile?.id && router.push(`/profile/${profile.id}`)}
                 className="text-left group"
               >
-                <span className="font-bold text-[var(--text-primary)] text-[16px] block leading-tight group-hover:text-[var(--emerald)] transition-colors">
+                <span className="font-bold text-[var(--text-primary)] text-[16px] block leading-tight group-hover:text-[var(--emerald)] transition-colors truncate">
                   {profile?.display_name || 'User'}
                 </span>
               </button>
@@ -148,11 +155,11 @@ export default function ChatSidebar() {
                 </div>
                 <div className="w-1 h-1 rounded-full bg-[var(--text-muted)] opacity-50 shrink-0" />
                 <button 
-                  onClick={() => profile?.id && router.push(`/profile/${profile.id}`)}
-                  className="flex items-center gap-1 group/followers min-w-0 flex-1"
+                  onClick={() => setShowFollowers(true)}
+                  className="flex items-center gap-1 group/followers shrink-0"
                 >
                   <Users size={16} className="shrink-0 text-[var(--text-muted)] group-hover/followers:text-[var(--text-primary)] transition-colors" />
-                  <span className="text-[12px] text-[var(--text-muted)] font-medium tracking-wide group-hover/followers:text-[var(--text-primary)] transition-colors truncate">
+                  <span className="text-[12px] text-[var(--text-muted)] font-medium tracking-wide group-hover/followers:text-[var(--text-primary)] transition-colors whitespace-nowrap">
                     {followerCount} {followerCount === 1 ? 'Follower' : 'Followers'}
                   </span>
                 </button>
@@ -161,7 +168,7 @@ export default function ChatSidebar() {
           </div>
 
           {/* Action buttons */}
-          <div className="flex items-center gap-1 sm:gap-1.5 pt-[40px]">
+          <div className="flex items-center gap-1 sm:gap-1.5 pt-[40px] shrink-0">
             <button
               onClick={() => setShowNewGroup(true)}
               className="p-2 rounded-xl hover:bg-[var(--bg-hover)] transition-all duration-200 text-[var(--text-secondary)] hover:text-[var(--text-primary)]"
@@ -272,6 +279,16 @@ export default function ChatSidebar() {
 
       {/* Notification Panel */}
       <NotificationPanel isOpen={showNotifications} onClose={() => setShowNotifications(false)} />
+
+      {/* Followers Modal */}
+      {profile?.id && (
+        <FollowersModal
+          isOpen={showFollowers}
+          onClose={() => setShowFollowers(false)}
+          profileId={profile.id}
+          followerCount={followerCount}
+        />
+      )}
     </div>
   );
 }

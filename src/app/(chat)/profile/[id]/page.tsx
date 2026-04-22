@@ -11,6 +11,7 @@ import Button from '@/components/ui/Button';
 import Spinner from '@/components/ui/Spinner';
 import ImageViewerModal from '@/components/ui/ImageViewerModal';
 import NotificationPanel from '@/components/ui/NotificationPanel';
+import FollowersModal from '@/components/modals/FollowersModal';
 import StatusCard from '@/components/status/StatusCard';
 import { getSupabaseBrowserClient } from '@/lib/supabase/client';
 import { useAuthStore } from '@/store/auth-store';
@@ -39,14 +40,20 @@ export default function ProfileViewPage() {
   const [isFollowing, setIsFollowing] = useState(false);
   const [relationship, setRelationship] = useState<string | null>(null);
   const [showAvatarViewer, setShowAvatarViewer] = useState(false);
+  const [showFollowers, setShowFollowers] = useState(false);
 
   const addNotification = useNotificationStore(s => s.addNotification);
 
   const isMe = currentUser?.id === profileId;
 
   useEffect(() => {
+    if (!currentUser) return; // Wait for auth to be ready
+
     const loadProfileData = async () => {
       setIsLoading(true);
+
+      // Ensure the auth session is current (RLS needs it)
+      await supabase.auth.getSession();
 
       // Load Profile
       const { data: profileData } = await supabase
@@ -67,40 +74,42 @@ export default function ProfileViewPage() {
       if (statusData) setStatuses(statusData);
 
       // Load Followers Count
-      const { count } = await supabase
+      const { data: followRows, error: followError } = await supabase
         .from('follows')
-        .select('*', { count: 'exact', head: true })
+        .select('follower_id')
         .eq('following_id', profileId);
       
-      setFollowerCount(count || 0);
+      if (followError) {
+        console.error('[ProfilePage] Follower count error:', followError);
+      }
+      console.log('[ProfilePage] Followers for', profileId, ':', followRows);
+      setFollowerCount(followRows?.length || 0);
 
       // Check following status
-      if (currentUser) {
-        const { data: followData } = await supabase
-          .from('follows')
-          .select('*')
-          .eq('follower_id', currentUser.id)
-          .eq('following_id', profileId)
-          .single();
-        
-        setIsFollowing(!!followData);
+      const { data: followData } = await supabase
+        .from('follows')
+        .select('*')
+        .eq('follower_id', currentUser.id)
+        .eq('following_id', profileId)
+        .single();
+      
+      setIsFollowing(!!followData);
 
-        // Check relationship status
-        const { data: contactData } = await supabase
-          .from('contacts')
-          .select('category')
-          .eq('user_id', currentUser.id)
-          .eq('contact_id', profileId)
-          .single();
-        
-        if (contactData) setRelationship(contactData.category);
-      }
+      // Check relationship status
+      const { data: contactData } = await supabase
+        .from('contacts')
+        .select('category')
+        .eq('user_id', currentUser.id)
+        .eq('contact_id', profileId)
+        .single();
+      
+      if (contactData) setRelationship(contactData.category);
 
       setIsLoading(false);
     };
 
     loadProfileData();
-  }, [profileId, currentUser, supabase]);
+  }, [profileId, currentUser]);
 
   // Keep author in sync with currentUser profile changes (for own profile)
   useEffect(() => {
@@ -115,12 +124,20 @@ export default function ProfileViewPage() {
     if (!currentUser) return;
     
     if (isFollowing) {
-      await supabase.from('follows').delete().eq('follower_id', currentUser.id).eq('following_id', profileId);
+      const { error } = await supabase.from('follows').delete().eq('follower_id', currentUser.id).eq('following_id', profileId);
+      if (error) {
+        toast.error(`Error: ${error.message}`);
+        return;
+      }
       setIsFollowing(false);
       setFollowerCount(p => Math.max(0, p - 1));
       toast.success('Unfollowed');
     } else {
-      await supabase.from('follows').insert({ follower_id: currentUser.id, following_id: profileId });
+      const { error } = await supabase.from('follows').insert({ follower_id: currentUser.id, following_id: profileId });
+      if (error) {
+        toast.error(`Error: ${error.message}`);
+        return;
+      }
       setIsFollowing(true);
       setFollowerCount(p => p + 1);
       toast.success('Following!');
@@ -218,7 +235,7 @@ export default function ProfileViewPage() {
           <ArrowLeft size={26} />
         </button>
         
-        <h1 className="text-[15px] font-semibold text-[var(--text-primary)] truncate max-w-[200px]">{author.display_name}</h1>
+        <h1 className="text-[15px] font-semibold text-[var(--text-primary)] truncate flex-1 min-w-0 text-center mx-4">{author.display_name}</h1>
 
         <div className="flex items-center gap-1">
           {isMe ? (
@@ -332,8 +349,8 @@ export default function ProfileViewPage() {
               </button>
             )}
 
-            <h2 className="text-[22px] font-bold text-[var(--text-primary)] flex items-center gap-2.5 mb-1" style={{ fontFamily: 'var(--font-heading)' }}>
-              {author.display_name}
+            <h2 className="text-[22px] font-bold text-[var(--text-primary)] flex items-center gap-2.5 mb-1 pr-10 min-w-0" style={{ fontFamily: 'var(--font-heading)' }}>
+              <span className="truncate">{author.display_name}</span>
               {relationship && (
                 <span className={`text-[10px] uppercase px-2.5 py-0.5 rounded-full font-bold ${
                   relationship === 'family' 
@@ -349,10 +366,10 @@ export default function ProfileViewPage() {
             </p>
 
             <div className="flex items-center gap-10 border-t border-[var(--border-color)] pt-5">
-              <div className="flex flex-col">
-                <span className="font-bold text-[20px] text-[var(--text-primary)]">{followerCount}</span>
+              <button onClick={() => setShowFollowers(true)} className="flex flex-col text-left group/fc hover:opacity-80 transition-opacity">
+                <span className="font-bold text-[20px] text-[var(--text-primary)] group-hover/fc:text-[var(--emerald)] transition-colors">{followerCount}</span>
                 <span className="text-[14px] text-[var(--text-muted)] font-medium uppercase tracking-wider">Followers</span>
-              </div>
+              </button>
               <div className="flex flex-col">
                 <span className="font-bold text-[20px] text-[var(--text-primary)]">{statuses.length}</span>
                 <span className="text-[14px] text-[var(--text-muted)] font-medium uppercase tracking-wider">Posts</span>
@@ -384,6 +401,13 @@ export default function ProfileViewPage() {
         isOpen={showAvatarViewer} 
         onClose={() => setShowAvatarViewer(false)} 
         src={author.avatar_url} 
+      />
+
+      <FollowersModal
+        isOpen={showFollowers}
+        onClose={() => setShowFollowers(false)}
+        profileId={profileId}
+        followerCount={followerCount}
       />
     </div>
   );
