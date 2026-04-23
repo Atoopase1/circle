@@ -43,7 +43,7 @@ export default function MessageInput({ chatId }: MessageInputProps) {
   const editMessage = useChatStore((s) => s.editMessage);
   const { sendTyping, sendStopTyping } = useTypingIndicator(chatId);
 
-  // Populate text when editing starts
+  // Populate text when editing starts or from session storage
   useEffect(() => {
     if (editingMessage) {
       setText(editingMessage.content || '');
@@ -51,8 +51,22 @@ export default function MessageInput({ chatId }: MessageInputProps) {
         textareaRef.current.focus();
       }
     } else if (!replyingTo) {
+      // Restore draft from session storage if available
+      const draft = sessionStorage.getItem(`draft-${chatId}`);
+      if (draft && !text) {
+        setText(draft);
+      }
     }
-  }, [editingMessage]);
+  }, [editingMessage, chatId]);
+
+  // Save draft to session storage as user types
+  useEffect(() => {
+    if (text && !editingMessage) {
+      sessionStorage.setItem(`draft-${chatId}`, text);
+    } else if (!text) {
+      sessionStorage.removeItem(`draft-${chatId}`);
+    }
+  }, [text, chatId, editingMessage]);
 
   const handleSend = useCallback(async () => {
     const trimmed = text.trim();
@@ -92,6 +106,7 @@ export default function MessageInput({ chatId }: MessageInputProps) {
       }
 
       setText('');
+      sessionStorage.removeItem(`draft-${chatId}`);
       setSelectedFile(null);
       setPreviewUrl(null);
       setUploadProgress(0);

@@ -3,7 +3,8 @@
 // ============================================================
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { createPortal } from 'react-dom';
 import { X, Trash2, Bell, BellOff, Check, CheckCheck } from 'lucide-react';
 import { useNotificationStore, type Notification } from '@/store/notification-store';
 import Avatar from '@/components/ui/Avatar';
@@ -33,8 +34,13 @@ export default function NotificationPanel({ isOpen, onClose }: NotificationPanel
   const deleteNotification = useNotificationStore(s => s.deleteNotification);
   const clearAll = useNotificationStore(s => s.clearAll);
   const router = useRouter();
+  const [mounted, setMounted] = useState(false);
 
-  if (!isOpen) return null;
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  if (!isOpen || !mounted) return null;
 
   const handleNotificationClick = (notification: Notification) => {
     markRead(notification.id);
@@ -42,21 +48,18 @@ export default function NotificationPanel({ isOpen, onClose }: NotificationPanel
     onClose();
   };
 
-  return (
-    <>
-      {/* Backdrop */}
+  return createPortal(
+    <div className="fixed inset-0 z-[9990] flex items-center justify-center p-4 animate-fadeIn pointer-events-none">
+      {/* Premium frosted backdrop */}
       <div
-        className="fixed inset-0 z-[9990] bg-black/30 backdrop-blur-[2px]"
+        className="absolute inset-0 bg-[var(--navy)]/40 backdrop-blur-md pointer-events-auto"
         onClick={onClose}
       />
 
-      {/* Panel */}
+      {/* Modal Panel */}
       <div
-        className="fixed right-4 top-16 z-[9991] w-[360px] max-w-[calc(100vw-32px)] max-h-[75vh] bg-[var(--bg-primary)] rounded-2xl border border-[var(--border-color)] flex flex-col overflow-hidden"
-        style={{
-          boxShadow: '0 12px 48px rgba(0,0,0,0.15), 0 4px 16px rgba(0,0,0,0.08)',
-          animation: 'slideUp 0.25s cubic-bezier(0.32, 0.72, 0, 1)',
-        }}
+        className="relative pointer-events-auto w-full max-w-[380px] max-h-[80vh] bg-[var(--bg-primary)] rounded-2xl border border-[var(--border-color)] flex flex-col overflow-hidden animate-scaleIn"
+        style={{ boxShadow: 'var(--shadow-2xl)' }}
       >
         {/* Header */}
         <div className="flex items-center justify-between px-5 py-4 border-b border-[var(--border-color)] shrink-0">
@@ -160,6 +163,7 @@ export default function NotificationPanel({ isOpen, onClose }: NotificationPanel
           )}
         </div>
       </div>
-    </>
+    </div>,
+    document.body
   );
 }

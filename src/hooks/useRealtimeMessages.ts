@@ -164,6 +164,7 @@ export function useRealtimeMessages(chatId: string | null) {
         )
         .subscribe((status) => {
           if (isUnmountedRef.current) return;
+          if (channelRef.current !== channel) return;
 
           if (status === 'SUBSCRIBED') {
             setGlobalConnectionState(false);
@@ -220,13 +221,12 @@ export function useRealtimeMessages(chatId: string | null) {
           // 2 & 3. Force fetch latest messages & merge into local state
           await useChatStore.getState().fetchMessages(chatId);
           
-          // 4. Re-subscribe to real-time updates
-          subscribe();
-          
           lastSyncTime = Date.now();
         } catch (err) {
           console.warn('[Realtime] Focus sync failed:', err);
         } finally {
+          // 4. Always re-subscribe to real-time updates even if fetch fails
+          if (!isUnmountedRef.current) subscribe();
           syncLock = false;
         }
       }, 300); // 300ms debounce
@@ -404,6 +404,8 @@ export function useRealtimeChatList() {
         )
         .subscribe((status) => {
           if (isUnmounted) return;
+          if (channelRef !== channel) return;
+
           if (status === 'SUBSCRIBED') {
             setGlobalConnectionState(false);
             attempts = 0;
@@ -452,13 +454,12 @@ export function useRealtimeChatList() {
           // 2 & 3. Force fetch latest chats (bypasses cache due to our client.ts config)
           await useChatStore.getState().fetchChats();
           
-          // 4. Re-subscribe to real-time updates
-          subscribe();
-          
           lastSyncTime = Date.now();
         } catch (err) {
           console.warn('[Realtime] Global focus sync failed:', err);
         } finally {
+          // 4. Always re-subscribe to real-time updates even if fetch fails
+          if (!isUnmounted) subscribe();
           syncLock = false;
         }
       }, 300); // 300ms debounce

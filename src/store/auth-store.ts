@@ -59,17 +59,31 @@ export const useAuthStore = create<AuthState>((set, get) => ({
     });
   },
 
-  fetchProfile: async (userId: string) => {
+  fetchProfile: async (userId: string, retries = 3) => {
     const supabase = getSupabaseBrowserClient();
 
-    const { data, error } = await supabase
-      .from('profiles')
-      .select('*')
-      .eq('id', userId)
-      .single();
+    for (let attempt = 1; attempt <= retries; attempt++) {
+      const { data, error } = await supabase
+        .from('profiles')
+        .select('*')
+        .eq('id', userId)
+        .single();
 
-    if (data && !error) {
-      set({ profile: data as Profile });
+      if (data && !error) {
+        set({ profile: data as Profile });
+        return;
+      }
+
+      console.error(`Profile fetch attempt ${attempt} failed:`, error);
+      
+      if (attempt < retries) {
+        // Wait before retrying (exponential backoff: 1s, 2s, 4s...)
+        await new Promise(res => setTimeout(res, 1000 * Math.pow(2, attempt - 1)));
+      } else {
+        // On final failure, we don't clear the user, but we might want to alert them
+        // that their profile couldn't be loaded due to a network issue.
+        console.error('CRITICAL: Failed to load user profile after all retries. Data is NOT lost, but cannot be displayed.');
+      }
     }
   },
 
@@ -80,8 +94,7 @@ export const useAuthStore = create<AuthState>((set, get) => ({
 
     const { data, error } = await supabase
       .from('profiles')
-      .update(updates)
-      .eq('id', userId)
+      .upsert({ id: userId, ...updates })
       .select()
       .single();
 

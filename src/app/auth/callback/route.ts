@@ -34,10 +34,25 @@ export async function GET(request: Request) {
       }
     );
 
-    const { error } = await supabase.auth.exchangeCodeForSession(code);
+    const { data, error } = await supabase.auth.exchangeCodeForSession(code);
     
-    if (!error) {
-      return NextResponse.redirect(`${origin}${next}`);
+    if (!error && data.session) {
+      const user = data.session.user;
+      
+      // Calculate time difference between account creation and current sign in
+      // If it's less than 10 seconds, this is a brand new account created via Google
+      const createdAt = new Date(user.created_at).getTime();
+      const lastSignIn = new Date(user.last_sign_in_at || user.created_at).getTime();
+      const isNewUser = Math.abs(createdAt - lastSignIn) < 10000;
+      
+      let finalNext = next;
+      
+      // If they are an existing user trying to go to setup-profile, send them home instead
+      if (next === '/setup-profile' && !isNewUser) {
+        finalNext = '/';
+      }
+
+      return NextResponse.redirect(`${origin}${finalNext}`);
     } else {
       // Redirect to login if there is a code but exchange failed
       return NextResponse.redirect(`${origin}/login?error=auth-code-exchange-failed`);

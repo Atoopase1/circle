@@ -14,11 +14,32 @@ export function getSupabaseBrowserClient() {
     {
       global: {
         // Force Next.js and the browser to never cache Supabase API responses.
-        // This is critical because if the app is suspended in the background and misses
-        // a realtime event, it relies on fetch() to get the missing messages. If fetch()
-        // returns a stale cache, the messages are invisible until a hard refresh.
+        // Using cache: 'no-store' prevents Next.js App Router caching.
+        // NOTE: Do NOT append query params like _cb=timestamp — PostgREST
+        // interprets ALL query params as column filters and will crash.
         fetch: (url, options) => {
-          return fetch(url, { ...options, cache: 'no-store' });
+          // Safely merge headers — Supabase passes a Headers instance,
+          // not a plain object, so we must convert it first.
+          const existingHeaders: Record<string, string> = {};
+          if (options?.headers) {
+            if (options.headers instanceof Headers) {
+              options.headers.forEach((value, key) => {
+                existingHeaders[key] = value;
+              });
+            } else if (typeof options.headers === 'object') {
+              Object.assign(existingHeaders, options.headers);
+            }
+          }
+
+          return fetch(url, {
+            ...options,
+            cache: 'no-store',
+            headers: {
+              ...existingHeaders,
+              'Cache-Control': 'no-cache, no-store, must-revalidate',
+              'Pragma': 'no-cache',
+            },
+          });
         },
       },
       realtime: {

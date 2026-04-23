@@ -10,6 +10,7 @@ import ProfileEditor from '@/components/settings/ProfileEditor';
 import Toggle from '@/components/ui/Toggle';
 import ChatSidebar from '@/components/chat/ChatSidebar';
 import { useAuthStore } from '@/store/auth-store';
+import ManageStorageModal from '@/components/modals/ManageStorageModal';
 
 export default function SettingsPage() {
   const router = useRouter();
@@ -21,6 +22,7 @@ export default function SettingsPage() {
   };
   const [isDark, setIsDark] = useState(false);
   const [currentFont, setCurrentFont] = useState('var(--font-inter)');
+  const [isStorageModalOpen, setIsStorageModalOpen] = useState(false);
 
   const [pushEnabled, setPushEnabled] = useState(true);
   const [soundEnabled, setSoundEnabled] = useState(true);
@@ -201,7 +203,10 @@ export default function SettingsPage() {
           </div>
 
           {/* Storage */}
-          <div className="surface-card p-5">
+          <div 
+            className="surface-card p-5 cursor-pointer hover:bg-[var(--bg-hover)] transition-colors duration-200"
+            onClick={() => setIsStorageModalOpen(true)}
+          >
             <h2 className="text-[14px] font-semibold text-[var(--text-muted)] uppercase tracking-widest mb-4 flex items-center gap-2">
               <HardDrive size={26} className="text-[var(--emerald)]" />
               Storage & Data
@@ -247,6 +252,12 @@ export default function SettingsPage() {
           </div>
         </div>
       </div>
+
+      {/* Storage Modal */}
+      <ManageStorageModal 
+        isOpen={isStorageModalOpen} 
+        onClose={() => setIsStorageModalOpen(false)} 
+      />
     </div>
   );
 }

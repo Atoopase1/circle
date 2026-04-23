@@ -17,6 +17,7 @@ export default function SetupProfilePage() {
   const { user, profile, updateProfile } = useAuthStore();
   const [displayName, setDisplayName] = useState('');
   const [bio, setBio] = useState('');
+  const [googleAvatar, setGoogleAvatar] = useState<string | undefined>(undefined);
   const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
@@ -33,6 +34,10 @@ export default function SetupProfilePage() {
           setDisplayName(user.user_metadata.full_name);
         } else if (user?.user_metadata?.name) {
           setDisplayName(user.user_metadata.name);
+        }
+
+        if (user?.user_metadata?.avatar_url || user?.user_metadata?.picture) {
+          setGoogleAvatar(user.user_metadata.avatar_url || user.user_metadata.picture);
         }
       };
       fetchGoogleMeta();
@@ -56,6 +61,7 @@ export default function SetupProfilePage() {
         display_name: displayName.trim(),
         bio: bio.trim() || 'Hey there! I am using Circle.',
         is_online: true,
+        ...(googleAvatar ? { avatar_url: googleAvatar, cover_url: googleAvatar } : { cover_url: '/default-cover.png' }),
       });
 
       toast.success('Profile set up!');
@@ -81,6 +87,7 @@ export default function SetupProfilePage() {
       <div className="flex justify-center mb-6">
         <Avatar
           name={displayName || 'User'}
+          url={googleAvatar}
           size="xl"
         />
       </div>
