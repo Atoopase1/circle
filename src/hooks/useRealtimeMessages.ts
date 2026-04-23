@@ -191,10 +191,22 @@ export function useRealtimeMessages(chatId: string | null) {
 
     subscribe();
 
-    // ── Tab Focus Synchronization ───────────────────────────────────────
+    // ── Tab Focus & Wake Up Synchronization ─────────────────────────────
     let syncLock = false;
     let lastSyncTime = Date.now();
     let debounceTimer: ReturnType<typeof setTimeout> | null = null;
+    let lastPulseTime = Date.now();
+
+    // Heartbeat to detect if device went to sleep and woke up (e.g. screen unlock)
+    const wakeupInterval = setInterval(() => {
+      const now = Date.now();
+      // If more than 5s passed since the last 2s pulse, the device was asleep
+      if (now - lastPulseTime > 5000) {
+        console.log('[Realtime] Device wake up detected. Forcing sync...');
+        handleFocusSync();
+      }
+      lastPulseTime = now;
+    }, 2000);
 
     const handleFocusSync = () => {
       if (isUnmountedRef.current || !chatId) return;
@@ -238,16 +250,28 @@ export function useRealtimeMessages(chatId: string | null) {
       }
     };
 
+    // If chat appears frozen, tap interaction forces a silent background sync (max once per 30s)
+    const handleInteractionSync = () => {
+      if (Date.now() - lastSyncTime > 30000) {
+        handleFocusSync();
+      }
+    };
+
     window.addEventListener('focus', handleFocusSync);
     window.addEventListener('online', handleFocusSync);
     document.addEventListener('visibilitychange', onVisibilityChange);
+    window.addEventListener('touchstart', handleInteractionSync, { passive: true });
+    window.addEventListener('mousedown', handleInteractionSync, { passive: true });
 
     return () => {
       isUnmountedRef.current = true;
 
+      clearInterval(wakeupInterval);
       window.removeEventListener('focus', handleFocusSync);
       window.removeEventListener('online', handleFocusSync);
       document.removeEventListener('visibilitychange', onVisibilityChange);
+      window.removeEventListener('touchstart', handleInteractionSync);
+      window.removeEventListener('mousedown', handleInteractionSync);
 
       if (debounceTimer) clearTimeout(debounceTimer);
 
@@ -424,10 +448,21 @@ export function useRealtimeChatList() {
 
     subscribe();
 
-    // ── Tab Focus Synchronization ───────────────────────────────────────
+    // ── Tab Focus & Wake Up Synchronization ─────────────────────────────
     let syncLock = false;
     let lastSyncTime = Date.now();
     let debounceTimer: ReturnType<typeof setTimeout> | null = null;
+    let lastPulseTime = Date.now();
+
+    // Heartbeat to detect if device went to sleep and woke up
+    const wakeupInterval = setInterval(() => {
+      const now = Date.now();
+      if (now - lastPulseTime > 5000) {
+        console.log('[Realtime] ChatList: Device wake up detected. Forcing sync...');
+        handleFocusSync();
+      }
+      lastPulseTime = now;
+    }, 2000);
 
     const handleFocusSync = () => {
       if (isUnmounted || !user) return;
@@ -471,16 +506,27 @@ export function useRealtimeChatList() {
       }
     };
 
+    const handleInteractionSync = () => {
+      if (Date.now() - lastSyncTime > 30000) {
+        handleFocusSync();
+      }
+    };
+
     window.addEventListener('focus', handleFocusSync);
     window.addEventListener('online', handleFocusSync);
     document.addEventListener('visibilitychange', onVisibilityChange);
+    window.addEventListener('touchstart', handleInteractionSync, { passive: true });
+    window.addEventListener('mousedown', handleInteractionSync, { passive: true });
 
     return () => {
       isUnmounted = true;
 
+      clearInterval(wakeupInterval);
       window.removeEventListener('focus', handleFocusSync);
       window.removeEventListener('online', handleFocusSync);
       document.removeEventListener('visibilitychange', onVisibilityChange);
+      window.removeEventListener('touchstart', handleInteractionSync);
+      window.removeEventListener('mousedown', handleInteractionSync);
 
       if (debounceTimer) clearTimeout(debounceTimer);
       if (reconnectTimer) clearTimeout(reconnectTimer);
