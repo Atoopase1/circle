@@ -5,8 +5,9 @@
 
 import { useState, useRef, useCallback, useEffect } from 'react';
 import { createPortal } from 'react-dom';
-import { Send, Paperclip, Smile, Mic, X, ImageIcon, FileText, Video, Camera, Pencil } from 'lucide-react';
+import { Send, Paperclip, Smile, Mic, X, ImageIcon, FileText, Video, Camera, Pencil, Lock } from 'lucide-react';
 import { useChatStore } from '@/store/chat-store';
+import { useAuthStore } from '@/store/auth-store';
 import { useTypingIndicator } from '@/hooks/usePresence';
 import { uploadMedia, getMessageTypeFromFile } from '@/lib/media';
 import toast from 'react-hot-toast';
@@ -18,6 +19,28 @@ interface MessageInputProps {
 }
 
 export default function MessageInput({ chatId }: MessageInputProps) {
+  const activeChat = useChatStore((s) => s.activeChat);
+  const currentUser = useAuthStore((s) => s.user);
+
+  // Check if admin-only messaging is enabled and user is not admin
+  const isAdminOnlyLocked = (() => {
+    if (!activeChat?.is_group || !activeChat?.admin_only_messages) return false;
+    const myParticipant = activeChat.participants?.find(p => p.user_id === currentUser?.id);
+    return myParticipant?.role !== 'admin';
+  })();
+
+  if (isAdminOnlyLocked) {
+    return (
+      <div className="glass-header border-t border-[var(--border-color)]">
+        <div className="flex items-center justify-center gap-3 px-4 py-4">
+          <Lock size={18} className="text-[var(--text-muted)]" />
+          <p className="text-[14px] text-[var(--text-muted)] font-medium">
+            Only admins can send messages
+          </p>
+        </div>
+      </div>
+    );
+  }
   const [text, setText] = useState('');
   const [isSending, setIsSending] = useState(false);
   const [showAttachMenu, setShowAttachMenu] = useState(false);

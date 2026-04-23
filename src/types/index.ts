@@ -26,6 +26,7 @@ export interface Chat {
   last_message_id: string | null;
   last_message_at: string | null;
   pinned_message_id: string | null;
+  admin_only_messages: boolean;
   created_at: string;
   updated_at: string;
 }

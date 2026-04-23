@@ -50,11 +50,11 @@ export default function Modal({ isOpen, onClose, title, children, maxWidth = 'ma
       
       {/* Modal card */}
       <div
-        className={`relative w-full ${maxWidth} bg-[var(--bg-primary)] rounded-2xl overflow-hidden animate-scaleIn`}
+        className={`relative w-full ${maxWidth} max-h-[90vh] flex flex-col bg-[var(--bg-primary)] rounded-2xl overflow-hidden animate-scaleIn`}
         style={{ boxShadow: 'var(--shadow-2xl)' }}
       >
         {/* Header */}
-        <div className="flex items-center justify-between px-6 py-4 border-b border-[var(--border-color)]">
+        <div className="flex items-center justify-between px-6 py-4 border-b border-[var(--border-color)] shrink-0">
           <h2 className="text-lg font-semibold text-[var(--text-primary)]">{title}</h2>
           <button
             onClick={onClose}
@@ -64,7 +64,7 @@ export default function Modal({ isOpen, onClose, title, children, maxWidth = 'ma
           </button>
         </div>
         {/* Body */}
-        <div className="px-6 py-4">{children}</div>
+        <div className="px-6 py-4 overflow-y-auto flex-1 min-h-0">{children}</div>
       </div>
     </div>,
     document.body

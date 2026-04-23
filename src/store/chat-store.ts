@@ -57,6 +57,11 @@ interface ChatState {
   toggleMessageSelection: (messageId: string) => void;
   clearSelection: () => void;
   deleteChat: (chatId: string) => Promise<void>;
+  updateGroupSettings: (chatId: string, settings: { name?: string; description?: string; iconUrl?: string; adminOnlyMessages?: boolean }) => Promise<void>;
+  removeGroupMember: (chatId: string, userId: string) => Promise<void>;
+  setMemberRole: (chatId: string, userId: string, role: 'admin' | 'member') => Promise<void>;
+  addGroupMembers: (chatId: string, memberIds: string[]) => Promise<void>;
+  leaveGroup: (chatId: string) => Promise<void>;
 }
 
 export const useChatStore = create<ChatState>((set, get) => ({
@@ -968,5 +973,154 @@ export const useChatStore = create<ChatState>((set, get) => ({
 
   clearSelection: () => {
     set({ selectionMode: false, selectedMessageIds: [] });
-  }
+  },
+
+  updateGroupSettings: async (chatId, settings) => {
+    const supabase = getSupabaseBrowserClient();
+
+    // Optimistic update
+    set((state) => {
+      const update: Partial<ChatWithDetails> = {};
+      if (settings.name !== undefined) update.group_name = settings.name;
+      if (settings.description !== undefined) update.group_description = settings.description;
+      if (settings.iconUrl !== undefined) update.group_icon_url = settings.iconUrl;
+      if (settings.adminOnlyMessages !== undefined) update.admin_only_messages = settings.adminOnlyMessages;
+
+      return {
+        chats: state.chats.map((c) => c.id === chatId ? { ...c, ...update } : c),
+        activeChat: state.activeChat?.id === chatId ? { ...state.activeChat, ...update } : state.activeChat,
+      };
+    });
+
+    const { error } = await supabase.rpc('update_group_settings', {
+      p_chat_id: chatId,
+      p_name: settings.name ?? null,
+      p_description: settings.description ?? null,
+      p_icon_url: settings.iconUrl ?? null,
+      p_admin_only_messages: settings.adminOnlyMessages ?? null,
+    });
+
+    if (error) {
+      console.error('updateGroupSettings error:', error);
+      if (typeof window !== 'undefined') {
+        const toast = (await import('react-hot-toast')).default;
+        toast.error(`Failed to update group: ${error.message}`);
+      }
+      // Revert on error
+      await get().fetchChats();
+    }
+  },
+
+  removeGroupMember: async (chatId, userId) => {
+    const supabase = getSupabaseBrowserClient();
+
+    // Optimistic: remove participant from list
+    set((state) => {
+      const filterParticipants = (c: ChatWithDetails) => ({
+        ...c,
+        participants: c.participants.filter((p) => p.user_id !== userId),
+      });
+      return {
+        chats: state.chats.map((c) => c.id === chatId ? filterParticipants(c) : c),
+        activeChat: state.activeChat?.id === chatId ? filterParticipants(state.activeChat) : state.activeChat,
+      };
+    });
+
+    const { error } = await supabase.rpc('remove_group_member', {
+      p_chat_id: chatId,
+      p_user_id: userId,
+    });
+
+    if (error) {
+      console.error('removeGroupMember error:', error);
+      if (typeof window !== 'undefined') {
+        const toast = (await import('react-hot-toast')).default;
+        toast.error(`Failed to remove member: ${error.message}`);
+      }
+      await get().fetchChats();
+    }
+  },
+
+  setMemberRole: async (chatId, userId, role) => {
+    const supabase = getSupabaseBrowserClient();
+
+    // Optimistic update
+    set((state) => {
+      const updateRole = (c: ChatWithDetails) => ({
+        ...c,
+        participants: c.participants.map((p) =>
+          p.user_id === userId ? { ...p, role } : p
+        ),
+      });
+      return {
+        chats: state.chats.map((c) => c.id === chatId ? updateRole(c) : c),
+        activeChat: state.activeChat?.id === chatId ? updateRole(state.activeChat) : state.activeChat,
+      };
+    });
+
+    const { error } = await supabase.rpc('set_member_role', {
+      p_chat_id: chatId,
+      p_user_id: userId,
+      p_role: role,
+    });
+
+    if (error) {
+      console.error('setMemberRole error:', error);
+      if (typeof window !== 'undefined') {
+        const toast = (await import('react-hot-toast')).default;
+        toast.error(`Failed to change role: ${error.message}`);
+      }
+      await get().fetchChats();
+    }
+  },
+
+  addGroupMembers: async (chatId, memberIds) => {
+    const supabase = getSupabaseBrowserClient();
+
+    const { error } = await supabase.rpc('add_group_members', {
+      p_chat_id: chatId,
+      p_member_ids: memberIds,
+    });
+
+    if (error) {
+      console.error('addGroupMembers error:', error);
+      if (typeof window !== 'undefined') {
+        const toast = (await import('react-hot-toast')).default;
+        toast.error(`Failed to add members: ${error.message}`);
+      }
+    }
+
+    // Always refresh to get full participant profiles
+    await get().fetchChats();
+    // Also refresh activeChat
+    const activeChatId = get().activeChatId;
+    if (activeChatId === chatId) {
+      const updatedChat = get().chats.find(c => c.id === chatId);
+      if (updatedChat) set({ activeChat: updatedChat });
+    }
+  },
+
+  leaveGroup: async (chatId) => {
+    const supabase = getSupabaseBrowserClient();
+
+    // Optimistic: remove chat from list
+    set((state) => ({
+      chats: state.chats.filter((c) => c.id !== chatId),
+      activeChat: state.activeChatId === chatId ? null : state.activeChat,
+      activeChatId: state.activeChatId === chatId ? null : state.activeChatId,
+    }));
+
+    const { error } = await supabase.rpc('leave_group', {
+      p_chat_id: chatId,
+    });
+
+    if (error) {
+      console.error('leaveGroup error:', error);
+      if (typeof window !== 'undefined') {
+        const toast = (await import('react-hot-toast')).default;
+        toast.error(`Failed to leave group: ${error.message}`);
+      }
+      await get().fetchChats();
+    }
+  },
 }));
