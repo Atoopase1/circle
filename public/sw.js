@@ -2,6 +2,7 @@ const CACHE_NAME = 'circle-pwa-cache-v2';
 const MEDIA_CACHE_NAME = 'circle-media-cache-v1';
 const STATIC_ROOT_CACHES = [
   '/',
+  '/login',
   '/manifest.json',
   '/icon-192.png',
   '/icon-512.png',
@@ -12,7 +13,12 @@ const STATIC_ROOT_CACHES = [
 self.addEventListener('install', (event) => {
   event.waitUntil(
     caches.open(CACHE_NAME).then((cache) => {
-      return cache.addAll(STATIC_ROOT_CACHES).catch((err) => console.log('Offline cache error:', err));
+      // Use individual additions so one failure (like a redirect on /) doesn't block the rest
+      return Promise.allSettled(
+        STATIC_ROOT_CACHES.map(url => 
+          cache.add(url).catch(err => console.warn(`Failed to cache ${url}:`, err))
+        )
+      );
     }).then(() => self.skipWaiting())
   );
 });
