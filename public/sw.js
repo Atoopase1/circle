@@ -1,4 +1,5 @@
-const CACHE_NAME = 'circle-pwa-cache-v1';
+const CACHE_NAME = 'circle-pwa-cache-v2';
+const MEDIA_CACHE_NAME = 'circle-media-cache-v1';
 const STATIC_ROOT_CACHES = [
   '/',
   '/manifest.json',
@@ -11,7 +12,6 @@ const STATIC_ROOT_CACHES = [
 self.addEventListener('install', (event) => {
   event.waitUntil(
     caches.open(CACHE_NAME).then((cache) => {
-      // Add offline shell silently, don't fail installation if some files are missing
       return cache.addAll(STATIC_ROOT_CACHES).catch((err) => console.log('Offline cache error:', err));
     }).then(() => self.skipWaiting())
   );
@@ -19,11 +19,12 @@ self.addEventListener('install', (event) => {
 
 // Activate event: clean up old caches immediately
 self.addEventListener('activate', (event) => {
+  const currentCaches = [CACHE_NAME, MEDIA_CACHE_NAME];
   event.waitUntil(
     caches.keys().then((cacheNames) => 
       Promise.all(
         cacheNames
-          .filter((name) => name !== CACHE_NAME)
+          .filter((name) => !currentCaches.includes(name))
           .map((name) => caches.delete(name))
       )
     ).then(() => self.clients.claim())
@@ -31,16 +32,19 @@ self.addEventListener('activate', (event) => {
 });
 
 // Fetch event with Hybrid Strategy:
-// 1. Static Assets (JS/CSS/Fonts/Images) -> Cache First, fallback to Network
-// 2. Next.js Data/Navigation -> Network First, fallback to Cache
+// 1. Supabase Storage Media (images/avatars/attachments) -> Cache First, update in background
+// 2. Static Assets (JS/CSS/Fonts/Images) -> Stale-While-Revalidate
+// 3. Next.js Data/Navigation -> Network First, fallback to Cache
 self.addEventListener('fetch', (event) => {
   const url = new URL(event.request.url);
 
-  // Ignore WebSockets, POST requests, and Supabase API calls (let Realtime/Zustand handle them)
+  // Ignore WebSockets, POST requests, and Supabase REST/Realtime API calls
   if (
     event.request.method !== 'GET' ||
     url.pathname.startsWith('/socket.io') ||
-    url.hostname.includes('supabase.co')
+    (url.hostname.includes('supabase.co') && url.pathname.startsWith('/rest/')) ||
+    (url.hostname.includes('supabase.co') && url.pathname.startsWith('/realtime/')) ||
+    (url.hostname.includes('supabase.co') && url.pathname.startsWith('/auth/'))
   ) {
     return;
   }
@@ -48,20 +52,24 @@ self.addEventListener('fetch', (event) => {
   // Next.js Hot Module Reloading for dev should bypass cache
   if (url.pathname.includes('/_next/webpack-hmr')) return;
 
-  // STRATEGY: Static Assets (Images, Next.js JS/CSS chunks)
-  // Stale-While-Revalidate: Return instant cache, update cache in background
-  if (url.pathname.startsWith('/_next/static/') || url.pathname.includes('/images/') || url.pathname.match(/\.(png|jpg|jpeg|svg|css|js|woff2)$/)) {
+  // ── STRATEGY 1: Supabase Storage Media (profile pics, shared images, audio, video) ──
+  // Cache-First with background revalidation. These URLs rarely change.
+  if (url.hostname.includes('supabase.co') && url.pathname.includes('/storage/')) {
     event.respondWith(
-      caches.open(CACHE_NAME).then((cache) => {
+      caches.open(MEDIA_CACHE_NAME).then((cache) => {
         return cache.match(event.request).then((cachedResponse) => {
+          // Always kick off a background fetch to keep the cache fresh
           const fetchPromise = fetch(event.request).then((networkResponse) => {
-            // Update cache in the background with the latest version
             if (networkResponse && networkResponse.status === 200) {
               cache.put(event.request, networkResponse.clone());
             }
             return networkResponse;
+          }).catch(() => {
+            // Network failed — that's fine, we have the cached copy
+            return cachedResponse;
           });
-          // Return instant cache if available, else wait for network
+
+          // Return the cached version instantly if we have it
           return cachedResponse || fetchPromise;
         });
       })
@@ -69,9 +77,46 @@ self.addEventListener('fetch', (event) => {
     return;
   }
 
-  // STRATEGY: HTML Pages & Dynamic Navigation
-  // Network-First with Cache Fallback: Try network so we always get the newest layout/app version,
-  // but if offline, serve the cached version or a standard offline fallback page.
+  // ── STRATEGY 2: Static Assets (Next.js chunks, images, fonts, CSS) ──
+  // Stale-While-Revalidate: Return instant cache, update cache in background
+  if (url.pathname.startsWith('/_next/static/') || url.pathname.includes('/images/') || url.pathname.match(/\.(png|jpg|jpeg|svg|css|js|woff2|woff|ttf|webp|avif|gif|ico)$/)) {
+    event.respondWith(
+      caches.open(CACHE_NAME).then((cache) => {
+        return cache.match(event.request).then((cachedResponse) => {
+          const fetchPromise = fetch(event.request).then((networkResponse) => {
+            if (networkResponse && networkResponse.status === 200) {
+              cache.put(event.request, networkResponse.clone());
+            }
+            return networkResponse;
+          }).catch(() => cachedResponse);
+          return cachedResponse || fetchPromise;
+        });
+      })
+    );
+    return;
+  }
+
+  // ── STRATEGY 3: Google Fonts ──
+  // Cache-First: Fonts never change once loaded
+  if (url.hostname.includes('fonts.googleapis.com') || url.hostname.includes('fonts.gstatic.com')) {
+    event.respondWith(
+      caches.open(CACHE_NAME).then((cache) => {
+        return cache.match(event.request).then((cachedResponse) => {
+          if (cachedResponse) return cachedResponse;
+          return fetch(event.request).then((networkResponse) => {
+            if (networkResponse && networkResponse.status === 200) {
+              cache.put(event.request, networkResponse.clone());
+            }
+            return networkResponse;
+          });
+        });
+      })
+    );
+    return;
+  }
+
+  // ── STRATEGY 4: HTML Pages & Dynamic Navigation ──
+  // Network-First with Cache Fallback
   event.respondWith(
     fetch(event.request)
       .then((response) => {
@@ -82,12 +127,10 @@ self.addEventListener('fetch', (event) => {
         return response;
       })
       .catch(() => {
-        // Drop to cache if network completely fails (device is offline)
         return caches.match(event.request).then((cachedResponse) => {
           if (cachedResponse) {
             return cachedResponse;
           }
-          // If we don't have the explicit page, optionally return an offline shell
           if (event.request.mode === 'navigate') {
             return caches.match('/offline.html');
           }

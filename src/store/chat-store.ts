@@ -7,6 +7,7 @@ import { create } from 'zustand';
 import { getSupabaseBrowserClient } from '@/lib/supabase/client';
 import type { ChatWithDetails, Message, Profile } from '@/types';
 import { useAuthStore } from '@/store/auth-store';
+import { cacheMessages, getCachedMessages, cacheChatList, getCachedChatList } from '@/lib/message-cache';
 
 interface ChatState {
   chats: ChatWithDetails[];
@@ -88,6 +89,16 @@ export const useChatStore = create<ChatState>((set, get) => ({
     // Only show loading spinner on first load — subsequent fetches are silent background refreshes
     if (!hasCachedChats) {
       set({ isLoadingChats: true });
+
+      // Instantly load cached chat list from IndexedDB while we fetch from network
+      try {
+        const cachedChats = await getCachedChatList();
+        if (cachedChats && cachedChats.length > 0 && get().chats.length === 0) {
+          set({ chats: cachedChats as ChatWithDetails[], isLoadingChats: false });
+        }
+      } catch (e) {
+        // Ignore cache read errors
+      }
     }
 
     const supabase = getSupabaseBrowserClient();
@@ -194,6 +205,9 @@ export const useChatStore = create<ChatState>((set, get) => ({
         _hasFetchedOnce: true,
         ...(updatedActiveChat ? { activeChat: updatedActiveChat } : {}),
       });
+
+      // Persist chat list to IndexedDB for instant loading next session
+      cacheChatList(chats).catch(() => {});
     } catch (err: any) {
       const errMsg = err?.message || err?.toString?.() || JSON.stringify(err) || String(err);
       if (typeof errMsg === 'string' && errMsg.toLowerCase().includes('fetch')) {
@@ -213,7 +227,24 @@ export const useChatStore = create<ChatState>((set, get) => ({
       return;
     }
 
-    const cached = get().messagesByChat[chatId];
+    let cached = get().messagesByChat[chatId];
+
+    // If no in-memory cache, try IndexedDB for instant display
+    if (!cached || cached.length === 0) {
+      try {
+        const idbMessages = await getCachedMessages(chatId);
+        if (idbMessages && idbMessages.length > 0) {
+          cached = idbMessages as Message[];
+          // Pre-populate the in-memory cache
+          set((state) => ({
+            messagesByChat: { ...state.messagesByChat, [chatId]: cached! },
+          }));
+        }
+      } catch (e) {
+        // Ignore cache read errors
+      }
+    }
+
     set({ 
       activeChatId: chatId,
       messages: cached || [],
@@ -310,6 +341,9 @@ export const useChatStore = create<ChatState>((set, get) => ({
           const mergedMessages = Array.from(msgMap.values()).sort(
             (a, b) => new Date(a.created_at).getTime() - new Date(b.created_at).getTime()
           );
+
+          // Persist to IndexedDB in the background for next session
+          cacheMessages(chatId, mergedMessages).catch(() => {});
 
           return {
             messages: mergedMessages,
