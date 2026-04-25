@@ -67,7 +67,7 @@ export default function ProfileViewPage() {
       // Load statuses
       const { data: statusData } = await supabase
         .from('statuses')
-        .select('*, profiles!statuses_user_id_fkey(*)')
+        .select('*, profiles!statuses_user_id_fkey(*), status_likes(*), status_comments(*, profiles(*)), status_ratings(*)')
         .eq('user_id', profileId)
         .order('created_at', { ascending: false });
       

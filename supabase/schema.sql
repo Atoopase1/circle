@@ -16,7 +16,7 @@ CREATE TABLE IF NOT EXISTS profiles (
   display_name TEXT NOT NULL DEFAULT 'User',
   avatar_url TEXT,
   cover_url TEXT,
-  bio TEXT DEFAULT 'Hey there! I am using Tekyel.',
+  bio TEXT DEFAULT 'Hey there! I am using WhatsApp.',
   is_online BOOLEAN DEFAULT false,
   last_seen TIMESTAMPTZ DEFAULT now(),
   created_at TIMESTAMPTZ DEFAULT now(),
