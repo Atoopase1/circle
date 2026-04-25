@@ -8,7 +8,7 @@ import { useRouter } from 'next/navigation';
 import { ArrowRight } from 'lucide-react';
 import Button from '@/components/ui/Button';
 import Avatar from '@/components/ui/Avatar';
-import CircleLogo from '@/components/ui/CircleLogo';
+import TekyelLogo from '@/components/ui/TekyelLogo';
 import { useAuthStore } from '@/store/auth-store';
 import toast, { Toaster } from 'react-hot-toast';
 
@@ -59,7 +59,7 @@ export default function SetupProfilePage() {
     try {
       await updateProfile({
         display_name: displayName.trim(),
-        bio: bio.trim() || 'Hey there! I am using Circle.',
+        bio: bio.trim() || 'Hey there! I am using Tekyel.',
         is_online: true,
         ...(googleAvatar ? { avatar_url: googleAvatar, cover_url: googleAvatar } : { cover_url: '/default-cover.png' }),
       });
@@ -78,7 +78,7 @@ export default function SetupProfilePage() {
       <Toaster position="top-center" />
 
       <div className="flex flex-col items-center mb-8">
-        <CircleLogo size={64} className="mb-4 shadow-sm" />
+        <TekyelLogo size={64} className="mb-4 shadow-sm" />
         <h1 className="text-xl font-bold text-[var(--text-primary)]">Set up your profile</h1>
         <p className="text-sm text-[var(--text-muted)] mt-1">Tell us about yourself</p>
       </div>
@@ -115,7 +115,7 @@ export default function SetupProfilePage() {
           <textarea
             value={bio}
             onChange={(e) => setBio(e.target.value)}
-            placeholder="Hey there! I am using Circle."
+            placeholder="Hey there! I am using Tekyel."
             rows={3}
             maxLength={200}
             className="w-full px-4 py-3 bg-[var(--bg-search)] text-[var(--text-primary)] rounded-lg text-sm placeholder:text-[var(--text-muted)] focus:outline-none focus:ring-2 focus:ring-[var(--wa-green)] transition-all resize-none"

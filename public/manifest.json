@@ -1,7 +1,7 @@
 {
   "id": "/",
-  "name": "Circle",
-  "short_name": "Circle",
+  "name": "Tekyel",
+  "short_name": "Tekyel",
   "description": "Connect, Share, Communicate",
   "start_url": "/",
   "scope": "/",
@@ -41,14 +41,14 @@
       "sizes": "512x512",
       "type": "image/png",
       "form_factor": "wide",
-      "label": "Circle Desktop App"
+      "label": "Tekyel Desktop App"
     },
     {
       "src": "/icon-512.png",
       "sizes": "512x512",
       "type": "image/png",
       "form_factor": "narrow",
-      "label": "Circle Mobile App"
+      "label": "Tekyel Mobile App"
     }
   ]
 }

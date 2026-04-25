@@ -234,7 +234,7 @@ export default function ContactsPage() {
                         <Avatar src={contact.profiles.avatar_url} name={contact.profiles.display_name} />
                         <div>
                           <p className="text-[var(--text-primary)] font-medium text-[14px]">{contact.profiles.display_name}</p>
-                          <p className="text-[var(--text-muted)] text-[14px]">{contact.profiles.bio || 'Hey there! I am using Circle.'}</p>
+                          <p className="text-[var(--text-muted)] text-[14px]">{contact.profiles.bio || 'Hey there! I am using Tekyel.'}</p>
                         </div>
                       </div>
                       <Button variant="ghost" size="sm" onClick={() => handleMessage(contact.contact_id)}>

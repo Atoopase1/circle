@@ -5,7 +5,7 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { Mail, Phone, Eye, EyeOff, ArrowRight, Shield, Key, Check } from 'lucide-react';
 import Button from '@/components/ui/Button';
-import CircleLogo from '@/components/ui/CircleLogo';
+import TekyelLogo from '@/components/ui/TekyelLogo';
 import { getSupabaseBrowserClient } from '@/lib/supabase/client';
 import toast, { Toaster } from 'react-hot-toast';
 
@@ -178,8 +178,8 @@ export default function LoginPage() {
 
       {/* Logo & Title */}
       <div className="flex flex-col items-center mb-8">
-        <CircleLogo size={64} className="mb-4 shadow-sm" />
-        <h1 className="text-2xl font-bold text-black dark:text-white">Circle</h1>
+        <TekyelLogo size={64} className="mb-4 shadow-sm" />
+        <h1 className="text-2xl font-bold text-black dark:text-white">Tekyel</h1>
         <p className="text-[14px] text-[var(--text-muted)] mt-1.5 tracking-wide text-center">
           {isForgotPassword 
             ? 'Reset your password' 

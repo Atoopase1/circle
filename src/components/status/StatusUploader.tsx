@@ -209,7 +209,7 @@ export default function StatusUploader({ onStatusPosted }: { onStatusPosted: () 
       <textarea
         value={textContent}
         onChange={(e) => setTextContent(e.target.value)}
-        placeholder="What's on your mind? Share with your circle..."
+        placeholder="What's on your mind? Share with your tekyel..."
         className="w-full bg-transparent border-none focus:outline-none resize-none text-[var(--text-primary)] placeholder-[var(--text-muted)] min-h-[60px]"
         disabled={isPosting}
       />

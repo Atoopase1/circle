@@ -4,8 +4,8 @@
 import type { Metadata } from 'next';
 
 export const metadata: Metadata = {
-  title: 'Circle — Sign In',
-  description: 'Sign in to your Circle account',
+  title: 'Tekyel — Sign In',
+  description: 'Sign in to your Tekyel account',
 };
 
 export default function AuthLayout({ children }: { children: React.ReactNode }) {

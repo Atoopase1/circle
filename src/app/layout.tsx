@@ -4,17 +4,17 @@ import TouchRipple from "@/components/layout/TouchRipple";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "Circle — Connect, Share, Communicate",
+  title: "Tekyel — Connect, Share, Communicate",
   description:
-    "Circle is a modern social messaging platform. Chat, call, share status updates, and stay connected with your circle.",
-  keywords: ["circle", "chat", "messaging", "social", "realtime", "video call", "audio call"],
+    "Tekyel is a modern social messaging platform. Chat, call, share status updates, and stay connected with your circle.",
+  keywords: ["tekyel", "chat", "messaging", "social", "realtime", "video call", "audio call"],
   manifest: "/manifest.json",
   icons: {
     icon: "/logo.jpg",
     apple: "/logo.jpg",
   },
   verification: {
-    google: "hgbDv35G9gxpPvOkXsgQohMMer5pX0_u_zAetrCi8qc",
+    google: "sk3Hm1wRQhXhx0Z-Dg0lxMs0HQudYUbN4maojIGSsPs",
   },
 };
 

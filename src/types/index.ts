@@ -1,5 +1,5 @@
 // ============================================================
-// Circle — Type Definitions
+// Tekyel — Type Definitions
 // ============================================================
 
 export interface Profile {

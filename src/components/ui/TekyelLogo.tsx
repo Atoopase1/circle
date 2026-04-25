@@ -1,20 +1,20 @@
 // ============================================================
-// CircleLogo — Premium SVG logo for the Circle app
+// TekyelLogo — Premium SVG logo for the Tekyel app
 // ============================================================
 'use client';
 
-interface CircleLogoProps {
+interface TekyelLogoProps {
   size?: number;
   className?: string;
   showText?: boolean;
 }
 
-export default function CircleLogo({ size = 48, className = '', showText = false }: CircleLogoProps) {
+export default function TekyelLogo({ size = 48, className = '', showText = false }: TekyelLogoProps) {
   return (
     <div className={`inline-flex items-center gap-2.5 ${className}`}>
       <img 
         src="/logo.jpg" 
-        alt="Circle Logo" 
+        alt="Tekyel Logo" 
         width={size} 
         height={size} 
         className="rounded-xl object-cover shadow-sm border border-[var(--border-color)]/50" 
@@ -23,7 +23,7 @@ export default function CircleLogo({ size = 48, className = '', showText = false
       
       {showText && (
         <span className="font-bold text-xl tracking-tight text-black dark:text-white">
-          Circle
+          Tekyel
         </span>
       )}
     </div>

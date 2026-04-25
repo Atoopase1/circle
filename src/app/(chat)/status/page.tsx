@@ -174,7 +174,7 @@ export default function StatusPage() {
               }`}
               onClick={() => setActiveTab('circle')}
             >
-              👥 My Circle
+              👥 My Tekyel
             </button>
           </div>
         </div>

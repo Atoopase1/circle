@@ -2,7 +2,7 @@
 
 import { useRouter } from 'next/navigation';
 import { ArrowLeft, FileText, Shield, UserCheck, AlertTriangle, Scale, RefreshCw, Mail } from 'lucide-react';
-import CircleLogo from '@/components/ui/CircleLogo';
+import TekyelLogo from '@/components/ui/TekyelLogo';
 
 export default function TermsOfServicePage() {
   const router = useRouter();
@@ -14,7 +14,7 @@ export default function TermsOfServicePage() {
       content: (
         <>
           <p className="mb-3">
-            By accessing, downloading, or using the Circle messaging platform (&ldquo;Service&rdquo;), you confirm that you have read, understood, and agree to be bound by these Terms of Service (&ldquo;Terms&rdquo;). These Terms constitute a legally binding agreement between you and Circle Technologies.
+            By accessing, downloading, or using the Tekyel messaging platform (&ldquo;Service&rdquo;), you confirm that you have read, understood, and agree to be bound by these Terms of Service (&ldquo;Terms&rdquo;). These Terms constitute a legally binding agreement between you and Tekyel Technologies.
           </p>
           <p>
             If you are using the Service on behalf of an organization, you represent and warrant that you have the authority to bind that organization to these Terms. If you do not agree to these Terms, you must not access or use the Service.
@@ -28,7 +28,7 @@ export default function TermsOfServicePage() {
       content: (
         <>
           <p className="mb-3">
-            To use Circle, you must be at least 13 years of age (or the minimum age required by law in your jurisdiction). You must register using a valid email address, phone number, or a supported third-party authentication provider such as Google OAuth.
+            To use Tekyel, you must be at least 13 years of age (or the minimum age required by law in your jurisdiction). You must register using a valid email address, phone number, or a supported third-party authentication provider such as Google OAuth.
           </p>
           <div className="space-y-2 pl-4 border-l-2 border-[var(--emerald)]/30 mt-4">
             <p><strong className="text-[var(--text-primary)]">Account Security:</strong> You are solely responsible for maintaining the confidentiality of your login credentials and for all activities that occur under your account.</p>
@@ -44,7 +44,7 @@ export default function TermsOfServicePage() {
       content: (
         <>
           <p className="mb-3">
-            Circle is designed for lawful personal and professional communication. You agree not to use the Service to:
+            Tekyel is designed for lawful personal and professional communication. You agree not to use the Service to:
           </p>
           <ul className="space-y-2 pl-5 list-disc marker:text-[var(--emerald)]/50">
             <li>Transmit any content that is unlawful, harmful, threatening, abusive, harassing, defamatory, or otherwise objectionable.</li>
@@ -66,10 +66,10 @@ export default function TermsOfServicePage() {
       content: (
         <>
           <p className="mb-3">
-            You retain full ownership of all content you create, upload, or share through Circle, including messages, images, videos, and status updates. Circle does not claim any intellectual property rights over your content.
+            You retain full ownership of all content you create, upload, or share through Tekyel, including messages, images, videos, and status updates. Tekyel does not claim any intellectual property rights over your content.
           </p>
           <p>
-            By using the Service, you grant Circle a limited, non-exclusive, royalty-free license solely to host, transmit, store, and deliver your content as necessary to operate the Service. This license terminates when you delete your content or your account.
+            By using the Service, you grant Tekyel a limited, non-exclusive, royalty-free license solely to host, transmit, store, and deliver your content as necessary to operate the Service. This license terminates when you delete your content or your account.
           </p>
         </>
       ),
@@ -83,7 +83,7 @@ export default function TermsOfServicePage() {
             The Service is provided on an &ldquo;as is&rdquo; and &ldquo;as available&rdquo; basis without warranties of any kind, whether express or implied, including but not limited to warranties of merchantability, fitness for a particular purpose, or non-infringement.
           </p>
           <p>
-            To the maximum extent permitted by applicable law, Circle and its officers, directors, employees, and agents shall not be liable for any indirect, incidental, special, consequential, or punitive damages, including loss of data, profits, or business opportunities, arising out of or in connection with your use of the Service.
+            To the maximum extent permitted by applicable law, Tekyel and its officers, directors, employees, and agents shall not be liable for any indirect, incidental, special, consequential, or punitive damages, including loss of data, profits, or business opportunities, arising out of or in connection with your use of the Service.
           </p>
         </>
       ),
@@ -93,7 +93,7 @@ export default function TermsOfServicePage() {
       title: '6. Modifications to Terms',
       content: (
         <p>
-          Circle reserves the right to modify these Terms at any time. We will notify you of material changes by posting the updated Terms within the application or by sending a notification to your registered email address. Your continued use of the Service after such modifications constitutes your acceptance of the revised Terms. We encourage you to review these Terms periodically.
+          Tekyel reserves the right to modify these Terms at any time. We will notify you of material changes by posting the updated Terms within the application or by sending a notification to your registered email address. Your continued use of the Service after such modifications constitutes your acceptance of the revised Terms. We encourage you to review these Terms periodically.
         </p>
       ),
     },
@@ -113,7 +113,7 @@ export default function TermsOfServicePage() {
             >
               <ArrowLeft size={26} />
             </button>
-            <CircleLogo size={44} />
+            <TekyelLogo size={44} />
           </div>
 
           <div className="flex items-center gap-3 mb-3">
@@ -146,7 +146,7 @@ export default function TermsOfServicePage() {
             <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
               <div className="flex items-center gap-2 text-[14px] text-[var(--text-muted)]">
                 <Mail size={26} className="text-[var(--emerald)]" />
-                <span>Questions? Contact us at <strong className="text-[var(--text-primary)]">legal@circleapp.io</strong></span>
+                <span>Questions? Contact us at <strong className="text-[var(--text-primary)]">legal@tekyelapp.io</strong></span>
               </div>
               <div className="text-[14px] text-[var(--text-muted)] flex items-center gap-1.5">
                 Built by <a href="https://technoidfix.online" target="_blank" rel="noopener noreferrer" className="font-semibold text-[var(--emerald)] hover:underline flex items-center gap-1">technoidfix</a>

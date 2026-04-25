@@ -4,7 +4,7 @@ import { useState, useEffect, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import { Eye, EyeOff, ArrowRight, Shield, AlertCircle } from 'lucide-react';
 import Button from '@/components/ui/Button';
-import CircleLogo from '@/components/ui/CircleLogo';
+import TekyelLogo from '@/components/ui/TekyelLogo';
 import { getSupabaseBrowserClient } from '@/lib/supabase/client';
 import toast, { Toaster } from 'react-hot-toast';
 
@@ -124,12 +124,12 @@ export default function UpdatePasswordPage() {
       <div className="p-10 flex flex-col items-center justify-center min-h-[400px]">
         <Toaster position="top-center" />
         <div className="relative mb-6">
-           <CircleLogo size={64} className="animate-pulse opacity-50" />
+           <TekyelLogo size={64} className="animate-pulse opacity-50" />
            <div className="absolute inset-0 border-2 border-[var(--emerald)] border-t-transparent rounded-full animate-spin" />
         </div>
         <h2 className="text-lg font-semibold text-[var(--text-primary)] mb-1">Verifying Link</h2>
         <p className="text-sm text-[var(--text-muted)] text-center max-w-[200px]">
-          Securely validating your reset token with Circle...
+          Securely validating your reset token with Tekyel...
         </p>
       </div>
     );
@@ -161,7 +161,7 @@ export default function UpdatePasswordPage() {
 
       {/* Title */}
       <div className="flex flex-col items-center mb-8">
-        <CircleLogo size={64} className="mb-4 shadow-sm" />
+        <TekyelLogo size={64} className="mb-4 shadow-sm" />
         <h1 className="text-2xl font-bold text-[var(--text-primary)]">Change Password</h1>
         <p className="text-[14px] text-[var(--text-muted)] mt-1.5 text-center">
           Verfied! Enter your new password below.

@@ -1,5 +1,5 @@
-const CACHE_NAME = 'circle-pwa-cache-v2';
-const MEDIA_CACHE_NAME = 'circle-media-cache-v1';
+const CACHE_NAME = 'tekyel-pwa-cache-v2';
+const MEDIA_CACHE_NAME = 'tekyel-media-cache-v1';
 const STATIC_ROOT_CACHES = [
   '/',
   '/login',

@@ -3,7 +3,7 @@
 // ============================================================
 import { Shield } from 'lucide-react';
 import ChatSidebar from '@/components/chat/ChatSidebar';
-import CircleLogo from '@/components/ui/CircleLogo';
+import TekyelLogo from '@/components/ui/TekyelLogo';
 
 export default function ChatDefaultPage() {
   return (
@@ -26,16 +26,16 @@ export default function ChatDefaultPage() {
 
               {/* Center logo */}
               <div className="absolute inset-0 flex items-center justify-center animate-float">
-                <CircleLogo size={84} />
+                <TekyelLogo size={84} />
               </div>
             </div>
           </div>
 
           <h2 className="text-[28px] font-light text-[var(--text-primary)] mb-3 tracking-tight" style={{ fontFamily: 'var(--font-heading)' }}>
-            Circle
+            Tekyel
           </h2>
           <p className="text-[14px] text-[var(--text-muted)] leading-relaxed mb-10">
-            Connect, share, and communicate with your circle.
+            Connect, share, and communicate with your tekyel.
             <br />
             Start a conversation or select a chat to get started.
           </p>

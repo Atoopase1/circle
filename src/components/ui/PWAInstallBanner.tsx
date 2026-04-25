@@ -84,11 +84,11 @@ export default function PWAInstallBanner() {
             </div>
             <div className="flex-1 min-w-0 pr-4">
               <h3 className="text-[15px] font-semibold text-[var(--text-primary)] leading-tight">
-                Install Circle
+                Install Tekyel
               </h3>
               <p className="text-[13px] text-[var(--text-muted)] mt-1 leading-relaxed">
                 {isMobile 
-                  ? 'Add Circle to your home screen for faster access and notifications.'
+                  ? 'Add Tekyel to your home screen for faster access and notifications.'
                   : 'Get the full desktop app experience — faster access, notifications, and offline support.'}
               </p>
             </div>

@@ -245,11 +245,11 @@ export default function SettingsPage() {
                   </div>
                   <div>
                     <p className="text-[14px] font-medium text-[var(--text-primary)]">
-                      {isInstalled ? 'App Installed' : 'Install Circle'}
+                      {isInstalled ? 'App Installed' : 'Install Tekyel'}
                     </p>
                     <p className="text-[14px] text-[var(--text-muted)]">
                       {isInstalled
-                        ? 'Circle is installed on this device'
+                        ? 'Tekyel is installed on this device'
                         : isMobile
                           ? 'Add to home screen for faster access'
                           : 'Get the full desktop app experience'}

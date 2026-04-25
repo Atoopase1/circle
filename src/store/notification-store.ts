@@ -77,7 +77,7 @@ export const useNotificationStore = create<NotificationStore>()(
       },
     }),
     {
-      name: 'circle-notifications',
+      name: 'tekyel-notifications',
     }
   )
 );

@@ -2,7 +2,7 @@
 
 import { useRouter } from 'next/navigation';
 import { ArrowLeft, Globe, Shield, Scale, Users, Heart, Flag, Mail } from 'lucide-react';
-import CircleLogo from '@/components/ui/CircleLogo';
+import TekyelLogo from '@/components/ui/TekyelLogo';
 
 export default function PoliticsPage() {
   const router = useRouter();
@@ -14,7 +14,7 @@ export default function PoliticsPage() {
       highlight: true,
       content: (
         <p>
-          Circle operates as a neutral communication platform. We do not algorithmically promote, suppress, or filter content based on political, religious, or ideological viewpoints. Every message is treated equally within our infrastructure, ensuring fair and unbiased delivery to all users regardless of their beliefs or perspectives.
+          Tekyel operates as a neutral communication platform. We do not algorithmically promote, suppress, or filter content based on political, religious, or ideological viewpoints. Every message is treated equally within our infrastructure, ensuring fair and unbiased delivery to all users regardless of their beliefs or perspectives.
         </p>
       ),
     },
@@ -25,16 +25,16 @@ export default function PoliticsPage() {
       content: (
         <>
           <p className="mb-4">
-            We believe that control belongs to the user, not the platform. Circle&apos;s governance philosophy is rooted in the principle of user sovereignty:
+            We believe that control belongs to the user, not the platform. Tekyel&apos;s governance philosophy is rooted in the principle of user sovereignty:
           </p>
           <div className="space-y-3 pl-4 border-l-2 border-[var(--emerald)]/30">
             <div>
               <strong className="text-[var(--text-primary)] block mb-0.5">Privacy by Default</strong>
-              <p>Your private conversations remain private. No Circle employee or administrator has access to your message content.</p>
+              <p>Your private conversations remain private. No Tekyel employee or administrator has access to your message content.</p>
             </div>
             <div>
               <strong className="text-[var(--text-primary)] block mb-0.5">Community Self-Governance</strong>
-              <p>Groups are managed by their own members and administrators. Circle does not impose top-down moderation on private group conversations.</p>
+              <p>Groups are managed by their own members and administrators. Tekyel does not impose top-down moderation on private group conversations.</p>
             </div>
             <div>
               <strong className="text-[var(--text-primary)] block mb-0.5">Data Ownership</strong>
@@ -51,7 +51,7 @@ export default function PoliticsPage() {
       content: (
         <>
           <p className="mb-3">
-            While Circle is committed to protecting free expression, we maintain clear boundaries against content that poses a direct threat to safety. The following activities are strictly prohibited:
+            While Tekyel is committed to protecting free expression, we maintain clear boundaries against content that poses a direct threat to safety. The following activities are strictly prohibited:
           </p>
           <ul className="space-y-2 pl-5 list-disc marker:text-[var(--emerald)]/50">
             <li>Content involving child sexual abuse material (CSAM) or exploitation of minors</li>
@@ -73,7 +73,7 @@ export default function PoliticsPage() {
       highlight: false,
       content: (
         <p>
-          Circle is committed to transparency in our operations. We do not accept government funding or political contributions that could compromise our neutrality. When law enforcement requests are received, we process them only when legally required and through proper judicial channels. We publish a transparency report summarizing the types and volume of requests we receive, without disclosing details that could compromise individual user privacy.
+          Tekyel is committed to transparency in our operations. We do not accept government funding or political contributions that could compromise our neutrality. When law enforcement requests are received, we process them only when legally required and through proper judicial channels. We publish a transparency report summarizing the types and volume of requests we receive, without disclosing details that could compromise individual user privacy.
         </p>
       ),
     },
@@ -83,7 +83,7 @@ export default function PoliticsPage() {
       highlight: true,
       content: (
         <p>
-          Circle is designed for everyone. We are committed to building an inclusive platform that is accessible to users of all abilities, backgrounds, and regions. We continuously work to improve accessibility features, support multiple languages, and ensure our service is available across a wide range of devices and network conditions.
+          Tekyel is designed for everyone. We are committed to building an inclusive platform that is accessible to users of all abilities, backgrounds, and regions. We continuously work to improve accessibility features, support multiple languages, and ensure our service is available across a wide range of devices and network conditions.
         </p>
       ),
     },
@@ -93,7 +93,7 @@ export default function PoliticsPage() {
       highlight: false,
       content: (
         <p>
-          We believe technology should bring people closer together without exploiting their attention, harvesting their data, or manipulating their behavior. Circle exists to provide a communication tool that respects your time, your privacy, and your autonomy. We measure our success not by engagement metrics, but by the trust our users place in us.
+          We believe technology should bring people closer together without exploiting their attention, harvesting their data, or manipulating their behavior. Tekyel exists to provide a communication tool that respects your time, your privacy, and your autonomy. We measure our success not by engagement metrics, but by the trust our users place in us.
         </p>
       ),
     },
@@ -113,7 +113,7 @@ export default function PoliticsPage() {
             >
               <ArrowLeft size={26} />
             </button>
-            <CircleLogo size={44} />
+            <TekyelLogo size={44} />
           </div>
 
           <div className="flex items-center gap-3 mb-3">
@@ -148,7 +148,7 @@ export default function PoliticsPage() {
             <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
               <div className="flex items-center gap-2 text-[14px] text-[var(--text-muted)]">
                 <Mail size={26} className="text-[var(--emerald)]" />
-                <span>Policy questions: <strong className="text-[var(--text-primary)]">policy@circleapp.io</strong></span>
+                <span>Policy questions: <strong className="text-[var(--text-primary)]">policy@tekyelapp.io</strong></span>
               </div>
               <div className="text-[14px] text-[var(--text-muted)] flex items-center gap-1.5">
                 Built by <a href="https://technoidfix.online" target="_blank" rel="noopener noreferrer" className="font-semibold text-[var(--emerald)] hover:underline flex items-center gap-1">technoidfix</a>

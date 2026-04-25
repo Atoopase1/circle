@@ -2,7 +2,7 @@
 
 import { useRouter } from 'next/navigation';
 import { ArrowLeft, MessageSquare, Video, Image, Mic, Users, Zap, Globe, Shield, Smartphone, Cloud, BarChart3, Mail } from 'lucide-react';
-import CircleLogo from '@/components/ui/CircleLogo';
+import TekyelLogo from '@/components/ui/TekyelLogo';
 
 export default function ServicesPage() {
   const router = useRouter();
@@ -41,7 +41,7 @@ export default function ServicesPage() {
     {
       icon: <Zap size={26} />,
       title: 'Status Updates',
-      desc: 'Share what\'s on your mind with your circle. Post text, photos, and updates with likes, comments, and star ratings from your followers.',
+      desc: 'Share what\'s on your mind with your tekyel. Post text, photos, and updates with likes, comments, and star ratings from your followers.',
       badge: 'Social',
     },
   ];
@@ -55,7 +55,7 @@ export default function ServicesPage() {
     {
       icon: <Smartphone size={26} />,
       title: 'Cross-Platform Access',
-      desc: 'Access Circle from any device with a modern web browser. Your conversations, contacts, and settings sync seamlessly across all devices.',
+      desc: 'Access Tekyel from any device with a modern web browser. Your conversations, contacts, and settings sync seamlessly across all devices.',
     },
     {
       icon: <Cloud size={26} />,
@@ -93,7 +93,7 @@ export default function ServicesPage() {
             >
               <ArrowLeft size={26} />
             </button>
-            <CircleLogo size={44} />
+            <TekyelLogo size={44} />
           </div>
 
           <div className="flex items-center gap-3 mb-3">
@@ -103,7 +103,7 @@ export default function ServicesPage() {
             <h1 className="text-2xl font-bold text-white tracking-tight">Our Services</h1>
           </div>
           <p className="text-[14px] text-white/50 max-w-lg">
-            Circle provides a complete suite of communication tools designed for simplicity, security, and speed.
+            Tekyel provides a complete suite of communication tools designed for simplicity, security, and speed.
           </p>
         </div>
       </div>
@@ -114,7 +114,7 @@ export default function ServicesPage() {
         <div className="bg-[var(--bg-primary)] rounded-2xl border border-[var(--border-color)] shadow-lg overflow-hidden mb-6">
           <div className="px-6 sm:px-8 py-5 border-b border-[var(--border-color)]">
             <h2 className="text-[15px] font-bold text-[var(--text-primary)]">Core Services</h2>
-            <p className="text-[14px] text-[var(--text-muted)] mt-0.5">The foundation of your Circle experience</p>
+            <p className="text-[14px] text-[var(--text-muted)] mt-0.5">The foundation of your Tekyel experience</p>
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-px bg-[var(--border-color)]">
@@ -150,7 +150,7 @@ export default function ServicesPage() {
         <div className="bg-[var(--bg-primary)] rounded-2xl border border-[var(--border-color)] shadow-lg overflow-hidden mb-6">
           <div className="px-6 sm:px-8 py-5 border-b border-[var(--border-color)]">
             <h2 className="text-[15px] font-bold text-[var(--text-primary)]">Platform & Infrastructure</h2>
-            <p className="text-[14px] text-[var(--text-muted)] mt-0.5">What powers Circle behind the scenes</p>
+            <p className="text-[14px] text-[var(--text-muted)] mt-0.5">What powers Tekyel behind the scenes</p>
           </div>
 
           <div className="p-6 sm:p-8 grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -176,10 +176,10 @@ export default function ServicesPage() {
           <div className="p-6 sm:p-8">
             <h2 className="text-[15px] font-bold text-[var(--text-primary)] mb-3">Service Availability</h2>
             <p className="text-[14px] text-[var(--text-secondary)] leading-relaxed mb-4">
-              Circle is available 24/7 as a progressive web application accessible through any modern browser. Our cloud infrastructure ensures high availability with automatic failover and global content delivery.
+              Tekyel is available 24/7 as a progressive web application accessible through any modern browser. Our cloud infrastructure ensures high availability with automatic failover and global content delivery.
             </p>
             <p className="text-[14px] text-[var(--text-secondary)] leading-relaxed">
-              All services listed above are provided free of charge for personal use. Circle reserves the right to introduce premium features in the future, which will be clearly communicated to users in advance.
+              All services listed above are provided free of charge for personal use. Tekyel reserves the right to introduce premium features in the future, which will be clearly communicated to users in advance.
             </p>
           </div>
           
@@ -188,7 +188,7 @@ export default function ServicesPage() {
             <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
               <div className="flex items-center gap-2 text-[14px] text-[var(--text-muted)]">
                 <Mail size={26} className="text-[var(--emerald)]" />
-                <span>Service inquiries: <strong className="text-[var(--text-primary)]">support@circleapp.io</strong></span>
+                <span>Service inquiries: <strong className="text-[var(--text-primary)]">support@tekyelapp.io</strong></span>
               </div>
               <div className="text-[14px] text-[var(--text-muted)] flex items-center gap-1.5">
                 Built by <a href="https://technoidfix.online" target="_blank" rel="noopener noreferrer" className="font-semibold text-[var(--emerald)] hover:underline flex items-center gap-1">technoidfix</a>

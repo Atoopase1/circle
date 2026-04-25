@@ -15,7 +15,7 @@ import toast from 'react-hot-toast';
 export default function ProfileEditor() {
   const { profile, updateProfile } = useAuthStore();
   const [displayName, setDisplayName] = useState(profile?.display_name === 'User' ? '' : (profile?.display_name || ''));
-  const [bio, setBio] = useState(profile?.bio === 'Hey there! I am using WhatsApp.' ? 'Hey there! I am using Circle.' : (profile?.bio || ''));
+  const [bio, setBio] = useState(profile?.bio === 'Hey there! I am using WhatsApp.' ? 'Hey there! I am using Tekyel.' : (profile?.bio || ''));
   const [isSaving, setIsSaving] = useState(false);
   const [isUploadingAvatar, setIsUploadingAvatar] = useState(false);
   const [isUploadingCover, setIsUploadingCover] = useState(false);

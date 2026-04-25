@@ -36,7 +36,7 @@ export const useGifStore = create<GifStore>()(
       }
     }),
     {
-      name: 'circle-saved-gifs',
+      name: 'tekyel-saved-gifs',
     }
   )
 );

@@ -2,7 +2,7 @@
 
 import { useRouter } from 'next/navigation';
 import { ArrowLeft, ShieldCheck, Database, Eye, Lock, Share2, Trash2, Bell, Mail } from 'lucide-react';
-import CircleLogo from '@/components/ui/CircleLogo';
+import TekyelLogo from '@/components/ui/TekyelLogo';
 
 export default function PrivacyPolicyPage() {
   const router = useRouter();
@@ -14,7 +14,7 @@ export default function PrivacyPolicyPage() {
       content: (
         <>
           <p className="mb-4">
-            Circle is built on a principle of data minimization. We collect only the information strictly necessary to provide and improve our messaging services.
+            Tekyel is built on a principle of data minimization. We collect only the information strictly necessary to provide and improve our messaging services.
           </p>
           <div className="space-y-4 pl-4 border-l-2 border-[var(--emerald)]/30">
             <div>
@@ -23,7 +23,7 @@ export default function PrivacyPolicyPage() {
             </div>
             <div>
               <strong className="text-[var(--text-primary)] block mb-1">Messages & Media</strong>
-              <p>Circle processes your messages, photos, videos, voice notes, and documents to deliver them to your intended recipients. Messages are encrypted during transit and stored securely for synchronization across your devices.</p>
+              <p>Tekyel processes your messages, photos, videos, voice notes, and documents to deliver them to your intended recipients. Messages are encrypted during transit and stored securely for synchronization across your devices.</p>
             </div>
             <div>
               <strong className="text-[var(--text-primary)] block mb-1">Usage & Device Data</strong>
@@ -50,7 +50,7 @@ export default function PrivacyPolicyPage() {
           </ul>
           <div className="mt-5 p-4 rounded-xl bg-[var(--emerald)]/5 border border-[var(--emerald)]/15">
             <p className="text-[14.5px] text-[var(--emerald)] font-medium">
-              ✦ Circle does not sell your personal data to advertisers or third parties. We do not use your messages for targeted advertising.
+              ✦ Tekyel does not sell your personal data to advertisers or third parties. We do not use your messages for targeted advertising.
             </p>
           </div>
         </>
@@ -62,7 +62,7 @@ export default function PrivacyPolicyPage() {
       content: (
         <>
           <p className="mb-3">
-            Protecting your data is fundamental to Circle. We implement multiple layers of security:
+            Protecting your data is fundamental to Tekyel. We implement multiple layers of security:
           </p>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mt-4">
             {[
@@ -86,7 +86,7 @@ export default function PrivacyPolicyPage() {
       content: (
         <>
           <p className="mb-3">
-            Circle does not sell, rent, or trade your personal information. We share data only in the following limited circumstances:
+            Tekyel does not sell, rent, or trade your personal information. We share data only in the following limited circumstances:
           </p>
           <ul className="space-y-2 pl-5 list-disc marker:text-[var(--emerald)]/50">
             <li><strong className="text-[var(--text-primary)]">Service Providers:</strong> Trusted infrastructure partners (cloud hosting, authentication) that process data on our behalf under strict contractual obligations.</li>
@@ -121,7 +121,7 @@ export default function PrivacyPolicyPage() {
       title: '6. Updates to This Policy',
       content: (
         <p>
-          We may update this Privacy Policy from time to time to reflect changes in our practices, technology, or legal requirements. When we make material changes, we will notify you through the application or via email. We encourage you to review this policy periodically. Your continued use of Circle after any modifications constitutes acceptance of the updated policy.
+          We may update this Privacy Policy from time to time to reflect changes in our practices, technology, or legal requirements. When we make material changes, we will notify you through the application or via email. We encourage you to review this policy periodically. Your continued use of Tekyel after any modifications constitutes acceptance of the updated policy.
         </p>
       ),
     },
@@ -141,7 +141,7 @@ export default function PrivacyPolicyPage() {
             >
               <ArrowLeft size={26} />
             </button>
-            <CircleLogo size={44} />
+            <TekyelLogo size={44} />
           </div>
 
           <div className="flex items-center gap-3 mb-3">
@@ -161,7 +161,7 @@ export default function PrivacyPolicyPage() {
           <div className="px-6 sm:px-8 py-4 bg-[var(--emerald)]/5 border-b border-[var(--emerald)]/10 flex items-center gap-3">
             <ShieldCheck size={26} className="text-[var(--emerald)] shrink-0" />
             <p className="text-[14.5px] text-[var(--text-secondary)]">
-              Your privacy matters to us. Circle is designed to collect only the data necessary to deliver a secure, reliable messaging experience.
+              Your privacy matters to us. Tekyel is designed to collect only the data necessary to deliver a secure, reliable messaging experience.
             </p>
           </div>
 
@@ -182,7 +182,7 @@ export default function PrivacyPolicyPage() {
             <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
               <div className="flex items-center gap-2 text-[14px] text-[var(--text-muted)]">
                 <Mail size={26} className="text-[var(--emerald)]" />
-                <span>Privacy inquiries: <strong className="text-[var(--text-primary)]">privacy@circleapp.io</strong></span>
+                <span>Privacy inquiries: <strong className="text-[var(--text-primary)]">privacy@tekyelapp.io</strong></span>
               </div>
               <div className="text-[14px] text-[var(--text-muted)] flex items-center gap-1.5">
                 Built by <a href="https://technoidfix.online" target="_blank" rel="noopener noreferrer" className="font-semibold text-[var(--emerald)] hover:underline flex items-center gap-1">technoidfix</a>
