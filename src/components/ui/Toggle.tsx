@@ -31,7 +31,7 @@ export default function Toggle({
             <p className="text-sm font-medium text-[var(--text-primary)]">{label}</p>
           )}
           {description && (
-            <p className="text-[13px] text-[var(--text-muted)] mt-0.5">{description}</p>
+            <p className="text-sm text-[var(--text-muted)] mt-0.5">{description}</p>
           )}
         </div>
       )}

@@ -175,7 +175,7 @@ export default function MessageList({ chatId, isGroup }: MessageListProps) {
           }}
         >
           <div 
-            className="px-4 py-1.5 rounded-full flex items-center gap-1.5 text-[14px] font-medium tracking-wide border border-[var(--border-color)]"
+            className="px-4 py-1.5 rounded-full flex items-center gap-1.5 text-sm font-medium tracking-wide border border-[var(--border-color)]"
             style={{  
               background: 'var(--bg-date-separator)',
               backdropFilter: 'blur(8px)',
@@ -219,7 +219,7 @@ export default function MessageList({ chatId, isGroup }: MessageListProps) {
 
             {/* Pinned Text */}
             <div className="flex-1 min-w-0 pr-2">
-              <span className="text-[15px] font-medium text-[var(--text-primary)] block truncate">
+              <span className="text-base font-medium text-[var(--text-primary)] block truncate">
                 {getPinnedPreview(pinnedMessage)}
               </span>
             </div>
@@ -247,7 +247,7 @@ export default function MessageList({ chatId, isGroup }: MessageListProps) {
       {/* Loading spinner for older messages */}
       {isLoadingMessages && messages.length > 0 && (
         <div className="py-4 text-center">
-          <span className="bg-[var(--bg-primary)] text-[var(--text-muted)] text-[14px] px-4 py-1.5 rounded-full border border-[var(--border-color)] animate-pulse inline-block">
+          <span className="bg-[var(--bg-primary)] text-[var(--text-muted)] text-sm px-4 py-1.5 rounded-full border border-[var(--border-color)] animate-pulse inline-block">
             Loading earlier messages...
           </span>
         </div>
@@ -271,7 +271,7 @@ export default function MessageList({ chatId, isGroup }: MessageListProps) {
             {/* Date separator — premium glass pill */}
             <div className="flex items-center justify-center my-4">
               <span 
-                className="px-3 py-1 text-[var(--text-secondary)] text-[12px] rounded-full font-medium tracking-wide border border-[var(--border-color)]"
+                className="px-3 py-1 text-[var(--text-secondary)] text-xs rounded-full font-medium tracking-wide border border-[var(--border-color)]"
                 style={{  
                   background: 'var(--bg-date-separator)',
                   backdropFilter: 'blur(8px)',

@@ -41,7 +41,7 @@ export default function Badge({
 
   return (
     <span
-      className={`min-w-[20px] h-5 px-1.5 inline-flex items-center justify-center text-[14px] font-bold rounded-full ${colorMap[variant]} ${pulse ? 'animate-badgePulse' : ''} ${className}`}
+      className={`min-w-[20px] h-5 px-1.5 inline-flex items-center justify-center text-sm font-bold rounded-full ${colorMap[variant]} ${pulse ? 'animate-badgePulse' : ''} ${className}`}
       style={{ boxShadow: glowMap[variant] }}
     >
       {count > 99 ? '99+' : count}

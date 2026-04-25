@@ -89,12 +89,12 @@ export default function ChatListItem({ chat, isActive, onClick }: ChatListItemPr
       />
       <div className="flex-1 min-w-0 text-left">
         <div className="flex items-center justify-between">
-          <span className="font-medium text-[var(--text-primary)] truncate text-[15px]">
+          <span className="font-medium text-[var(--text-primary)] truncate text-base">
             {displayName}
           </span>
           {chat.last_message_at && (
             <span
-              className={`text-[14px] shrink-0 ml-2 font-light ${
+              className={`text-sm shrink-0 ml-2 font-light ${
                 unreadCount > 0 ? 'text-[var(--emerald)] font-medium' : 'text-[var(--text-muted)]'
               }`}
             >
@@ -103,12 +103,12 @@ export default function ChatListItem({ chat, isActive, onClick }: ChatListItemPr
           )}
         </div>
         <div className="flex items-center justify-between mt-1">
-          <p className="text-[14px] text-[var(--text-muted)] truncate leading-snug">
+          <p className="text-sm text-[var(--text-muted)] truncate leading-snug">
             {lastMessagePreview}
           </p>
           {unreadCount > 0 && (
             <span 
-              className="shrink-0 ml-2 min-w-[20px] h-5 px-1.5 flex items-center justify-center bg-[var(--emerald)] text-white text-[14px] font-bold rounded-full group-hover:hidden"
+              className="shrink-0 ml-2 min-w-[20px] h-5 px-1.5 flex items-center justify-center bg-[var(--emerald)] text-white text-sm font-bold rounded-full group-hover:hidden"
               style={{ boxShadow: '0 0 8px rgba(22, 163, 74, 0.3)' }}
             >
               {unreadCount > 99 ? '99+' : unreadCount}

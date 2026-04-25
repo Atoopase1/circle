@@ -76,6 +76,18 @@ export default function RootLayout({
                   document.documentElement.style.fontStyle = 'italic';
                 }
                 
+                var savedTextSize = localStorage.getItem('app-text-size') || 'medium';
+                if (savedTextSize === '14px') savedTextSize = 'small';
+                if (savedTextSize === '16px') savedTextSize = 'medium';
+                if (savedTextSize === '18px') savedTextSize = 'large';
+                if (savedTextSize === '20px') savedTextSize = 'extra-large';
+                
+                var textScale = '1';
+                if (savedTextSize === 'small') textScale = '0.9';
+                if (savedTextSize === 'large') textScale = '1.1';
+                if (savedTextSize === 'extra-large') textScale = '1.25';
+                document.documentElement.style.setProperty('--text-scale', textScale);
+                
                 // Register Service Worker for PWA
                 if ('serviceWorker' in navigator) {
                   window.addEventListener('load', function() {

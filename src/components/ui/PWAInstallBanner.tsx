@@ -81,10 +81,10 @@ export default function PWAInstallBanner() {
               )}
             </div>
             <div className="flex-1 min-w-0 pr-4">
-              <h3 className="text-[15px] font-semibold text-[var(--text-primary)] leading-tight">
+              <h3 className="text-base font-semibold text-[var(--text-primary)] leading-tight">
                 Install Tekyel
               </h3>
-              <p className="text-[13px] text-[var(--text-muted)] mt-1 leading-relaxed">
+              <p className="text-sm text-[var(--text-muted)] mt-1 leading-relaxed">
                 {isMobile 
                   ? 'Add Tekyel to your home screen for faster access and notifications.'
                   : 'Get the full desktop app experience — faster access, notifications, and offline support.'}
@@ -96,14 +96,14 @@ export default function PWAInstallBanner() {
           <div className="flex items-center gap-3 mt-4">
             <button
               onClick={handleInstall}
-              className="flex-1 flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-[var(--emerald)] hover:bg-[var(--emerald-hover)] text-white text-[14px] font-semibold transition-all duration-200 shadow-lg shadow-[var(--emerald)]/20 hover:shadow-[var(--emerald)]/40 active:scale-[0.97]"
+              className="flex-1 flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-[var(--emerald)] hover:bg-[var(--emerald-hover)] text-white text-sm font-semibold transition-all duration-200 shadow-lg shadow-[var(--emerald)]/20 hover:shadow-[var(--emerald)]/40 active:scale-[0.97]"
             >
               <Download size={16} />
               Install App
             </button>
             <button
               onClick={handleDismiss}
-              className="px-4 py-2.5 rounded-xl text-[14px] font-medium text-[var(--text-muted)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-hover)] transition-colors duration-200"
+              className="px-4 py-2.5 rounded-xl text-sm font-medium text-[var(--text-muted)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-hover)] transition-colors duration-200"
             >
               Not now
             </button>

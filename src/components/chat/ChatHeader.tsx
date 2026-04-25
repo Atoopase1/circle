@@ -38,7 +38,7 @@ export default function ChatHeader({ chat, onInfoClick }: ChatHeaderProps) {
           <X size={26} />
         </button>
         <div className="flex-1 min-w-0">
-          <h2 className="font-semibold text-[var(--text-primary)] text-[16px]">
+          <h2 className="font-semibold text-[var(--text-primary)] text-base">
             {selectedMessageIds.length} Selected
           </h2>
         </div>
@@ -160,11 +160,11 @@ export default function ChatHeader({ chat, onInfoClick }: ChatHeaderProps) {
         }} 
         className="flex-1 min-w-0 text-left"
       >
-        <h2 className="font-semibold text-[var(--text-primary)] text-[15px] truncate">
+        <h2 className="font-semibold text-[var(--text-primary)] text-base truncate">
           {displayName}
         </h2>
         {statusText && (
-          <p className="text-[14px] text-[var(--text-muted)] truncate mt-0.5">{statusText}</p>
+          <p className="text-sm text-[var(--text-muted)] truncate mt-0.5">{statusText}</p>
         )}
       </button>
 

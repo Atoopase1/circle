@@ -163,14 +163,14 @@ export default function UpdatePasswordPage() {
       <div className="flex flex-col items-center mb-8">
         <TekyelLogo size={64} className="mb-4 shadow-sm" />
         <h1 className="text-2xl font-bold text-[var(--text-primary)]">Change Password</h1>
-        <p className="text-[14px] text-[var(--text-muted)] mt-1.5 text-center">
+        <p className="text-sm text-[var(--text-muted)] mt-1.5 text-center">
           Verfied! Enter your new password below.
         </p>
       </div>
 
       <div className="space-y-5">
         <div>
-          <label className="block text-[14px] font-medium text-[var(--text-primary)] mb-2">
+          <label className="block text-sm font-medium text-[var(--text-primary)] mb-2">
             New Password
           </label>
           <div className="relative">
@@ -192,7 +192,7 @@ export default function UpdatePasswordPage() {
         </div>
 
         <div>
-          <label className="block text-[14px] font-medium text-[var(--text-primary)] mb-2">
+          <label className="block text-sm font-medium text-[var(--text-primary)] mb-2">
             Confirm Password
           </label>
           <input
@@ -217,7 +217,7 @@ export default function UpdatePasswordPage() {
 
         <div className="flex items-center justify-center gap-1.5 pt-6 mt-4 border-t border-[var(--border-color)] opacity-60">
           <Shield size={17} className="text-[var(--text-muted)]" />
-          <span className="text-[13px] text-[var(--text-muted)]">Encrypted Session</span>
+          <span className="text-sm text-[var(--text-muted)]">Encrypted Session</span>
         </div>
       </div>
     </div>

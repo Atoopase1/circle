@@ -67,7 +67,7 @@ export default function ForwardModal({ message, onClose }: ForwardModalProps) {
           <button onClick={onClose} className="p-2 -ml-2 rounded-xl hover:bg-[var(--bg-hover)] text-[var(--text-muted)] hover:text-[var(--text-primary)] transition-all duration-200">
             <X size={23} />
           </button>
-          <h2 className="text-[16px] font-semibold text-[var(--text-primary)] flex-1">Forward to...</h2>
+          <h2 className="text-base font-semibold text-[var(--text-primary)] flex-1">Forward to...</h2>
         </div>
 
         {/* Search */}
@@ -79,7 +79,7 @@ export default function ForwardModal({ message, onClose }: ForwardModalProps) {
               placeholder="Search chats"
               value={search}
               onChange={e => setSearch(e.target.value)}
-              className="w-full bg-[var(--bg-secondary)] text-[var(--text-primary)] pl-10 pr-4 py-2.5 rounded-xl text-[14px] focus:outline-none focus:ring-2 focus:ring-[var(--emerald)]/30 focus:bg-[var(--bg-primary)] border border-transparent focus:border-[var(--emerald)]/20 transition-all duration-200"
+              className="w-full bg-[var(--bg-secondary)] text-[var(--text-primary)] pl-10 pr-4 py-2.5 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-[var(--emerald)]/30 focus:bg-[var(--bg-primary)] border border-transparent focus:border-[var(--emerald)]/20 transition-all duration-200"
             />
           </div>
         </div>
@@ -87,7 +87,7 @@ export default function ForwardModal({ message, onClose }: ForwardModalProps) {
         {/* Chat list */}
         <div className="p-2 overflow-y-auto flex-1 h-[300px] scrollbar-thin">
           {filteredChats.length === 0 ? (
-            <div className="p-6 text-center text-[14px] text-[var(--text-muted)]">No chats found</div>
+            <div className="p-6 text-center text-sm text-[var(--text-muted)]">No chats found</div>
           ) : (
             filteredChats.map(chat => {
               const name = chat.is_group ? chat.group_name : chat.other_user?.display_name;
@@ -112,7 +112,7 @@ export default function ForwardModal({ message, onClose }: ForwardModalProps) {
                     )}
                   </div>
                   <div className="flex-1 min-w-0">
-                    <p className="font-medium text-[var(--text-primary)] truncate text-[14px]">{name}</p>
+                    <p className="font-medium text-[var(--text-primary)] truncate text-sm">{name}</p>
                   </div>
                 </button>
               );
@@ -123,7 +123,7 @@ export default function ForwardModal({ message, onClose }: ForwardModalProps) {
         {/* Forward action bar */}
         {selectedChatIds.length > 0 && (
           <div className="p-4 glass-header border-t border-[var(--border-color)] flex justify-between items-center animate-slideUp">
-            <span className="text-[14px] text-[var(--text-muted)]">{selectedChatIds.length} chat{selectedChatIds.length !== 1 ? 's' : ''} selected</span>
+            <span className="text-sm text-[var(--text-muted)]">{selectedChatIds.length} chat{selectedChatIds.length !== 1 ? 's' : ''} selected</span>
             <button
               onClick={handleForward}
               disabled={isSending}

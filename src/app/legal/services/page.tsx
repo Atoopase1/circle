@@ -102,7 +102,7 @@ export default function ServicesPage() {
             </div>
             <h1 className="text-2xl font-bold text-white tracking-tight">Our Services</h1>
           </div>
-          <p className="text-[14px] text-white/50 max-w-lg">
+          <p className="text-sm text-white/50 max-w-lg">
             Tekyel provides a complete suite of communication tools designed for simplicity, security, and speed.
           </p>
         </div>
@@ -113,8 +113,8 @@ export default function ServicesPage() {
         {/* Core Services Grid */}
         <div className="bg-[var(--bg-primary)] rounded-2xl border border-[var(--border-color)] shadow-lg overflow-hidden mb-6">
           <div className="px-6 sm:px-8 py-5 border-b border-[var(--border-color)]">
-            <h2 className="text-[15px] font-bold text-[var(--text-primary)]">Core Services</h2>
-            <p className="text-[14px] text-[var(--text-muted)] mt-0.5">The foundation of your Tekyel experience</p>
+            <h2 className="text-base font-bold text-[var(--text-primary)]">Core Services</h2>
+            <p className="text-sm text-[var(--text-muted)] mt-0.5">The foundation of your Tekyel experience</p>
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-px bg-[var(--border-color)]">
@@ -129,7 +129,7 @@ export default function ServicesPage() {
                   </div>
                   <div className="min-w-0">
                     <div className="flex items-center gap-2 mb-1.5">
-                      <h3 className="text-[14px] font-semibold text-[var(--text-primary)]">{service.title}</h3>
+                      <h3 className="text-sm font-semibold text-[var(--text-primary)]">{service.title}</h3>
                       <span className={`text-[9px] uppercase font-bold px-2 py-0.5 rounded-full ${
                         service.badge === 'Core'
                           ? 'bg-[var(--emerald)]/10 text-[var(--emerald)]'
@@ -138,7 +138,7 @@ export default function ServicesPage() {
                         {service.badge}
                       </span>
                     </div>
-                    <p className="text-[14.5px] text-[var(--text-muted)] leading-relaxed">{service.desc}</p>
+                    <p className="text-sm text-[var(--text-muted)] leading-relaxed">{service.desc}</p>
                   </div>
                 </div>
               </div>
@@ -149,8 +149,8 @@ export default function ServicesPage() {
         {/* Platform Features */}
         <div className="bg-[var(--bg-primary)] rounded-2xl border border-[var(--border-color)] shadow-lg overflow-hidden mb-6">
           <div className="px-6 sm:px-8 py-5 border-b border-[var(--border-color)]">
-            <h2 className="text-[15px] font-bold text-[var(--text-primary)]">Platform & Infrastructure</h2>
-            <p className="text-[14px] text-[var(--text-muted)] mt-0.5">What powers Tekyel behind the scenes</p>
+            <h2 className="text-base font-bold text-[var(--text-primary)]">Platform & Infrastructure</h2>
+            <p className="text-sm text-[var(--text-muted)] mt-0.5">What powers Tekyel behind the scenes</p>
           </div>
 
           <div className="p-6 sm:p-8 grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -163,7 +163,7 @@ export default function ServicesPage() {
                   {feature.icon}
                 </div>
                 <div>
-                  <h3 className="text-[14px] font-semibold text-[var(--text-primary)] mb-1">{feature.title}</h3>
+                  <h3 className="text-sm font-semibold text-[var(--text-primary)] mb-1">{feature.title}</h3>
                   <p className="text-[11.5px] text-[var(--text-muted)] leading-relaxed">{feature.desc}</p>
                 </div>
               </div>
@@ -174,11 +174,11 @@ export default function ServicesPage() {
         {/* Availability Card */}
         <div className="bg-[var(--bg-primary)] rounded-2xl border border-[var(--border-color)] shadow-lg overflow-hidden">
           <div className="p-6 sm:p-8">
-            <h2 className="text-[15px] font-bold text-[var(--text-primary)] mb-3">Service Availability</h2>
-            <p className="text-[14px] text-[var(--text-secondary)] leading-relaxed mb-4">
+            <h2 className="text-base font-bold text-[var(--text-primary)] mb-3">Service Availability</h2>
+            <p className="text-sm text-[var(--text-secondary)] leading-relaxed mb-4">
               Tekyel is available 24/7 as a progressive web application accessible through any modern browser. Our cloud infrastructure ensures high availability with automatic failover and global content delivery.
             </p>
-            <p className="text-[14px] text-[var(--text-secondary)] leading-relaxed">
+            <p className="text-sm text-[var(--text-secondary)] leading-relaxed">
               All services listed above are provided free of charge for personal use. Tekyel reserves the right to introduce premium features in the future, which will be clearly communicated to users in advance.
             </p>
           </div>
@@ -186,11 +186,11 @@ export default function ServicesPage() {
           {/* Footer */}
           <div className="px-6 sm:px-8 py-5 bg-[var(--bg-secondary)] border-t border-[var(--border-color)]">
             <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
-              <div className="flex items-center gap-2 text-[14px] text-[var(--text-muted)]">
+              <div className="flex items-center gap-2 text-sm text-[var(--text-muted)]">
                 <Mail size={26} className="text-[var(--emerald)]" />
                 <span>Service inquiries: <strong className="text-[var(--text-primary)]">support@tekyelapp.io</strong></span>
               </div>
-              <div className="text-[14px] text-[var(--text-muted)] flex items-center gap-1.5">
+              <div className="text-sm text-[var(--text-muted)] flex items-center gap-1.5">
                 Built by <a href="https://technoidfix.online" target="_blank" rel="noopener noreferrer" className="font-semibold text-[var(--emerald)] hover:underline flex items-center gap-1">technoidfix</a>
               </div>
             </div>

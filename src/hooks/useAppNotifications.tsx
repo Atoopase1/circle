@@ -89,7 +89,7 @@ export function useAppNotifications() {
                   <p className="text-sm font-semibold text-[var(--text-primary)]">
                     {actor.display_name}
                   </p>
-                  <p className="mt-1 text-[13px] text-[var(--text-muted)] line-clamp-2">
+                  <p className="mt-1 text-sm text-[var(--text-muted)] line-clamp-2">
                     {preview}
                   </p>
                 </div>
@@ -167,7 +167,7 @@ export function useAppNotifications() {
                   <p className="text-sm font-semibold text-[var(--emerald)]">
                     New post from {actor.display_name}
                   </p>
-                  <p className="mt-1 text-[13px] text-[var(--text-primary)] font-medium line-clamp-1">
+                  <p className="mt-1 text-sm text-[var(--text-primary)] font-medium line-clamp-1">
                     {newStatus.text_content || 'Shared an update'}
                   </p>
                 </div>
@@ -224,7 +224,7 @@ export function useAppNotifications() {
                   <p className="text-sm font-semibold text-[var(--emerald)]">
                     New Follower
                   </p>
-                  <p className="mt-1 text-[13px] text-[var(--text-primary)] font-medium line-clamp-1">
+                  <p className="mt-1 text-sm text-[var(--text-primary)] font-medium line-clamp-1">
                     {actor.display_name} started following you
                   </p>
                 </div>
@@ -278,7 +278,7 @@ export function useAppNotifications() {
                   <p className="text-sm font-semibold text-[var(--emerald)]">
                     New message from {actor.display_name}
                   </p>
-                  <p className="mt-1 text-[13px] text-[var(--text-primary)] font-medium line-clamp-1">
+                  <p className="mt-1 text-sm text-[var(--text-primary)] font-medium line-clamp-1">
                     {msg.content || (msg.media_url ? '📷 Sent an image' : 'Sent a message')}
                   </p>
                 </div>

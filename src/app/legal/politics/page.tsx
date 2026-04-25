@@ -60,7 +60,7 @@ export default function PoliticsPage() {
             <li>Distribution of non-consensual intimate imagery</li>
           </ul>
           <div className="mt-4 p-4 rounded-xl bg-red-500/5 border border-red-500/15">
-            <p className="text-[14.5px] text-red-400/80">
+            <p className="text-sm text-red-400/80">
               ⚠ Violations of these standards may result in immediate account termination and, where required by law, reporting to relevant authorities.
             </p>
           </div>
@@ -122,7 +122,7 @@ export default function PoliticsPage() {
             </div>
             <h1 className="text-2xl font-bold text-white tracking-tight">Platform Principles</h1>
           </div>
-          <p className="text-[14px] text-white/50 max-w-lg">
+          <p className="text-sm text-white/50 max-w-lg">
             Our values, governance philosophy, and commitment to building a trustworthy communication platform.
           </p>
         </div>
@@ -131,12 +131,12 @@ export default function PoliticsPage() {
       {/* Content card */}
       <div className="max-w-3xl mx-auto px-6 -mt-6 relative z-10">
         <div className="bg-[var(--bg-primary)] rounded-2xl border border-[var(--border-color)] shadow-lg overflow-hidden">
-          <div className="p-6 sm:p-8 space-y-8 text-[14.5px] text-[var(--text-secondary)] leading-relaxed">
+          <div className="p-6 sm:p-8 space-y-8 text-sm text-[var(--text-secondary)] leading-relaxed">
             {principles.map((principle, i) => (
               <section key={i} className={i > 0 ? 'pt-6 border-t border-[var(--border-color)]' : ''}>
                 <div className="flex items-center gap-2.5 mb-4">
                   <span className="text-[var(--emerald)]">{principle.icon}</span>
-                  <h2 className="text-[15px] font-semibold text-[var(--text-primary)]">{principle.title}</h2>
+                  <h2 className="text-base font-semibold text-[var(--text-primary)]">{principle.title}</h2>
                 </div>
                 {principle.content}
               </section>
@@ -146,11 +146,11 @@ export default function PoliticsPage() {
           {/* Footer */}
           <div className="px-6 sm:px-8 py-5 bg-[var(--bg-secondary)] border-t border-[var(--border-color)]">
             <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
-              <div className="flex items-center gap-2 text-[14px] text-[var(--text-muted)]">
+              <div className="flex items-center gap-2 text-sm text-[var(--text-muted)]">
                 <Mail size={26} className="text-[var(--emerald)]" />
                 <span>Policy questions: <strong className="text-[var(--text-primary)]">policy@tekyelapp.io</strong></span>
               </div>
-              <div className="text-[14px] text-[var(--text-muted)] flex items-center gap-1.5">
+              <div className="text-sm text-[var(--text-muted)] flex items-center gap-1.5">
                 Built by <a href="https://technoidfix.online" target="_blank" rel="noopener noreferrer" className="font-semibold text-[var(--emerald)] hover:underline flex items-center gap-1">technoidfix</a>
               </div>
             </div>

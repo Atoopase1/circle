@@ -101,7 +101,7 @@ export default function ProfileEditor() {
 
       {/* Cover Image */}
       <div>
-        <label className="block text-[14px] font-medium text-[var(--text-primary)] mb-2">
+        <label className="block text-sm font-medium text-[var(--text-primary)] mb-2">
           Cover Photo
         </label>
         <div 
@@ -115,7 +115,7 @@ export default function ProfileEditor() {
               className="w-full h-full flex flex-col items-center justify-center gap-2 bg-[var(--emerald-dark,#15803D)]"
             >
               <ImageIcon size={28} className="text-white/30" />
-              <span className="text-white/40 text-[13px]">Click to add cover photo</span>
+              <span className="text-white/40 text-sm">Click to add cover photo</span>
             </div>
           )}
 
@@ -169,12 +169,12 @@ export default function ProfileEditor() {
             </div>
           )}
         </div>
-        <p className="text-[14px] text-[var(--text-muted)] mt-3">Click to change photo</p>
+        <p className="text-sm text-[var(--text-muted)] mt-3">Click to change photo</p>
       </div>
 
       {/* Name */}
       <div>
-        <label className="block text-[14px] font-medium text-[var(--text-primary)] mb-2">
+        <label className="block text-sm font-medium text-[var(--text-primary)] mb-2">
           Your name
         </label>
         <input
@@ -183,13 +183,13 @@ export default function ProfileEditor() {
           onChange={(e) => setDisplayName(e.target.value)}
           placeholder="Enter your name"
           maxLength={50}
-          className="w-full px-4 py-3 bg-[var(--bg-secondary)] text-[var(--text-primary)] rounded-xl text-[14px] focus:outline-none focus:ring-2 focus:ring-[var(--emerald)]/30 focus:bg-[var(--bg-primary)] border border-transparent focus:border-[var(--emerald)]/20 transition-all duration-200"
+          className="w-full px-4 py-3 bg-[var(--bg-secondary)] text-[var(--text-primary)] rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-[var(--emerald)]/30 focus:bg-[var(--bg-primary)] border border-transparent focus:border-[var(--emerald)]/20 transition-all duration-200"
         />
       </div>
 
       {/* Bio */}
       <div>
-        <label className="block text-[14px] font-medium text-[var(--text-primary)] mb-2">
+        <label className="block text-sm font-medium text-[var(--text-primary)] mb-2">
           About
         </label>
         <textarea
@@ -198,9 +198,9 @@ export default function ProfileEditor() {
           placeholder="Write something about yourself..."
           rows={3}
           maxLength={200}
-          className="w-full px-4 py-3 bg-[var(--bg-secondary)] text-[var(--text-primary)] rounded-xl text-[14px] focus:outline-none focus:ring-2 focus:ring-[var(--emerald)]/30 focus:bg-[var(--bg-primary)] border border-transparent focus:border-[var(--emerald)]/20 resize-none transition-all duration-200"
+          className="w-full px-4 py-3 bg-[var(--bg-secondary)] text-[var(--text-primary)] rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-[var(--emerald)]/30 focus:bg-[var(--bg-primary)] border border-transparent focus:border-[var(--emerald)]/20 resize-none transition-all duration-200"
         />
-        <p className={`text-[14px] mt-1.5 text-right transition-colors ${bio.length > 180 ? 'text-[var(--gold)]' : 'text-[var(--text-muted)]'}`}>
+        <p className={`text-sm mt-1.5 text-right transition-colors ${bio.length > 180 ? 'text-[var(--gold)]' : 'text-[var(--text-muted)]'}`}>
           {bio.length}/200
         </p>
       </div>
@@ -209,14 +209,14 @@ export default function ProfileEditor() {
       <div className="space-y-3 pt-2">
         {profile?.email && (
           <div className="flex items-center justify-between">
-            <label className="text-[14px] font-medium text-[var(--text-muted)] uppercase tracking-wider">Email</label>
-            <p className="text-[14px] text-[var(--text-primary)]">{profile.email}</p>
+            <label className="text-sm font-medium text-[var(--text-muted)] uppercase tracking-wider">Email</label>
+            <p className="text-sm text-[var(--text-primary)]">{profile.email}</p>
           </div>
         )}
         {profile?.phone && (
           <div className="flex items-center justify-between">
-            <label className="text-[14px] font-medium text-[var(--text-muted)] uppercase tracking-wider">Phone</label>
-            <p className="text-[14px] text-[var(--text-primary)]">{profile.phone}</p>
+            <label className="text-sm font-medium text-[var(--text-muted)] uppercase tracking-wider">Phone</label>
+            <p className="text-sm text-[var(--text-primary)]">{profile.phone}</p>
           </div>
         )}
       </div>

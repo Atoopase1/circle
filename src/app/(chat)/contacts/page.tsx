@@ -100,7 +100,7 @@ export default function ContactsPage() {
     <div className="flex-1 flex flex-col bg-[var(--bg-app)]">
       {/* Search Header */}
       <div className="glass-header px-6 py-6 border-b border-[var(--border-color)] z-10 w-full max-w-4xl mx-auto">
-        <h1 className="text-[22px] font-semibold text-[var(--text-primary)] mb-5" style={{ fontFamily: 'var(--font-heading)' }}>
+        <h1 className="text-xl font-semibold text-[var(--text-primary)] mb-5" style={{ fontFamily: 'var(--font-heading)' }}>
           Network & Contacts
         </h1>
         <SearchInput
@@ -113,7 +113,7 @@ export default function ContactsPage() {
       <div className="flex-1 overflow-y-auto px-6 py-6 w-full max-w-4xl mx-auto scrollbar-thin">
         {query ? (
           <div className="animate-fadeIn">
-            <h2 className="text-[var(--emerald)] font-semibold text-[14px] mb-4 uppercase tracking-widest flex items-center gap-2">
+            <h2 className="text-[var(--emerald)] font-semibold text-sm mb-4 uppercase tracking-widest flex items-center gap-2">
               {isSearching ? <Spinner size="sm" /> : (
                 <>
                   <Search size={26} />
@@ -132,14 +132,14 @@ export default function ContactsPage() {
                     <div className="flex items-center gap-3 cursor-pointer" onClick={() => router.push(`/profile/${user.id}`)}>
                       <Avatar src={user.avatar_url} name={user.display_name} />
                       <div>
-                        <p className="text-[var(--text-primary)] font-medium text-[14px]">{user.display_name}</p>
-                        <p className="text-[var(--text-muted)] text-[14px]">{user.is_online ? 
+                        <p className="text-[var(--text-primary)] font-medium text-sm">{user.display_name}</p>
+                        <p className="text-[var(--text-muted)] text-sm">{user.is_online ? 
                           <span className="text-[var(--emerald)]">Online</span> : 'Offline'}</p>
                       </div>
                     </div>
                     <div className="flex items-center gap-2">
                       {isSaved ? (
-                        <div className={`px-3 py-1 rounded-full text-[14px] font-semibold uppercase tracking-wider ${
+                        <div className={`px-3 py-1 rounded-full text-sm font-semibold uppercase tracking-wider ${
                           isSaved.category === 'family' 
                             ? 'bg-[var(--gold)]/10 text-[var(--gold)]' 
                             : 'bg-[var(--emerald)]/10 text-[var(--emerald)]'
@@ -148,15 +148,15 @@ export default function ContactsPage() {
                         </div>
                       ) : (
                         <>
-                          <Button variant="secondary" size="sm" onClick={() => handleAddContact(user.id, 'friend')} className="text-[14px]">
+                          <Button variant="secondary" size="sm" onClick={() => handleAddContact(user.id, 'friend')} className="text-sm">
                             <UserPlus size={17} className="mr-1" /> Friend
                           </Button>
-                          <Button variant="primary" size="sm" onClick={() => handleAddContact(user.id, 'family')} className="text-[14px]">
+                          <Button variant="primary" size="sm" onClick={() => handleAddContact(user.id, 'family')} className="text-sm">
                             <Crown size={17} className="mr-1" /> Family
                           </Button>
                         </>
                       )}
-                      <Button variant="ghost" size="sm" onClick={() => handleMessage(user.id)} className="text-[14px]">
+                      <Button variant="ghost" size="sm" onClick={() => handleMessage(user.id)} className="text-sm">
                         <MessageSquare size={17} />
                       </Button>
                     </div>
@@ -175,7 +175,7 @@ export default function ContactsPage() {
                 <div className="flex gap-3 mb-6">
                   <button
                     onClick={() => setActiveTab('friend')}
-                    className={`flex-1 flex items-center justify-center gap-2 px-4 py-3 rounded-xl text-[14px] font-semibold transition-all duration-300 ${
+                    className={`flex-1 flex items-center justify-center gap-2 px-4 py-3 rounded-xl text-sm font-semibold transition-all duration-300 ${
                       activeTab === 'friend'
                         ? 'bg-[var(--emerald)] text-white shadow-lg shadow-[var(--emerald)]/25'
                         : 'bg-[var(--bg-secondary)] text-[var(--text-muted)] hover:bg-[var(--bg-hover)] hover:text-[var(--text-primary)]'
@@ -183,7 +183,7 @@ export default function ContactsPage() {
                   >
                     <Users size={26} />
                     Friends
-                    <span className={`ml-1 px-2 py-0.5 rounded-full text-[14px] font-bold ${
+                    <span className={`ml-1 px-2 py-0.5 rounded-full text-sm font-bold ${
                       activeTab === 'friend' 
                         ? 'bg-white/20 text-white' 
                         : 'bg-[var(--bg-hover)] text-[var(--text-muted)]'
@@ -193,7 +193,7 @@ export default function ContactsPage() {
                   </button>
                   <button
                     onClick={() => setActiveTab('family')}
-                    className={`flex-1 flex items-center justify-center gap-2 px-4 py-3 rounded-xl text-[14px] font-semibold transition-all duration-300 ${
+                    className={`flex-1 flex items-center justify-center gap-2 px-4 py-3 rounded-xl text-sm font-semibold transition-all duration-300 ${
                       activeTab === 'family'
                         ? 'bg-[var(--gold)] text-white shadow-lg shadow-[var(--gold)]/25'
                         : 'bg-[var(--bg-secondary)] text-[var(--text-muted)] hover:bg-[var(--bg-hover)] hover:text-[var(--text-primary)]'
@@ -201,7 +201,7 @@ export default function ContactsPage() {
                   >
                     <Crown size={26} />
                     Family
-                    <span className={`ml-1 px-2 py-0.5 rounded-full text-[14px] font-bold ${
+                    <span className={`ml-1 px-2 py-0.5 rounded-full text-sm font-bold ${
                       activeTab === 'family' 
                         ? 'bg-white/20 text-white' 
                         : 'bg-[var(--bg-hover)] text-[var(--text-muted)]'
@@ -221,7 +221,7 @@ export default function ContactsPage() {
                       <p className="text-[var(--text-muted)] text-sm">
                         No {activeTab === 'friend' ? 'friends' : 'family members'} added yet.
                       </p>
-                      <p className="text-[var(--text-muted)] text-[13px] mt-1">
+                      <p className="text-[var(--text-muted)] text-sm mt-1">
                         Search above to find and add people.
                       </p>
                     </div>
@@ -231,8 +231,8 @@ export default function ContactsPage() {
                       <div className="flex items-center gap-3 cursor-pointer" onClick={() => router.push(`/profile/${contact.contact_id}`)}>
                         <Avatar src={contact.profiles.avatar_url} name={contact.profiles.display_name} />
                         <div>
-                          <p className="text-[var(--text-primary)] font-medium text-[14px]">{contact.profiles.display_name}</p>
-                          <p className="text-[var(--text-muted)] text-[14px]">{contact.profiles.bio || 'Hey there! I am using Tekyel.'}</p>
+                          <p className="text-[var(--text-primary)] font-medium text-sm">{contact.profiles.display_name}</p>
+                          <p className="text-[var(--text-muted)] text-sm">{contact.profiles.bio || 'Hey there! I am using Tekyel.'}</p>
                         </div>
                       </div>
                       <Button variant="ghost" size="sm" onClick={() => handleMessage(contact.contact_id)}>

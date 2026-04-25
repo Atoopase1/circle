@@ -180,7 +180,7 @@ export default function LoginPage() {
       <div className="flex flex-col items-center mb-8">
         <TekyelLogo size={64} className="mb-4 shadow-sm" />
         <h1 className="text-2xl font-bold text-black dark:text-white">Tekyel</h1>
-        <p className="text-[14px] text-[var(--text-muted)] mt-1.5 tracking-wide text-center">
+        <p className="text-sm text-[var(--text-muted)] mt-1.5 tracking-wide text-center">
           {isForgotPassword 
             ? 'Reset your password' 
             : 'Sign in to your account'}
@@ -219,7 +219,7 @@ export default function LoginPage() {
       {(mode === 'email' || isForgotPassword) && (
         <div className="space-y-5 animate-fadeIn">
           <div>
-            <label className="block text-[14px] font-medium text-[var(--text-primary)] mb-2">
+            <label className="block text-sm font-medium text-[var(--text-primary)] mb-2">
               Email address
             </label>
             <input
@@ -233,7 +233,7 @@ export default function LoginPage() {
           
           {!isForgotPassword && (
             <div>
-              <label className="block text-[14px] font-medium text-[var(--text-primary)] mb-2">
+              <label className="block text-sm font-medium text-[var(--text-primary)] mb-2">
                 Password
               </label>
               <div className="relative">
@@ -265,12 +265,12 @@ export default function LoginPage() {
                     />
                     <Check className="absolute w-3.5 h-3.5 text-white opacity-0 peer-checked:opacity-100 left-0.5 pointer-events-none transition-opacity" strokeWidth={4} />
                   </div>
-                  <span className="text-[14px] font-medium text-[var(--text-muted)] group-hover:text-[var(--text-primary)] transition-colors">Remember me</span>
+                  <span className="text-sm font-medium text-[var(--text-muted)] group-hover:text-[var(--text-primary)] transition-colors">Remember me</span>
                 </label>
                 <button
                   type="button"
                   onClick={() => setIsForgotPassword(true)}
-                  className="text-[14px] font-medium text-[var(--emerald)] hover:underline"
+                  className="text-sm font-medium text-[var(--emerald)] hover:underline"
                 >
                   Forgot Password?
                 </button>
@@ -304,7 +304,7 @@ export default function LoginPage() {
             <ArrowRight size={23} className="ml-2" />
           </Button>
           
-          <p className="text-center text-[14px] text-[var(--text-muted)]">
+          <p className="text-center text-sm text-[var(--text-muted)]">
             {isForgotPassword ? (
               <button onClick={() => setIsForgotPassword(false)} className="font-semibold hover:text-[var(--text-primary)]">
                 Back to Sign in
@@ -320,7 +320,7 @@ export default function LoginPage() {
       {mode === 'phone' && !isForgotPassword && (
         <div className="space-y-5 animate-fadeIn">
           <div>
-            <label className="block text-[14px] font-medium text-[var(--text-primary)] mb-2">
+            <label className="block text-sm font-medium text-[var(--text-primary)] mb-2">
               Phone number
             </label>
             <input
@@ -336,7 +336,7 @@ export default function LoginPage() {
           {/* If using Password mode */}
           {!useOtp && !otpSent && (
             <div className="animate-slideUp">
-              <label className="block text-[14px] font-medium text-[var(--text-primary)] mb-2">
+              <label className="block text-sm font-medium text-[var(--text-primary)] mb-2">
                 Password
               </label>
               <div className="relative">
@@ -363,7 +363,7 @@ export default function LoginPage() {
               <div className="mt-4 flex justify-center">
                 <button 
                   onClick={() => setUseOtp(true)}
-                  className="text-[14px] font-medium text-[var(--text-muted)] hover:text-[var(--text-primary)] flex items-center transition-colors border border-[var(--border-color)] px-4 py-2 rounded-lg bg-[var(--bg-secondary)]"
+                  className="text-sm font-medium text-[var(--text-muted)] hover:text-[var(--text-primary)] flex items-center transition-colors border border-[var(--border-color)] px-4 py-2 rounded-lg bg-[var(--bg-secondary)]"
                 >
                   <Key size={26} className="mr-2" /> 
                   Sign in with SMS Code instead
@@ -377,7 +377,7 @@ export default function LoginPage() {
             <div className="animate-slideUp">
               {otpSent && (
                 <div className="mb-4">
-                  <label className="block text-[14px] font-medium text-[var(--text-primary)] mb-2">
+                  <label className="block text-sm font-medium text-[var(--text-primary)] mb-2">
                     Verification code
                   </label>
                   <input
@@ -406,14 +406,14 @@ export default function LoginPage() {
                 {otpSent ? (
                   <button
                     onClick={() => { setOtpSent(false); setOtp(''); }}
-                    className="w-full text-center text-[14px] text-[var(--text-muted)] hover:text-[var(--emerald)] transition-colors"
+                    className="w-full text-center text-sm text-[var(--text-muted)] hover:text-[var(--emerald)] transition-colors"
                   >
                     Change phone number
                   </button>
                 ) : (
                   <button 
                     onClick={() => setUseOtp(false)}
-                    className="text-[14px] font-medium text-[var(--text-muted)] hover:text-[var(--text-primary)] flex items-center justify-center transition-colors"
+                    className="text-sm font-medium text-[var(--text-muted)] hover:text-[var(--text-primary)] flex items-center justify-center transition-colors"
                   >
                     Use password instead
                   </button>
@@ -443,7 +443,7 @@ export default function LoginPage() {
             </label>
           </div>
 
-          <p className="text-center mt-3 text-[14px] text-[var(--text-muted)]">
+          <p className="text-center mt-3 text-sm text-[var(--text-muted)]">
             <span>Don't have an account? Sign up with Google below.</span>
           </p>
         </div>
@@ -454,7 +454,7 @@ export default function LoginPage() {
         <div className="mt-6 animate-fadeIn">
           <div className="relative flex items-center justify-center mb-6">
             <div className="absolute inset-x-0 border-t border-[var(--border-color)]"></div>
-            <div className="relative bg-[var(--bg-app)] px-4 text-[14px] font-medium text-[var(--text-muted)] uppercase tracking-wider">
+            <div className="relative bg-[var(--bg-app)] px-4 text-sm font-medium text-[var(--text-muted)] uppercase tracking-wider">
               Or Sign Up / continue with
             </div>
           </div>
@@ -492,7 +492,7 @@ export default function LoginPage() {
       {/* Policies & Security Footer */}
       {!isForgotPassword && (
         <div className="mt-10 animate-fadeIn">
-          <p className="text-[14.5px] text-[var(--text-muted)] text-center leading-relaxed px-2">
+          <p className="text-sm text-[var(--text-muted)] text-center leading-relaxed px-2">
             Secure login with industry-standard encryption.
           </p>
 
@@ -502,12 +502,12 @@ export default function LoginPage() {
           {/* End-to-end encrypted badge */}
           <div className="flex items-center justify-center gap-2 mb-3">
             <Shield size={23} className="text-[var(--text-muted)] opacity-60" />
-            <span className="text-[14px] text-[var(--text-muted)] opacity-60 tracking-wide">
+            <span className="text-sm text-[var(--text-muted)] opacity-60 tracking-wide">
               End-to-end encrypted
             </span>
           </div>
           
-          <div className="flex items-center justify-center text-[14px] text-[var(--text-muted)] opacity-80 mt-2">
+          <div className="flex items-center justify-center text-sm text-[var(--text-muted)] opacity-80 mt-2">
             Built by <a href="https://technoidfix.online" target="_blank" rel="noopener noreferrer" className="font-semibold text-[var(--emerald)] hover:underline ml-1">technoidfix</a>
           </div>
         </div>
@@ -518,7 +518,7 @@ export default function LoginPage() {
         <div className="flex flex-col items-center justify-center gap-1.5 mt-6 pt-6 border-t border-[var(--border-color)]">
           <div className="flex items-center gap-1.5">
             <Shield size={17} className="text-[var(--text-muted)]" />
-            <span className="text-[14px] text-[var(--text-muted)] tracking-wide">End-to-end encrypted</span>
+            <span className="text-sm text-[var(--text-muted)] tracking-wide">End-to-end encrypted</span>
           </div>
         </div>
       )}

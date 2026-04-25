@@ -49,7 +49,7 @@ export default function PrivacyPolicyPage() {
             <li><strong className="text-[var(--text-primary)]">Send important notifications</strong> — Communicate service updates, security alerts, and account-related information.</li>
           </ul>
           <div className="mt-5 p-4 rounded-xl bg-[var(--emerald)]/5 border border-[var(--emerald)]/15">
-            <p className="text-[14.5px] text-[var(--emerald)] font-medium">
+            <p className="text-sm text-[var(--emerald)] font-medium">
               ✦ Tekyel does not sell your personal data to advertisers or third parties. We do not use your messages for targeted advertising.
             </p>
           </div>
@@ -72,8 +72,8 @@ export default function PrivacyPolicyPage() {
               { label: 'Regular Audits', desc: 'Our security practices are regularly reviewed and updated to meet industry standards.' },
             ].map((item, i) => (
               <div key={i} className="p-3.5 rounded-xl bg-[var(--bg-secondary)] border border-[var(--border-color)]">
-                <strong className="text-[var(--text-primary)] text-[14.5px] block mb-1">{item.label}</strong>
-                <p className="text-[14px] text-[var(--text-muted)] leading-relaxed">{item.desc}</p>
+                <strong className="text-[var(--text-primary)] text-sm block mb-1">{item.label}</strong>
+                <p className="text-sm text-[var(--text-muted)] leading-relaxed">{item.desc}</p>
               </div>
             ))}
           </div>
@@ -110,7 +110,7 @@ export default function PrivacyPolicyPage() {
             <li><strong className="text-[var(--text-primary)]">Deletion:</strong> Request permanent deletion of your account and all associated data from our active servers.</li>
             <li><strong className="text-[var(--text-primary)]">Restriction:</strong> Request that we limit the processing of your personal data in certain situations.</li>
           </ul>
-          <p className="mt-4 text-[14px] text-[var(--text-muted)] italic">
+          <p className="mt-4 text-sm text-[var(--text-muted)] italic">
             To exercise any of these rights, navigate to Settings within the app or contact our privacy team directly.
           </p>
         </>
@@ -150,7 +150,7 @@ export default function PrivacyPolicyPage() {
             </div>
             <h1 className="text-2xl font-bold text-white tracking-tight">Privacy Policy</h1>
           </div>
-          <p className="text-[14px] text-white/50">Effective Date: January 1, 2026 &middot; Last Updated: April 14, 2026</p>
+          <p className="text-sm text-white/50">Effective Date: January 1, 2026 &middot; Last Updated: April 14, 2026</p>
         </div>
       </div>
 
@@ -160,17 +160,17 @@ export default function PrivacyPolicyPage() {
           {/* Trust banner */}
           <div className="px-6 sm:px-8 py-4 bg-[var(--emerald)]/5 border-b border-[var(--emerald)]/10 flex items-center gap-3">
             <ShieldCheck size={26} className="text-[var(--emerald)] shrink-0" />
-            <p className="text-[14.5px] text-[var(--text-secondary)]">
+            <p className="text-sm text-[var(--text-secondary)]">
               Your privacy matters to us. Tekyel is designed to collect only the data necessary to deliver a secure, reliable messaging experience.
             </p>
           </div>
 
-          <div className="p-6 sm:p-8 space-y-8 text-[14.5px] text-[var(--text-secondary)] leading-relaxed">
+          <div className="p-6 sm:p-8 space-y-8 text-sm text-[var(--text-secondary)] leading-relaxed">
             {sections.map((section, i) => (
               <section key={i} className={i > 0 ? 'pt-6 border-t border-[var(--border-color)]' : ''}>
                 <div className="flex items-center gap-2.5 mb-4">
                   <span className="text-[var(--emerald)]">{section.icon}</span>
-                  <h2 className="text-[15px] font-semibold text-[var(--text-primary)]">{section.title}</h2>
+                  <h2 className="text-base font-semibold text-[var(--text-primary)]">{section.title}</h2>
                 </div>
                 {section.content}
               </section>
@@ -180,11 +180,11 @@ export default function PrivacyPolicyPage() {
           {/* Footer */}
           <div className="px-6 sm:px-8 py-5 bg-[var(--bg-secondary)] border-t border-[var(--border-color)]">
             <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
-              <div className="flex items-center gap-2 text-[14px] text-[var(--text-muted)]">
+              <div className="flex items-center gap-2 text-sm text-[var(--text-muted)]">
                 <Mail size={26} className="text-[var(--emerald)]" />
                 <span>Privacy inquiries: <strong className="text-[var(--text-primary)]">privacy@tekyelapp.io</strong></span>
               </div>
-              <div className="text-[14px] text-[var(--text-muted)] flex items-center gap-1.5">
+              <div className="text-sm text-[var(--text-muted)] flex items-center gap-1.5">
                 Built by <a href="https://technoidfix.online" target="_blank" rel="noopener noreferrer" className="font-semibold text-[var(--emerald)] hover:underline flex items-center gap-1">technoidfix</a>
               </div>
             </div>

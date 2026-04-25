@@ -112,7 +112,7 @@ const MessageBubble = React.memo(function MessageBubble({ message, isOwn, showSe
   if (message.is_deleted) {
     return (
       <div className={`flex ${isOwn ? 'justify-end' : 'justify-start'} mb-1.5 px-4 group`}>
-        <div className="relative flex items-center gap-2 px-4 py-2 rounded-2xl bg-[var(--bg-secondary)] text-[var(--text-muted)] text-[14px] italic border border-[var(--border-color)]">
+        <div className="relative flex items-center gap-2 px-4 py-2 rounded-2xl bg-[var(--bg-secondary)] text-[var(--text-muted)] text-sm italic border border-[var(--border-color)]">
           <span>🚫 This message was deleted</span>
           <button
             onClick={() => deleteMessageForMe(message.id)}
@@ -232,22 +232,22 @@ const MessageBubble = React.memo(function MessageBubble({ message, isOwn, showSe
             } else {
               toast.custom((t) => (
                 <div className="bg-[var(--bg-primary)] p-4 rounded-xl shadow-xl border border-[var(--border-color)] flex flex-col gap-3 min-w-[200px] pointer-events-auto">
-                  <p className="text-[14px] font-medium text-center text-[var(--text-primary)]">Pin Message</p>
+                  <p className="text-sm font-medium text-center text-[var(--text-primary)]">Pin Message</p>
                   <button 
                     onClick={() => { pinMessage(message.chat_id, message.id, 'me'); toast.dismiss(t.id); }}
-                    className="w-full py-2 bg-[var(--bg-hover)] rounded-lg text-[14px] font-medium hover:bg-[var(--emerald)] hover:text-white transition-colors"
+                    className="w-full py-2 bg-[var(--bg-hover)] rounded-lg text-sm font-medium hover:bg-[var(--emerald)] hover:text-white transition-colors"
                   >
                     For Me
                   </button>
                   <button 
                     onClick={() => { pinMessage(message.chat_id, message.id, 'everyone'); toast.dismiss(t.id); }}
-                    className="w-full py-2 bg-[var(--bg-hover)] rounded-lg text-[14px] font-medium hover:bg-[var(--emerald)] hover:text-white transition-colors"
+                    className="w-full py-2 bg-[var(--bg-hover)] rounded-lg text-sm font-medium hover:bg-[var(--emerald)] hover:text-white transition-colors"
                   >
                     For Everyone
                   </button>
                   <button 
                     onClick={() => toast.dismiss(t.id)}
-                    className="w-full py-1 text-[13px] text-[var(--text-muted)] hover:text-[var(--text-primary)] transition-colors mt-1"
+                    className="w-full py-1 text-sm text-[var(--text-muted)] hover:text-[var(--text-primary)] transition-colors mt-1"
                   >
                     Cancel
                   </button>
@@ -311,12 +311,12 @@ const MessageBubble = React.memo(function MessageBubble({ message, isOwn, showSe
                   }}
                 >
                   <span 
-                    className="text-[13px] font-semibold mb-0.5 max-w-full truncate"
+                    className="text-sm font-semibold mb-0.5 max-w-full truncate"
                     style={{ color: senderColor }}
                   >
                     {displayName}
                   </span>
-                  <span className={`text-[13px] line-clamp-2 leading-[18px] flex gap-1 items-center ${isOwn ? 'text-[var(--bubble-out-text)] opacity-80' : 'text-[var(--bubble-in-text)] opacity-80'}`}>
+                  <span className={`text-sm line-clamp-2 leading-[18px] flex gap-1 items-center ${isOwn ? 'text-[var(--bubble-out-text)] opacity-80' : 'text-[var(--bubble-in-text)] opacity-80'}`}>
                     {replyData.message_type === 'image' && '📷 Photo'}
                     {replyData.message_type === 'video' && '🎬 Video'}
                     {replyData.message_type === 'audio' && '🎵 Audio'}
@@ -330,7 +330,7 @@ const MessageBubble = React.memo(function MessageBubble({ message, isOwn, showSe
             {/* Sender name in groups — only show if we have a real name */}
             {showSenderName && !isOwn && message.sender && getDisplayName(message.sender) && (
               <p
-                className="text-[14px] font-semibold mb-1"
+                className="text-sm font-semibold mb-1"
                 style={{ color: `hsl(${(message.sender.id ? message.sender.id.charCodeAt(0) * 37 : 1) % 360}, 65%, 55%)` }}
               >
                 {getDisplayName(message.sender)}
@@ -356,7 +356,7 @@ const MessageBubble = React.memo(function MessageBubble({ message, isOwn, showSe
                   ) : mediaError ? (
                     <div className="flex flex-col items-center justify-center p-6 text-red-400">
                       <AlertCircle size={28} className="mb-2" />
-                      <span className="text-[13px]">Failed to load media</span>
+                      <span className="text-sm">Failed to load media</span>
                     </div>
                   ) : null}
                   {!mediaLoaded && !mediaError && (
@@ -386,7 +386,7 @@ const MessageBubble = React.memo(function MessageBubble({ message, isOwn, showSe
                   {mediaError && (
                     <div className="flex flex-col items-center justify-center p-6 text-red-400">
                       <AlertCircle size={28} className="mb-2" />
-                      <span className="text-[13px]">Failed to load video</span>
+                      <span className="text-sm">Failed to load video</span>
                     </div>
                   )}
                   {/* Play overlay */}
@@ -430,7 +430,7 @@ const MessageBubble = React.memo(function MessageBubble({ message, isOwn, showSe
                     <p className={`text-sm truncate font-medium ${isOwn ? 'text-white' : 'text-[var(--text-primary)]'}`}>
                       {message.media_metadata?.filename || 'Document'}
                     </p>
-                    <p className={`text-[13px] ${isOwn ? 'text-white/60' : 'text-[var(--text-muted)]'}`}>
+                    <p className={`text-sm ${isOwn ? 'text-white/60' : 'text-[var(--text-muted)]'}`}>
                       {message.media_metadata?.size
                         ? formatFileSize(message.media_metadata.size as number)
                         : 'File'}
@@ -442,7 +442,7 @@ const MessageBubble = React.memo(function MessageBubble({ message, isOwn, showSe
 
             {/* Text content */}
             {message.content && (
-              <p className={`text-[14px] leading-relaxed m-0`} style={{ whiteSpace: 'pre-wrap', overflowWrap: 'anywhere', wordBreak: 'break-word', color: isOwn ? 'var(--bubble-out-text)' : 'var(--bubble-in-text)', boxSizing: 'border-box', minWidth: 0 }}>
+              <p className={`text-sm leading-relaxed m-0`} style={{ whiteSpace: 'pre-wrap', overflowWrap: 'anywhere', wordBreak: 'break-word', color: isOwn ? 'var(--bubble-out-text)' : 'var(--bubble-in-text)', boxSizing: 'border-box', minWidth: 0 }}>
                 {message.content}
               </p>
             )}
@@ -450,7 +450,7 @@ const MessageBubble = React.memo(function MessageBubble({ message, isOwn, showSe
             {/* Time & Status */}
             <div className="flex items-center justify-end gap-1 -mb-0.5 mt-1" style={{ minWidth: isOwn ? '64px' : '44px' }}>
               {isStarred && <Star size={10} className={isOwn ? 'fill-[var(--gold)] text-[var(--gold)]' : 'fill-[var(--gold)] text-[var(--gold)]'} />}
-              <span className="text-[11px] font-normal" style={{ color: isOwn ? 'var(--bubble-out-meta, #667781)' : 'var(--bubble-in-meta, #667781)' }}>
+              <span className="text-xs font-normal" style={{ color: isOwn ? 'var(--bubble-out-meta, #667781)' : 'var(--bubble-in-meta, #667781)' }}>
                 {formatMessageTime(message.created_at)}
               </span>
               {isOwn && overallStatus === 'failed' && (
@@ -468,13 +468,13 @@ const MessageBubble = React.memo(function MessageBubble({ message, isOwn, showSe
             {/* Reactions beneath bubble */}
             {message.reactions && message.reactions.length > 0 && (
               <div
-                className={`absolute -bottom-3 ${isOwn ? '-left-2' : '-right-2'} bg-[var(--bg-primary)] border border-[var(--border-color)] rounded-full px-2 py-0.5 text-[13px] flex gap-1 items-center`}
+                className={`absolute -bottom-3 ${isOwn ? '-left-2' : '-right-2'} bg-[var(--bg-primary)] border border-[var(--border-color)] rounded-full px-2 py-0.5 text-sm flex gap-1 items-center`}
                 style={{ boxShadow: 'var(--shadow-sm)' }}
               >
                 {Array.from(new Set(message.reactions.map(r => r.emoji))).map(emoji => (
                   <span key={emoji}>{emoji}</span>
                 ))}
-                {message.reactions.length > 1 && <span className="text-[var(--text-muted)] text-[10px] font-medium">{message.reactions.length}</span>}
+                {message.reactions.length > 1 && <span className="text-[var(--text-muted)] text-xs font-medium">{message.reactions.length}</span>}
               </div>
             )}
           </div>
@@ -516,7 +516,7 @@ const MessageBubble = React.memo(function MessageBubble({ message, isOwn, showSe
                   >
                     <ZoomOut size={26} />
                   </button>
-                  <span className="text-white/60 text-[13px] font-mono min-w-[40px] text-center">{Math.round(lightboxZoom * 100)}%</span>
+                  <span className="text-white/60 text-sm font-mono min-w-[40px] text-center">{Math.round(lightboxZoom * 100)}%</span>
                   <button
                     onClick={(e) => { e.stopPropagation(); setLightboxZoom(z => Math.min(3, z + 0.25)); }}
                     className="p-2 rounded-full bg-white/10 hover:bg-white/20 text-white transition-colors"

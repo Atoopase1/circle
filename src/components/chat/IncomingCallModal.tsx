@@ -24,10 +24,10 @@ export default function IncomingCallModal() {
         <Avatar src={incomingCall.caller.avatar_url} name={incomingCall.caller.display_name || '?'} size="xxl" />
         
         <div className="text-center">
-          <h2 className="text-[24px] font-semibold text-white tracking-tight" style={{ fontFamily: 'var(--font-heading)' }}>
+          <h2 className="text-2xl font-semibold text-white tracking-tight" style={{ fontFamily: 'var(--font-heading)' }}>
             {incomingCall.caller.display_name}
           </h2>
-          <p className="text-white/50 text-[14px] mt-2 flex items-center gap-2 justify-center">
+          <p className="text-white/50 text-sm mt-2 flex items-center gap-2 justify-center">
             {incomingCall.callType === 'video' && <Video size={26} className="text-white/40" />}
             <span className="animate-pulse text-[var(--emerald)]">
               Incoming {incomingCall.callType} call…
@@ -46,7 +46,7 @@ export default function IncomingCallModal() {
             >
               <PhoneOff size={28} />
             </button>
-            <span className="text-white/50 text-[14px] font-medium">Decline</span>
+            <span className="text-white/50 text-sm font-medium">Decline</span>
           </div>
 
           {/* Accept */}
@@ -60,7 +60,7 @@ export default function IncomingCallModal() {
             >
               <Phone size={28} />
             </button>
-            <span className="text-white/50 text-[14px] font-medium">Accept</span>
+            <span className="text-white/50 text-sm font-medium">Accept</span>
           </div>
         </div>
       </div>

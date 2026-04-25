@@ -137,7 +137,7 @@ export default function FollowersModal({ isOpen, onClose, profileId, followerCou
               <Users size={32} className="opacity-30 text-[var(--text-muted)]" />
             </div>
             <p className="text-sm font-medium text-[var(--text-secondary)]">No followers yet</p>
-            <p className="text-[13px] mt-1.5 text-[var(--text-muted)]">Share your profile to get started</p>
+            <p className="text-sm mt-1.5 text-[var(--text-muted)]">Share your profile to get started</p>
           </div>
         ) : (
           <div className="space-y-1">
@@ -160,7 +160,7 @@ export default function FollowersModal({ isOpen, onClose, profileId, followerCou
                       <p className="text-sm font-semibold text-[var(--text-primary)] truncate group-hover:text-[var(--emerald)] transition-colors">
                         {follower.display_name}
                       </p>
-                      <p className="text-[12px] text-[var(--text-muted)] truncate leading-snug mt-0.5">
+                      <p className="text-xs text-[var(--text-muted)] truncate leading-snug mt-0.5">
                         {follower.bio || 'Hey there! 👋'}
                       </p>
                     </div>

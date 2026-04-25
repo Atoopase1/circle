@@ -233,7 +233,7 @@ export default function ProfileViewPage() {
           <ArrowLeft size={26} />
         </button>
         
-        <h1 className="text-[15px] font-semibold text-[var(--text-primary)] truncate flex-1 min-w-0 text-center mx-4">{author.display_name}</h1>
+        <h1 className="text-base font-semibold text-[var(--text-primary)] truncate flex-1 min-w-0 text-center mx-4">{author.display_name}</h1>
 
         <div className="flex items-center gap-1">
           {isMe ? (
@@ -269,7 +269,7 @@ export default function ProfileViewPage() {
           {isMe && !isUploadingCover && (
             <button
               onClick={() => coverInputRef.current?.click()}
-              className="absolute right-4 bottom-4 bg-black/40 hover:bg-black/60 backdrop-blur-md px-3.5 py-2 rounded-full text-white transition-all border border-white/15 flex items-center gap-2 text-[13px] font-medium shadow-lg"
+              className="absolute right-4 bottom-4 bg-black/40 hover:bg-black/60 backdrop-blur-md px-3.5 py-2 rounded-full text-white transition-all border border-white/15 flex items-center gap-2 text-sm font-medium shadow-lg"
             >
               <Camera size={26} />
               <span className="hidden sm:inline">Edit cover</span>
@@ -347,10 +347,10 @@ export default function ProfileViewPage() {
               </button>
             )}
 
-            <h2 className="text-[22px] font-bold text-[var(--text-primary)] flex items-center gap-2.5 mb-1 pr-10 min-w-0" style={{ fontFamily: 'var(--font-heading)' }}>
+            <h2 className="text-xl font-bold text-[var(--text-primary)] flex items-center gap-2.5 mb-1 pr-10 min-w-0" style={{ fontFamily: 'var(--font-heading)' }}>
               <span className="truncate">{author.display_name}</span>
               {relationship && (
-                <span className={`text-[10px] uppercase px-2.5 py-0.5 rounded-full font-bold ${
+                <span className={`text-xs uppercase px-2.5 py-0.5 rounded-full font-bold ${
                   relationship === 'family' 
                     ? 'bg-[var(--gold)]/10 text-[var(--gold)]' 
                     : 'bg-[var(--emerald)]/10 text-[var(--emerald)]'
@@ -359,29 +359,29 @@ export default function ProfileViewPage() {
                 </span>
               )}
             </h2>
-            <p className="text-[var(--text-muted)] text-[14px] mb-6 leading-relaxed">
+            <p className="text-[var(--text-muted)] text-sm mb-6 leading-relaxed">
               {author.bio || 'No bio available.'}
             </p>
 
             <div className="flex items-center gap-10 border-t border-[var(--border-color)] pt-5">
               <button onClick={() => setShowFollowers(true)} className="flex flex-col text-left group/fc hover:opacity-80 transition-opacity">
-                <span className="font-bold text-[20px] text-[var(--text-primary)] group-hover/fc:text-[var(--emerald)] transition-colors">{followerCount}</span>
-                <span className="text-[14px] text-[var(--text-muted)] font-medium uppercase tracking-wider">Followers</span>
+                <span className="font-bold text-xl text-[var(--text-primary)] group-hover/fc:text-[var(--emerald)] transition-colors">{followerCount}</span>
+                <span className="text-sm text-[var(--text-muted)] font-medium uppercase tracking-wider">Followers</span>
               </button>
               <div className="flex flex-col">
-                <span className="font-bold text-[20px] text-[var(--text-primary)]">{statuses.length}</span>
-                <span className="text-[14px] text-[var(--text-muted)] font-medium uppercase tracking-wider">Posts</span>
+                <span className="font-bold text-xl text-[var(--text-primary)]">{statuses.length}</span>
+                <span className="text-sm text-[var(--text-muted)] font-medium uppercase tracking-wider">Posts</span>
               </div>
             </div>
           </div>
 
           {/* Activity timeline */}
-          <h3 className="text-[14px] font-semibold text-[var(--text-muted)] uppercase tracking-widest px-1 mb-4 flex items-center gap-2">
+          <h3 className="text-sm font-semibold text-[var(--text-muted)] uppercase tracking-widest px-1 mb-4 flex items-center gap-2">
             Activity Timeline
           </h3>
           {statuses.length === 0 ? (
             <div className="text-center p-12 surface-card mb-20">
-              <p className="text-[var(--text-muted)] text-[14px]">No posts shared yet.</p>
+              <p className="text-[var(--text-muted)] text-sm">No posts shared yet.</p>
             </div>
           ) : (
             <div className="space-y-4 mb-20">

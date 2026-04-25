@@ -96,11 +96,11 @@ export default function GifPicker({ onGifSelect, onClose }: GifPickerProps) {
     <div className="w-[300px] sm:w-[350px] h-[400px] bg-[var(--bg-primary)] rounded-2xl flex flex-col p-3 border border-[var(--border-color)]" style={{ boxShadow: 'var(--shadow-xl)' }}>
       {/* Header */}
       <div className="flex items-center justify-between mb-3 px-1">
-        <h3 className="text-[14px] font-semibold text-[var(--text-primary)]">GIFs</h3>
+        <h3 className="text-sm font-semibold text-[var(--text-primary)]">GIFs</h3>
         <button 
           onClick={handleUploadClick}
           disabled={isUploading}
-          className="flex items-center gap-1.5 px-3 py-1.5 bg-[var(--emerald)]/10 text-[var(--emerald)] rounded-lg hover:bg-[var(--emerald)]/20 transition-colors text-[12px] font-medium disabled:opacity-50"
+          className="flex items-center gap-1.5 px-3 py-1.5 bg-[var(--emerald)]/10 text-[var(--emerald)] rounded-lg hover:bg-[var(--emerald)]/20 transition-colors text-xs font-medium disabled:opacity-50"
         >
           {isUploading ? (
             <span className="w-3 h-3 border-2 border-[var(--emerald)] border-t-transparent rounded-full animate-spin" />
@@ -119,7 +119,7 @@ export default function GifPicker({ onGifSelect, onClose }: GifPickerProps) {
       </div>
 
       <input 
-        className="w-full bg-[var(--bg-secondary)] text-[var(--text-primary)] px-4 py-2.5 rounded-xl mb-3 text-[14px] focus:outline-none focus:ring-2 focus:ring-[var(--emerald)]/20 placeholder:text-[var(--text-muted)] shrink-0"
+        className="w-full bg-[var(--bg-secondary)] text-[var(--text-primary)] px-4 py-2.5 rounded-xl mb-3 text-sm focus:outline-none focus:ring-2 focus:ring-[var(--emerald)]/20 placeholder:text-[var(--text-muted)] shrink-0"
         placeholder="Search Tenor..." 
         value={term} 
         onChange={(e) => setTerm(e.target.value)} 
@@ -128,14 +128,14 @@ export default function GifPicker({ onGifSelect, onClose }: GifPickerProps) {
       <div className="flex-1 overflow-y-auto overflow-x-hidden scrollbar-thin pr-1 pb-1">
         {!term.trim() ? (
           savedGifs.length === 0 ? (
-            <div className="flex flex-col items-center justify-center h-full text-[var(--text-muted)] text-[13px] text-center px-4 gap-2">
-              <span className="text-[32px]">⭐</span>
+            <div className="flex flex-col items-center justify-center h-full text-[var(--text-muted)] text-sm text-center px-4 gap-2">
+              <span className="text-4xl">⭐</span>
               <p>Your GIF collection is empty.</p>
-              <p className="text-[11px] opacity-70">Search Tenor below, or click 'Add' to upload your own.</p>
+              <p className="text-xs opacity-70">Search Tenor below, or click 'Add' to upload your own.</p>
             </div>
           ) : (
             <>
-              <div className="mb-2 px-1 text-[12px] font-semibold text-[var(--text-muted)] uppercase tracking-wider">My Collection</div>
+              <div className="mb-2 px-1 text-xs font-semibold text-[var(--text-muted)] uppercase tracking-wider">My Collection</div>
               <div className="grid grid-cols-2 gap-2">
                 {savedGifs.map((gif) => (
                   <div key={gif.id} className="relative group rounded-xl overflow-hidden bg-[var(--bg-hover)]">
@@ -168,14 +168,14 @@ export default function GifPicker({ onGifSelect, onClose }: GifPickerProps) {
         ) : (
           /* Search Results Layer */
           loading ? (
-            <div className="flex items-center justify-center h-[200px] text-[var(--text-muted)] text-[14px]">Searching...</div>
+            <div className="flex items-center justify-center h-[200px] text-[var(--text-muted)] text-sm">Searching...</div>
           ) : error ? (
-            <div className="flex items-center justify-center h-[200px] text-red-500 text-[14px]">Error searching Tenor.</div>
+            <div className="flex items-center justify-center h-[200px] text-red-500 text-sm">Error searching Tenor.</div>
           ) : searchGifs.length === 0 ? (
-            <div className="flex items-center justify-center h-[200px] text-[var(--text-muted)] text-[14px]">No results found.</div>
+            <div className="flex items-center justify-center h-[200px] text-[var(--text-muted)] text-sm">No results found.</div>
           ) : (
             <>
-              <div className="mb-2 px-1 text-[12px] font-semibold text-[var(--text-muted)] uppercase tracking-wider">Tenor Results</div>
+              <div className="mb-2 px-1 text-xs font-semibold text-[var(--text-muted)] uppercase tracking-wider">Tenor Results</div>
               <div className="grid grid-cols-2 gap-2">
                 {searchGifs.map((url, i) => (
                   <img 

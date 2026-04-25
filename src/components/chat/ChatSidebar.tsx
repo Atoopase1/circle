@@ -153,14 +153,14 @@ export default function ChatSidebar() {
                 onClick={() => profile?.id && router.push(`/profile/${profile.id}`)}
                 className="text-left group"
               >
-                <span className="font-bold text-[var(--text-primary)] text-[16px] block leading-tight group-hover:text-[var(--emerald)] transition-colors truncate">
+                <span className="font-bold text-[var(--text-primary)] text-base block leading-tight group-hover:text-[var(--emerald)] transition-colors truncate">
                   {profile?.display_name || 'User'}
                 </span>
               </button>
               <div className="flex items-center gap-2 mt-3.5 min-w-0">
                 <div className="flex items-center gap-1.5 shrink-0">
                   <span className="w-1.5 h-1.5 rounded-full bg-[var(--emerald)] shadow-[0_0_5px_var(--emerald)] animate-pulse" />
-                  <span className="text-[12px] text-[var(--emerald)] font-semibold tracking-wide">Online</span>
+                  <span className="text-xs text-[var(--emerald)] font-semibold tracking-wide">Online</span>
                 </div>
                 <div className="w-1 h-1 rounded-full bg-[var(--text-muted)] opacity-50 shrink-0" />
                 <button 
@@ -168,7 +168,7 @@ export default function ChatSidebar() {
                   className="flex items-center gap-1 group/followers shrink-0"
                 >
                   <Users size={16} className="shrink-0 text-[var(--text-muted)] group-hover/followers:text-[var(--text-primary)] transition-colors" />
-                  <span className="text-[12px] text-[var(--text-muted)] font-medium tracking-wide group-hover/followers:text-[var(--text-primary)] transition-colors whitespace-nowrap">
+                  <span className="text-xs text-[var(--text-muted)] font-medium tracking-wide group-hover/followers:text-[var(--text-primary)] transition-colors whitespace-nowrap">
                     {followerCount} {followerCount === 1 ? 'Follower' : 'Followers'}
                   </span>
                 </button>
@@ -233,7 +233,7 @@ export default function ChatSidebar() {
               <MessageSquarePlus size={32} className="opacity-40" />
             </div>
             <p className="text-sm font-medium text-[var(--text-secondary)]">No conversations yet</p>
-            <p className="text-[13px] mt-1.5 text-[var(--text-muted)]">Start a new chat to get going</p>
+            <p className="text-sm mt-1.5 text-[var(--text-muted)]">Start a new chat to get going</p>
           </div>
         ) : (
           filteredChats.map((chat) => (
@@ -267,7 +267,7 @@ export default function ChatSidebar() {
                 <Avatar src={user.avatar_url} name={user.display_name} size="md" />
                 <div className="text-left">
                   <p className="text-sm font-medium text-[var(--text-primary)]">{user.display_name}</p>
-                  <p className="text-[13px] text-[var(--text-muted)]">{user.bio || 'Hey there!'}</p>
+                  <p className="text-sm text-[var(--text-muted)]">{user.bio || 'Hey there!'}</p>
                 </div>
               </button>
             ))

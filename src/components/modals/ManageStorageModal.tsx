@@ -150,19 +150,19 @@ export default function ManageStorageModal({
                 <HardDrive size={26} className="text-[var(--emerald)]" />
               </div>
               <div>
-                <p className="text-[14px] font-medium text-[var(--text-primary)]">Total Used</p>
+                <p className="text-sm font-medium text-[var(--text-primary)]">Total Used</p>
                 {isCalculating ? (
                   <div className="h-5 w-16 bg-[var(--border-color)] rounded animate-pulse mt-1" />
                 ) : (
                   <p className="text-xl font-bold text-[var(--text-primary)] tracking-tight">
-                    {stats.total.toFixed(2)} <span className="text-[14px] font-medium text-[var(--text-muted)]">MB</span>
+                    {stats.total.toFixed(2)} <span className="text-sm font-medium text-[var(--text-muted)]">MB</span>
                   </p>
                 )}
               </div>
             </div>
             <div className="text-right">
-              <p className="text-[14px] font-medium text-[var(--text-primary)]">Free Space</p>
-              <p className="text-[14px] text-[var(--text-muted)]">Plenty</p>
+              <p className="text-sm font-medium text-[var(--text-primary)]">Free Space</p>
+              <p className="text-sm text-[var(--text-muted)]">Plenty</p>
             </div>
           </div>
 
@@ -176,7 +176,7 @@ export default function ManageStorageModal({
 
         {/* Storage Categories */}
         <div className="space-y-3">
-          <p className="text-[14px] font-semibold text-[var(--text-muted)] uppercase tracking-widest px-1">Select to clear</p>
+          <p className="text-sm font-semibold text-[var(--text-muted)] uppercase tracking-widest px-1">Select to clear</p>
           
           <StorageItem 
             icon={<Database size={26} className={selectedItems.database ? "text-[var(--wa-green)]" : "text-[var(--text-muted)]"} />}
@@ -252,7 +252,7 @@ function StorageItem({
           {icon}
         </div>
         <div>
-          <p className="text-[14px] font-medium text-[var(--text-primary)]">{title}</p>
+          <p className="text-sm font-medium text-[var(--text-primary)]">{title}</p>
           <p className="text-xs text-[var(--text-muted)] mt-0.5">{description}</p>
         </div>
       </div>

@@ -36,7 +36,14 @@ export default function SettingsPage() {
     setIsDark(document.documentElement.classList.contains('dark'));
     setIsItalic(localStorage.getItem('app-font-style') === 'italic');
     setCurrentFont(localStorage.getItem('app-font') || 'Inter');
-    setTextSize(localStorage.getItem('app-text-size') || '16px');
+    
+    let storedSize = localStorage.getItem('app-text-size') || 'medium';
+    // Handle legacy pixel values
+    if (storedSize === '14px') storedSize = 'small';
+    if (storedSize === '16px') storedSize = 'medium';
+    if (storedSize === '18px') storedSize = 'large';
+    if (storedSize === '20px') storedSize = 'extra-large';
+    setTextSize(storedSize);
     
     // Load toggle states
     setPushEnabled(localStorage.getItem('setting-push') !== 'false');
@@ -85,7 +92,14 @@ export default function SettingsPage() {
     const newSize = e.target.value;
     setTextSize(newSize);
     localStorage.setItem('app-text-size', newSize);
-    document.documentElement.style.fontSize = newSize;
+    
+    let scale = '1';
+    if (newSize === 'small') scale = '0.9';
+    else if (newSize === 'large') scale = '1.1';
+    else if (newSize === 'extra-large') scale = '1.25';
+    
+    document.documentElement.style.setProperty('--text-scale', scale);
+    document.documentElement.style.fontSize = ''; // Reset legacy root font-size
   };
 
   const toggleItalicMode = () => {
@@ -117,13 +131,13 @@ export default function SettingsPage() {
           >
             <ArrowLeft size={26} />
           </button>
-          <h1 className="text-[18px] font-semibold text-[var(--text-primary)]" style={{ fontFamily: 'var(--font-heading)' }}>Settings</h1>
+          <h1 className="text-lg font-semibold text-[var(--text-primary)]" style={{ fontFamily: 'var(--font-heading)' }}>Settings</h1>
         </div>
 
         <div className="flex-1 overflow-y-auto px-5 py-6 space-y-6 scrollbar-thin">
           {/* Profile Card */}
           <div className="surface-card p-6">
-            <h2 className="text-[14px] font-semibold text-[var(--text-muted)] uppercase tracking-widest mb-5 flex items-center gap-2">
+            <h2 className="text-sm font-semibold text-[var(--text-muted)] uppercase tracking-widest mb-5 flex items-center gap-2">
               <User size={26} className="text-[var(--emerald)]" />
               Profile
             </h2>
@@ -132,7 +146,7 @@ export default function SettingsPage() {
 
           {/* Appearance */}
           <div className="surface-card p-5">
-            <h2 className="text-[14px] font-semibold text-[var(--text-muted)] uppercase tracking-widest mb-4 flex items-center gap-2">
+            <h2 className="text-sm font-semibold text-[var(--text-muted)] uppercase tracking-widest mb-4 flex items-center gap-2">
               <Palette size={26} className="text-[var(--emerald)]" />
               Appearance
             </h2>
@@ -143,8 +157,8 @@ export default function SettingsPage() {
                     {isDark ? <Moon size={26} className="text-[var(--emerald)]" /> : <Sun size={26} className="text-[var(--gold)]" />}
                   </div>
                   <div>
-                    <p className="text-[14px] font-medium text-[var(--text-primary)]">Dark Mode</p>
-                    <p className="text-[14px] text-[var(--text-muted)]">Toggle dark/light theme</p>
+                    <p className="text-sm font-medium text-[var(--text-primary)]">Dark Mode</p>
+                    <p className="text-sm text-[var(--text-muted)]">Toggle dark/light theme</p>
                   </div>
                 </div>
                 <Toggle checked={isDark} onChange={toggleDarkMode} />
@@ -156,14 +170,14 @@ export default function SettingsPage() {
                     <Type size={26} className="text-[var(--text-muted)]" />
                   </div>
                   <div>
-                    <p className="text-[14px] font-medium text-[var(--text-primary)]">App Font</p>
-                    <p className="text-[14px] text-[var(--text-muted)]">Select your preferred font style</p>
+                    <p className="text-sm font-medium text-[var(--text-primary)]">App Font</p>
+                    <p className="text-sm text-[var(--text-muted)]">Select your preferred font style</p>
                   </div>
                 </div>
                 <select 
                   value={currentFont}
                   onChange={changeFont}
-                  className="bg-[var(--bg-secondary)] text-[var(--text-primary)] text-[14px] rounded-lg px-2 py-1.5 border border-[var(--border-color)] focus:outline-none focus:ring-1 focus:ring-[var(--emerald)] cursor-pointer hover:bg-[var(--bg-hover)] transition-colors max-w-[140px] sm:max-w-none truncate"
+                  className="bg-[var(--bg-secondary)] text-[var(--text-primary)] text-sm rounded-lg px-2 py-1.5 border border-[var(--border-color)] focus:outline-none focus:ring-1 focus:ring-[var(--emerald)] cursor-pointer hover:bg-[var(--bg-hover)] transition-colors max-w-[140px] sm:max-w-none truncate"
                 >
                   <option value="Inter">Inter (Default)</option>
                   <option value="Poppins">Poppins</option>
@@ -191,8 +205,8 @@ export default function SettingsPage() {
                     <Type size={26} className="text-[var(--text-muted)] italic" />
                   </div>
                   <div>
-                    <p className="text-[14px] font-medium text-[var(--text-primary)]">Italic Text</p>
-                    <p className="text-[14px] text-[var(--text-muted)]">Apply cursive/italic styling</p>
+                    <p className="text-sm font-medium text-[var(--text-primary)]">Italic Text</p>
+                    <p className="text-sm text-[var(--text-muted)]">Apply cursive/italic styling</p>
                   </div>
                 </div>
                 <Toggle checked={isItalic} onChange={toggleItalicMode} />
@@ -204,19 +218,19 @@ export default function SettingsPage() {
                     <span className="text-[var(--text-muted)] font-bold text-lg">A</span>
                   </div>
                   <div>
-                    <p className="text-[14px] font-medium text-[var(--text-primary)]">Text Size</p>
-                    <p className="text-[14px] text-[var(--text-muted)]">Scale the app interface size</p>
+                    <p className="text-sm font-medium text-[var(--text-primary)]">Text Size</p>
+                    <p className="text-sm text-[var(--text-muted)]">Scale the app interface size</p>
                   </div>
                 </div>
                 <select 
                   value={textSize}
                   onChange={changeTextSize}
-                  className="bg-[var(--bg-secondary)] text-[var(--text-primary)] text-[14px] rounded-lg px-2 py-1.5 border border-[var(--border-color)] focus:outline-none focus:ring-1 focus:ring-[var(--emerald)] cursor-pointer hover:bg-[var(--bg-hover)] transition-colors"
+                  className="bg-[var(--bg-secondary)] text-[var(--text-primary)] text-sm rounded-lg px-2 py-1.5 border border-[var(--border-color)] focus:outline-none focus:ring-1 focus:ring-[var(--emerald)] cursor-pointer hover:bg-[var(--bg-hover)] transition-colors"
                 >
-                  <option value="14px">Small</option>
-                  <option value="16px">Medium (Default)</option>
-                  <option value="18px">Large</option>
-                  <option value="20px">Extra Large</option>
+                  <option value="small">Small</option>
+                  <option value="medium">Medium (Default)</option>
+                  <option value="large">Large</option>
+                  <option value="extra-large">Extra Large</option>
                 </select>
               </div>
             </div>
@@ -224,7 +238,7 @@ export default function SettingsPage() {
 
           {/* Notifications */}
           <div className="surface-card p-5">
-            <h2 className="text-[14px] font-semibold text-[var(--text-muted)] uppercase tracking-widest mb-4 flex items-center gap-2">
+            <h2 className="text-sm font-semibold text-[var(--text-muted)] uppercase tracking-widest mb-4 flex items-center gap-2">
               <Bell size={26} className="text-[var(--emerald)]" />
               Notifications
             </h2>
@@ -235,8 +249,8 @@ export default function SettingsPage() {
                     <Bell size={26} className="text-[var(--text-muted)]" />
                   </div>
                   <div>
-                    <p className="text-[14px] font-medium text-[var(--text-primary)]">Push Notifications</p>
-                    <p className="text-[14px] text-[var(--text-muted)]">Receive message alerts</p>
+                    <p className="text-sm font-medium text-[var(--text-primary)]">Push Notifications</p>
+                    <p className="text-sm text-[var(--text-muted)]">Receive message alerts</p>
                   </div>
                 </div>
                 <Toggle checked={pushEnabled} onChange={() => toggleSetting('setting-push', setPushEnabled, pushEnabled)} />
@@ -247,8 +261,8 @@ export default function SettingsPage() {
                     <Bell size={26} className="text-[var(--text-muted)]" />
                   </div>
                   <div>
-                    <p className="text-[14px] font-medium text-[var(--text-primary)]">Sound</p>
-                    <p className="text-[14px] text-[var(--text-muted)]">Play notification sounds</p>
+                    <p className="text-sm font-medium text-[var(--text-primary)]">Sound</p>
+                    <p className="text-sm text-[var(--text-muted)]">Play notification sounds</p>
                   </div>
                 </div>
                 <Toggle checked={soundEnabled} onChange={() => toggleSetting('setting-sound', setSoundEnabled, soundEnabled)} />
@@ -258,7 +272,7 @@ export default function SettingsPage() {
 
           {/* Privacy */}
           <div className="surface-card p-5">
-            <h2 className="text-[14px] font-semibold text-[var(--text-muted)] uppercase tracking-widest mb-4 flex items-center gap-2">
+            <h2 className="text-sm font-semibold text-[var(--text-muted)] uppercase tracking-widest mb-4 flex items-center gap-2">
               <Lock size={26} className="text-[var(--emerald)]" />
               Privacy & Security
             </h2>
@@ -269,8 +283,8 @@ export default function SettingsPage() {
                     <Lock size={26} className="text-[var(--text-muted)]" />
                   </div>
                   <div>
-                    <p className="text-[14px] font-medium text-[var(--text-primary)]">Read Receipts</p>
-                    <p className="text-[14px] text-[var(--text-muted)]">Show when messages are read</p>
+                    <p className="text-sm font-medium text-[var(--text-primary)]">Read Receipts</p>
+                    <p className="text-sm text-[var(--text-muted)]">Show when messages are read</p>
                   </div>
                 </div>
                 <Toggle checked={readReceiptsEnabled} onChange={() => toggleSetting('setting-receipts', setReadReceiptsEnabled, readReceiptsEnabled)} />
@@ -281,8 +295,8 @@ export default function SettingsPage() {
                     <User size={26} className="text-[var(--text-muted)]" />
                   </div>
                   <div>
-                    <p className="text-[14px] font-medium text-[var(--text-primary)]">Online Status</p>
-                    <p className="text-[14px] text-[var(--text-muted)]">Show when you're online</p>
+                    <p className="text-sm font-medium text-[var(--text-primary)]">Online Status</p>
+                    <p className="text-sm text-[var(--text-muted)]">Show when you're online</p>
                   </div>
                 </div>
                 <Toggle checked={onlineStatusEnabled} onChange={() => toggleSetting('setting-online', setOnlineStatusEnabled, onlineStatusEnabled)} />
@@ -295,7 +309,7 @@ export default function SettingsPage() {
             className="surface-card p-5 cursor-pointer hover:bg-[var(--bg-hover)] transition-colors duration-200"
             onClick={() => setIsStorageModalOpen(true)}
           >
-            <h2 className="text-[14px] font-semibold text-[var(--text-muted)] uppercase tracking-widest mb-4 flex items-center gap-2">
+            <h2 className="text-sm font-semibold text-[var(--text-muted)] uppercase tracking-widest mb-4 flex items-center gap-2">
               <HardDrive size={26} className="text-[var(--emerald)]" />
               Storage & Data
             </h2>
@@ -304,8 +318,8 @@ export default function SettingsPage() {
                 <HardDrive size={26} className="text-[var(--text-muted)]" />
               </div>
               <div>
-                <p className="text-[14px] font-medium text-[var(--text-primary)]">Manage Storage</p>
-                <p className="text-[14px] text-[var(--text-muted)]">Review and clear cached data</p>
+                <p className="text-sm font-medium text-[var(--text-primary)]">Manage Storage</p>
+                <p className="text-sm text-[var(--text-muted)]">Review and clear cached data</p>
               </div>
             </div>
           </div>
@@ -313,7 +327,7 @@ export default function SettingsPage() {
           {/* Install App — visible when PWA not installed */}
           {(isInstallable || !isInstalled) && (
             <div className="surface-card p-5">
-              <h2 className="text-[14px] font-semibold text-[var(--text-muted)] uppercase tracking-widest mb-4 flex items-center gap-2">
+              <h2 className="text-sm font-semibold text-[var(--text-muted)] uppercase tracking-widest mb-4 flex items-center gap-2">
                 {isMobile ? <Smartphone size={26} className="text-[var(--emerald)]" /> : <Monitor size={26} className="text-[var(--emerald)]" />}
                 Install App
               </h2>
@@ -327,10 +341,10 @@ export default function SettingsPage() {
                     )}
                   </div>
                   <div>
-                    <p className="text-[14px] font-medium text-[var(--text-primary)]">
+                    <p className="text-sm font-medium text-[var(--text-primary)]">
                       {isInstalled ? 'App Installed' : 'Install Tekyel'}
                     </p>
-                    <p className="text-[14px] text-[var(--text-muted)]">
+                    <p className="text-sm text-[var(--text-muted)]">
                       {isInstalled
                         ? 'Tekyel is installed on this device'
                         : isMobile
@@ -342,7 +356,7 @@ export default function SettingsPage() {
                 {isInstallable && !isInstalled && (
                   <button
                     onClick={promptInstall}
-                    className="flex items-center gap-2 px-4 py-2 rounded-xl bg-[var(--emerald)] hover:bg-[var(--emerald-hover)] text-white text-[13px] font-semibold transition-all duration-200 shadow-lg shadow-[var(--emerald)]/20 active:scale-[0.97]"
+                    className="flex items-center gap-2 px-4 py-2 rounded-xl bg-[var(--emerald)] hover:bg-[var(--emerald-hover)] text-white text-sm font-semibold transition-all duration-200 shadow-lg shadow-[var(--emerald)]/20 active:scale-[0.97]"
                   >
                     <Download size={14} />
                     Install
@@ -354,18 +368,18 @@ export default function SettingsPage() {
 
           {/* About */}
           <div className="surface-card p-5">
-            <h2 className="text-[14px] font-semibold text-[var(--text-muted)] uppercase tracking-widest mb-4 flex items-center gap-2">
+            <h2 className="text-sm font-semibold text-[var(--text-muted)] uppercase tracking-widest mb-4 flex items-center gap-2">
               <Info size={26} className="text-[var(--emerald)]" />
               About
             </h2>
             <div className="space-y-2">
               <div className="flex items-center justify-between">
-                <span className="text-[14px] text-[var(--text-primary)]">Version</span>
-                <span className="text-[14px] text-[var(--text-muted)]">2.0.0</span>
+                <span className="text-sm text-[var(--text-primary)]">Version</span>
+                <span className="text-sm text-[var(--text-muted)]">2.0.0</span>
               </div>
               <div className="flex items-center justify-between">
-                <span className="text-[14px] text-[var(--text-primary)]">Build</span>
-                <span className="text-[14px] text-[var(--text-muted)]">Premium</span>
+                <span className="text-sm text-[var(--text-primary)]">Build</span>
+                <span className="text-sm text-[var(--text-muted)]">Premium</span>
               </div>
             </div>
           </div>

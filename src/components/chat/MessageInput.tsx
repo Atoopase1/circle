@@ -32,7 +32,7 @@ export default function MessageInput({ chatId }: MessageInputProps) {
       <div className="glass-header border-t border-[var(--border-color)]">
         <div className="flex items-center justify-center gap-3 px-4 py-4">
           <Lock size={18} className="text-[var(--text-muted)]" />
-          <p className="text-[14px] text-[var(--text-muted)] font-medium">
+          <p className="text-sm text-[var(--text-muted)] font-medium">
             Only admins can send messages
           </p>
         </div>
@@ -305,7 +305,7 @@ export default function MessageInput({ chatId }: MessageInputProps) {
           )}
           <div className="flex-1 min-w-0">
             <p className="text-sm text-[var(--text-primary)] truncate font-medium">{selectedFile.name}</p>
-            <p className="text-[13px] text-[var(--text-muted)]">
+            <p className="text-sm text-[var(--text-muted)]">
               {(selectedFile.size / 1024 / 1024).toFixed(1)} MB
             </p>
           </div>
@@ -337,10 +337,10 @@ export default function MessageInput({ chatId }: MessageInputProps) {
       {replyingTo && !editingMessage && (
         <div className="px-4 py-2.5 border-b border-[var(--border-color)] bg-[var(--bg-secondary)] flex items-center justify-between animate-slideUp">
           <div className="flex-1 min-w-0 border-l-3 border-[var(--emerald)] pl-3">
-            <p className="text-[14px] font-semibold text-[var(--emerald)] mb-0.5">
+            <p className="text-sm font-semibold text-[var(--emerald)] mb-0.5">
               {replyingTo.sender?.display_name || 'User'}
             </p>
-            <p className="text-[14px] text-[var(--text-secondary)] truncate">
+            <p className="text-sm text-[var(--text-secondary)] truncate">
               {replyingTo.content || (replyingTo.media_url ? '[Media]' : '')}
             </p>
           </div>
@@ -359,10 +359,10 @@ export default function MessageInput({ chatId }: MessageInputProps) {
           <div className="flex-1 min-w-0 flex items-start gap-3 pl-1">
             <Pencil size={23} className="text-[var(--emerald)] mt-0.5 shrink-0" />
             <div className="min-w-0">
-              <p className="text-[14px] font-semibold text-[var(--emerald)] mb-0.5">
+              <p className="text-sm font-semibold text-[var(--emerald)] mb-0.5">
                 Edit message
               </p>
-              <p className="text-[14px] text-[var(--text-secondary)] truncate">
+              <p className="text-sm text-[var(--text-secondary)] truncate">
                 {editingMessage.content}
               </p>
             </div>
@@ -438,7 +438,7 @@ export default function MessageInput({ chatId }: MessageInputProps) {
                       handleFileSelect(opt.accept);
                       setShowAttachMenu(false);
                     }}
-                    className="w-full flex items-center gap-3 px-4 py-2.5 hover:bg-[var(--bg-hover)] transition-all duration-150 text-[14px] text-[var(--text-primary)]"
+                    className="w-full flex items-center gap-3 px-4 py-2.5 hover:bg-[var(--bg-hover)] transition-all duration-150 text-sm text-[var(--text-primary)]"
                   >
                     <opt.icon size={22} className={opt.color} />
                     {opt.label}
@@ -475,9 +475,9 @@ export default function MessageInput({ chatId }: MessageInputProps) {
             <div className="w-full flex items-center justify-between px-4 py-2 bg-[var(--bg-secondary)] rounded-2xl h-full border border-transparent">
               <div className="flex items-center gap-2">
                  <div className="w-2.5 h-2.5 rounded-full bg-red-500 animate-pulse" />
-                 <span className="text-[14px] font-medium animate-pulse text-red-500">Recording...</span>
+                 <span className="text-sm font-medium animate-pulse text-red-500">Recording...</span>
               </div>
-              <span className="text-[14px] font-medium text-[var(--text-muted)]">
+              <span className="text-sm font-medium text-[var(--text-muted)]">
                 {Math.floor(recordingTime / 60)}:{(recordingTime % 60).toString().padStart(2, '0')}
               </span>
             </div>
@@ -490,7 +490,7 @@ export default function MessageInput({ chatId }: MessageInputProps) {
                 onKeyDown={handleKeyDown}
                 placeholder="Type a message"
                 rows={1}
-                className="w-full px-4 pr-12 py-2.5 bg-[var(--bg-secondary)] text-[var(--text-primary)] rounded-2xl text-[14px] placeholder:text-[var(--text-muted)] focus:outline-none focus:ring-2 focus:ring-[var(--emerald)]/20 focus:bg-[var(--bg-primary)] border border-transparent focus:border-[var(--emerald)]/15 resize-none max-h-[150px] leading-5 transition-all duration-200"
+                className="w-full px-4 pr-12 py-2.5 bg-[var(--bg-secondary)] text-[var(--text-primary)] rounded-2xl text-sm placeholder:text-[var(--text-muted)] focus:outline-none focus:ring-2 focus:ring-[var(--emerald)]/20 focus:bg-[var(--bg-primary)] border border-transparent focus:border-[var(--emerald)]/15 resize-none max-h-[150px] leading-5 transition-all duration-200"
               />
               {/* GIF button — inside input on right edge */}
               <button 
@@ -498,7 +498,7 @@ export default function MessageInput({ chatId }: MessageInputProps) {
                   setShowGifPicker(!showGifPicker);
                   setShowEmoji(false);
                 }}
-                className={`absolute right-2 bottom-1/2 translate-y-1/2 px-1.5 py-0.5 rounded-lg transition-all duration-200 text-[12px] font-bold border ${showGifPicker ? 'bg-[var(--emerald)]/15 text-[var(--emerald)] border-[var(--emerald)]/30' : 'text-[var(--text-muted)] border-[var(--text-muted)]/30 hover:text-[var(--text-primary)] hover:border-[var(--text-primary)]/30'}`}
+                className={`absolute right-2 bottom-1/2 translate-y-1/2 px-1.5 py-0.5 rounded-lg transition-all duration-200 text-xs font-bold border ${showGifPicker ? 'bg-[var(--emerald)]/15 text-[var(--emerald)] border-[var(--emerald)]/30' : 'text-[var(--text-muted)] border-[var(--text-muted)]/30 hover:text-[var(--text-primary)] hover:border-[var(--text-primary)]/30'}`}
               >
                 GIF
               </button>

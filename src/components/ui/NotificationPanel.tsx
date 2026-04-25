@@ -63,9 +63,9 @@ export default function NotificationPanel({ isOpen, onClose }: NotificationPanel
         <div className="flex items-center justify-between px-5 py-4 border-b border-[var(--border-color)] shrink-0">
           <div className="flex items-center gap-2.5">
             <Bell size={22} className="text-[var(--emerald)]" />
-            <h2 className="text-[16px] font-bold text-[var(--text-primary)]">Notifications</h2>
+            <h2 className="text-base font-bold text-[var(--text-primary)]">Notifications</h2>
             {notifications.filter(n => !n.read).length > 0 && (
-              <span className="bg-[var(--emerald)] text-white text-[11px] font-bold px-2 py-0.5 rounded-full min-w-[20px] text-center">
+              <span className="bg-[var(--emerald)] text-white text-xs font-bold px-2 py-0.5 rounded-full min-w-[20px] text-center">
                 {notifications.filter(n => !n.read).length}
               </span>
             )}
@@ -105,8 +105,8 @@ export default function NotificationPanel({ isOpen, onClose }: NotificationPanel
               <div className="w-16 h-16 mb-4 rounded-full bg-[var(--bg-secondary)] flex items-center justify-center">
                 <BellOff size={32} className="text-[var(--text-muted)]" />
               </div>
-              <p className="text-[15px] font-semibold text-[var(--text-primary)] mb-1">No notifications yet</p>
-              <p className="text-[13px] text-[var(--text-muted)] leading-relaxed">
+              <p className="text-base font-semibold text-[var(--text-primary)] mb-1">No notifications yet</p>
+              <p className="text-sm text-[var(--text-muted)] leading-relaxed">
                 When people you follow post updates, you'll see them here.
               </p>
             </div>
@@ -134,14 +134,14 @@ export default function NotificationPanel({ isOpen, onClose }: NotificationPanel
 
                   {/* Content */}
                   <div className="flex-1 min-w-0">
-                    <p className="text-[14px] text-[var(--text-primary)] leading-snug">
+                    <p className="text-sm text-[var(--text-primary)] leading-snug">
                       <span className="font-semibold">{notification.userName}</span>
                       <span className="text-[var(--text-muted)]"> shared a new post</span>
                     </p>
                     {notification.preview && (
-                      <p className="text-[13px] text-[var(--text-muted)] truncate mt-0.5">{notification.preview}</p>
+                      <p className="text-sm text-[var(--text-muted)] truncate mt-0.5">{notification.preview}</p>
                     )}
-                    <p className="text-[12px] text-[var(--text-muted)] mt-1 opacity-70">{timeAgo(notification.createdAt)}</p>
+                    <p className="text-xs text-[var(--text-muted)] mt-1 opacity-70">{timeAgo(notification.createdAt)}</p>
                   </div>
 
                   {/* Delete button */}

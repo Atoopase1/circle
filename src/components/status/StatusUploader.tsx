@@ -132,7 +132,7 @@ export default function StatusUploader({ onStatusPosted }: { onStatusPosted: () 
           </div>
           <button
             onClick={handleBackToEdit}
-            className="flex items-center gap-1.5 text-[13px] text-[var(--wa-green)] hover:underline font-medium"
+            className="flex items-center gap-1.5 text-sm text-[var(--wa-green)] hover:underline font-medium"
           >
             <Edit3 size={26} />
             Edit
@@ -172,7 +172,7 @@ export default function StatusUploader({ onStatusPosted }: { onStatusPosted: () 
             </div>
           )}
 
-          <div className="flex items-center gap-2 text-[13px] text-[var(--text-muted)]">
+          <div className="flex items-center gap-2 text-sm text-[var(--text-muted)]">
             <Sparkles size={16} />
             Posting as <span className="font-medium text-[var(--text-primary)]">{visibility}</span>
           </div>
@@ -236,7 +236,7 @@ export default function StatusUploader({ onStatusPosted }: { onStatusPosted: () 
               >
                 <X size={26} />
               </button>
-              <div className="absolute bottom-1 left-1 bg-black/60 text-white rounded px-1.5 py-0.5 text-[10px]">
+              <div className="absolute bottom-1 left-1 bg-black/60 text-white rounded px-1.5 py-0.5 text-xs">
                 <Video size={10} className="inline mr-1" />Video
               </div>
             </div>
@@ -284,7 +284,7 @@ export default function StatusUploader({ onStatusPosted }: { onStatusPosted: () 
           <select
             value={visibility}
             onChange={(e) => setVisibility(e.target.value as any)}
-            className="bg-[var(--bg-secondary)] text-[var(--text-primary)] text-[13px] rounded-lg px-2 py-1 outline-none border-none cursor-pointer"
+            className="bg-[var(--bg-secondary)] text-[var(--text-primary)] text-sm rounded-lg px-2 py-1 outline-none border-none cursor-pointer"
             disabled={isPosting}
           >
             <option value="public">🌍 Public (Discoverable)</option>

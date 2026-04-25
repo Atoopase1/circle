@@ -141,7 +141,7 @@ export default function StatusPage() {
                 <button
                   key={type}
                   onClick={() => setFilterType(type)}
-                  className={`px-3 py-1.5 rounded-lg text-[13px] font-medium transition-colors border ${
+                  className={`px-3 py-1.5 rounded-lg text-sm font-medium transition-colors border ${
                     filterType === type 
                       ? 'bg-[var(--wa-green)]/10 border-[var(--wa-green)]/30 text-[var(--wa-green)]' 
                       : 'bg-[var(--bg-secondary)] border-[var(--border-color)] text-[var(--text-muted)] hover:text-[var(--text-primary)]'

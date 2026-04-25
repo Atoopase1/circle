@@ -200,11 +200,11 @@ export default function StatusCard({ status, onToggleFollow, onRefresh, initialF
           <div className="flex-1 min-w-0">
             <div className="flex items-center gap-2">
               <span className="font-semibold text-[var(--text-primary)] text-sm truncate">{profiles.display_name}</span>
-              <span className="text-[10px] uppercase bg-[var(--bg-secondary)] px-1.5 py-0.5 rounded text-[var(--text-muted)] shrink-0">
+              <span className="text-xs uppercase bg-[var(--bg-secondary)] px-1.5 py-0.5 rounded text-[var(--text-muted)] shrink-0">
                 {visibility}
               </span>
             </div>
-            <span className="text-[13px] text-[var(--text-muted)] block truncate mt-0.5">
+            <span className="text-sm text-[var(--text-muted)] block truncate mt-0.5">
               {formatDistanceToNow(new Date(created_at), { addSuffix: true })}
             </span>
           </div>
@@ -243,7 +243,7 @@ export default function StatusCard({ status, onToggleFollow, onRefresh, initialF
         ) : (
           <button
             onClick={handleFollow}
-            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-[13px] font-semibold transition-all shrink-0 ${
+            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-sm font-semibold transition-all shrink-0 ${
               followed
                 ? 'bg-[var(--wa-green)]/10 text-[var(--wa-green)] border border-[var(--wa-green)]/30 hover:bg-[var(--wa-green)]/20'
                 : 'bg-[var(--wa-green)] text-white hover:bg-[var(--wa-green-dark)] shadow-sm'
@@ -315,7 +315,7 @@ export default function StatusCard({ status, onToggleFollow, onRefresh, initialF
               fill={liked ? 'currentColor' : 'none'}
               className={`transition-transform ${likeAnimating ? 'scale-125' : 'scale-100'}`}
             />
-            {likeCount > 0 && <span className="text-[13px] font-medium">{likeCount}</span>}
+            {likeCount > 0 && <span className="text-sm font-medium">{likeCount}</span>}
           </button>
 
           {/* Comment Toggle */}
@@ -324,7 +324,7 @@ export default function StatusCard({ status, onToggleFollow, onRefresh, initialF
             className="flex items-center gap-1.5 text-[var(--text-muted)] hover:text-[var(--text-primary)] transition-colors"
           >
             <MessageSquare size={26} />
-            {comments.length > 0 && <span className="text-[13px] font-medium">{comments.length}</span>}
+            {comments.length > 0 && <span className="text-sm font-medium">{comments.length}</span>}
           </button>
 
           {/* 5-Star Rating System */}
@@ -334,7 +334,7 @@ export default function StatusCard({ status, onToggleFollow, onRefresh, initialF
                 <Star size={26} className={`${star <= myRating ? 'text-yellow-400 fill-yellow-400' : 'text-[var(--text-muted)] hover:text-yellow-200'}`} />
               </button>
             ))}
-            {ratingCount > 0 && <span className="text-[13px] text-[var(--text-muted)] ml-1">({averageRating})</span>}
+            {ratingCount > 0 && <span className="text-sm text-[var(--text-muted)] ml-1">({averageRating})</span>}
           </div>
         </div>
 
@@ -377,7 +377,7 @@ export default function StatusCard({ status, onToggleFollow, onRefresh, initialF
               <div key={comment.id} className="flex gap-2">
                 <Avatar src={comment.profiles?.avatar_url} name={comment.profiles?.display_name || '?'} size="sm" />
                 <div className="bg-[var(--bg-primary)] p-2 px-3 rounded-2xl rounded-tl-sm border border-[var(--border-color)]">
-                  <p className="text-[13px] font-semibold text-[var(--text-primary)] truncate max-w-[150px] mb-0.5">{comment.profiles?.display_name || 'Unknown User'}</p>
+                  <p className="text-sm font-semibold text-[var(--text-primary)] truncate max-w-[150px] mb-0.5">{comment.profiles?.display_name || 'Unknown User'}</p>
                   <p className="text-sm text-[var(--text-primary)]">{comment.content}</p>
                 </div>
               </div>

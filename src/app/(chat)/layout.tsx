@@ -41,7 +41,7 @@ export default function ChatLayout({ children }: { children: React.ReactNode }) 
       <div className="h-screen flex items-center justify-center bg-[var(--bg-app)]">
         <div className="flex flex-col items-center gap-3">
           <LottieLoader size={160} />
-          <p className="text-[var(--text-muted)] text-[14px] font-medium animate-pulse tracking-wide">Loading Tekyel…</p>
+          <p className="text-[var(--text-muted)] text-sm font-medium animate-pulse tracking-wide">Loading Tekyel…</p>
         </div>
       </div>
     );

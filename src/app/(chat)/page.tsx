@@ -29,21 +29,21 @@ export default function ChatDefaultPage() {
             </div>
           </div>
 
-          <h2 className="text-[28px] font-light text-[var(--text-primary)] mb-3 tracking-tight" style={{ fontFamily: 'var(--font-heading)' }}>
+          <h2 className="text-3xl font-light text-[var(--text-primary)] mb-3 tracking-tight" style={{ fontFamily: 'var(--font-heading)' }}>
             Tekyel
           </h2>
-          <p className="text-[14px] text-[var(--text-muted)] leading-relaxed mb-10">
+          <p className="text-sm text-[var(--text-muted)] leading-relaxed mb-10">
             Connect, share, and communicate with your tekyel.
             <br />
             Start a conversation or select a chat to get started.
           </p>
           <div className="flex flex-col items-center gap-4">
-            <div className="flex items-center justify-center gap-2 text-[14px] text-[var(--text-muted)] bg-[var(--bg-primary)] rounded-full px-4 py-2 border border-[var(--border-color)] shadow-sm">
+            <div className="flex items-center justify-center gap-2 text-sm text-[var(--text-muted)] bg-[var(--bg-primary)] rounded-full px-4 py-2 border border-[var(--border-color)] shadow-sm">
               <Shield size={17} className="text-[var(--emerald)]" />
               <span>End-to-end encrypted</span>
             </div>
             
-            <div className="text-[14px] text-[var(--text-muted)] opacity-80">
+            <div className="text-sm text-[var(--text-muted)] opacity-80">
               Built by <a href="https://technoidfix.online" target="_blank" rel="noopener noreferrer" className="font-bold text-[var(--emerald)] hover:underline ml-1">technoidfix</a>
             </div>
           </div>

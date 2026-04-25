@@ -12,7 +12,7 @@ interface AvatarProps {
 }
 
 const sizeMap = {
-  sm: { container: 'w-8 h-8', text: 'text-[13px]', dot: 'w-2.5 h-2.5', ring: 'ring-2' },
+  sm: { container: 'w-8 h-8', text: 'text-sm', dot: 'w-2.5 h-2.5', ring: 'ring-2' },
   md: { container: 'w-10 h-10', text: 'text-sm', dot: 'w-3 h-3', ring: 'ring-2' },
   lg: { container: 'w-12 h-12', text: 'text-base', dot: 'w-3.5 h-3.5', ring: 'ring-2' },
   xl: { container: 'w-20 h-20', text: 'text-2xl', dot: 'w-4 h-4', ring: 'ring-[3px]' },

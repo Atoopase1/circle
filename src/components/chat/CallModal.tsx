@@ -76,7 +76,7 @@ export default function CallModal() {
           </div>
         )}
         <div className="absolute bottom-1.5 left-2 right-2 flex items-center justify-between">
-          <span className="text-white text-[10px] font-mono bg-black/60 px-2 py-0.5 rounded-full backdrop-blur-sm">
+          <span className="text-white text-xs font-mono bg-black/60 px-2 py-0.5 rounded-full backdrop-blur-sm">
             {status === 'connected' ? duration : 'Calling…'}
           </span>
           <Maximize2 size={16} className="text-white opacity-0 group-hover:opacity-100 transition-opacity" />
@@ -146,10 +146,10 @@ export default function CallModal() {
           </div>
 
           <div className="text-center">
-            <h2 className="text-[26px] font-semibold text-white tracking-tight" style={{ fontFamily: 'var(--font-heading)' }}>
+            <h2 className="text-2xl font-semibold text-white tracking-tight" style={{ fontFamily: 'var(--font-heading)' }}>
               {remoteUser?.display_name}
             </h2>
-            <p className="text-white/50 text-[14px] mt-2 font-light">
+            <p className="text-white/50 text-sm mt-2 font-light">
               {status === 'calling' && (
                 <span className="text-[var(--emerald)] animate-pulse">Calling…</span>
               )}

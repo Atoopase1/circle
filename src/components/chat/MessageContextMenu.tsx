@@ -195,7 +195,7 @@ export default function MessageContextMenu(props: MessageContextMenuProps) {
       } ${disabled ? 'opacity-30 pointer-events-none' : ''}`}
     >
       <Icon size={26} className={danger ? 'text-red-500' : (iconClass || 'text-[var(--text-muted)]')} />
-      <span className="text-[10px] font-medium leading-tight">{label}</span>
+      <span className="text-xs font-medium leading-tight">{label}</span>
     </button>
   );
 
@@ -269,7 +269,7 @@ export default function MessageContextMenu(props: MessageContextMenuProps) {
                 <button
                   key={e}
                   onClick={(ev) => { ev.stopPropagation(); ev.preventDefault(); props.onReact(e); handleClose(); }}
-                  className="text-[20px] p-1.5 rounded-full hover:bg-[var(--bg-hover)] active:scale-125 transition-all duration-150"
+                  className="text-xl p-1.5 rounded-full hover:bg-[var(--bg-hover)] active:scale-125 transition-all duration-150"
                 >
                   {e}
                 </button>

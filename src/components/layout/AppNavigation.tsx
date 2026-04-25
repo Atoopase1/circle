@@ -47,7 +47,7 @@ export default function AppNavigation() {
               )}
               
               {/* Tooltip */}
-              <span className="absolute left-[60px] px-2.5 py-1.5 bg-[var(--navy)] text-white text-[14px] rounded-lg opacity-0 group-hover:opacity-100 pointer-events-none transition-all duration-200 whitespace-nowrap z-50 shadow-lg translate-x-[-4px] group-hover:translate-x-0">
+              <span className="absolute left-[60px] px-2.5 py-1.5 bg-[var(--navy)] text-white text-sm rounded-lg opacity-0 group-hover:opacity-100 pointer-events-none transition-all duration-200 whitespace-nowrap z-50 shadow-lg translate-x-[-4px] group-hover:translate-x-0">
                 {tab.name}
               </span>
             </button>
@@ -72,7 +72,7 @@ export default function AppNavigation() {
               }`}
             >
               <Icon size={25} strokeWidth={isActive ? 2.5 : 2.2} className="transition-all duration-200" />
-              <span className={`text-[10px] transition-all duration-200 ${isActive ? 'font-semibold' : 'font-medium'}`}>{tab.name}</span>
+              <span className={`text-xs transition-all duration-200 ${isActive ? 'font-semibold' : 'font-medium'}`}>{tab.name}</span>
               
               {/* Active indicator bar */}
               {isActive && (

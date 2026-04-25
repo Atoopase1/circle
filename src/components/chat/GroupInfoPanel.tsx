@@ -138,7 +138,7 @@ export default function GroupInfoPanel({ chat, isOpen, onClose }: GroupInfoPanel
         >
           <X size={23} />
         </button>
-        <h2 className="font-semibold text-[var(--text-primary)] text-[15px]">Group info</h2>
+        <h2 className="font-semibold text-[var(--text-primary)] text-base">Group info</h2>
         {isAdmin && !isEditingProfile && (
           <button
             onClick={handleStartEdit}
@@ -191,7 +191,7 @@ export default function GroupInfoPanel({ chat, isOpen, onClose }: GroupInfoPanel
                 onChange={(e) => setEditName(e.target.value)}
                 placeholder="Group name"
                 maxLength={50}
-                className="w-full px-4 py-2.5 bg-[var(--bg-secondary)] text-[var(--text-primary)] rounded-xl text-[14px] focus:outline-none focus:ring-2 focus:ring-[var(--emerald)]/30 border border-transparent focus:border-[var(--emerald)]/20 text-center transition-all duration-200"
+                className="w-full px-4 py-2.5 bg-[var(--bg-secondary)] text-[var(--text-primary)] rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-[var(--emerald)]/30 border border-transparent focus:border-[var(--emerald)]/20 text-center transition-all duration-200"
                 autoFocus
               />
               <textarea
@@ -200,7 +200,7 @@ export default function GroupInfoPanel({ chat, isOpen, onClose }: GroupInfoPanel
                 placeholder="Group description (optional)"
                 rows={2}
                 maxLength={200}
-                className="w-full px-4 py-2.5 bg-[var(--bg-secondary)] text-[var(--text-primary)] rounded-xl text-[14px] focus:outline-none focus:ring-2 focus:ring-[var(--emerald)]/30 border border-transparent focus:border-[var(--emerald)]/20 resize-none text-center transition-all duration-200"
+                className="w-full px-4 py-2.5 bg-[var(--bg-secondary)] text-[var(--text-primary)] rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-[var(--emerald)]/30 border border-transparent focus:border-[var(--emerald)]/20 resize-none text-center transition-all duration-200"
               />
               <div className="flex gap-2">
                 <Button
@@ -224,16 +224,16 @@ export default function GroupInfoPanel({ chat, isOpen, onClose }: GroupInfoPanel
           ) : (
             <>
               <h3
-                className="mt-4 text-[18px] font-semibold text-[var(--text-primary)] truncate w-full text-center px-4"
+                className="mt-4 text-lg font-semibold text-[var(--text-primary)] truncate w-full text-center px-4"
                 style={{ fontFamily: 'var(--font-heading)' }}
               >
                 {chat.group_name || 'Group'}
               </h3>
-              <p className="text-[14px] text-[var(--text-muted)] mt-1">
+              <p className="text-sm text-[var(--text-muted)] mt-1">
                 Group · {chat.participants.length} participants
               </p>
               {chat.group_description && (
-                <p className="mt-3 text-[14px] text-[var(--text-secondary)] text-center leading-relaxed">
+                <p className="mt-3 text-sm text-[var(--text-secondary)] text-center leading-relaxed">
                   {chat.group_description}
                 </p>
               )}
@@ -244,7 +244,7 @@ export default function GroupInfoPanel({ chat, isOpen, onClose }: GroupInfoPanel
         {/* Group Settings (admin only) */}
         {isAdmin && (
           <div className="px-5 py-4 border-b border-[var(--border-color)] space-y-4">
-            <p className="text-[12px] font-semibold text-[var(--text-muted)] uppercase tracking-widest">
+            <p className="text-xs font-semibold text-[var(--text-muted)] uppercase tracking-widest">
               Group Settings
             </p>
 
@@ -262,7 +262,7 @@ export default function GroupInfoPanel({ chat, isOpen, onClose }: GroupInfoPanel
           <div className="px-5 py-4 border-b border-[var(--border-color)]">
             <div className="flex items-center gap-3 p-3 bg-[var(--gold)]/10 rounded-xl border border-[var(--gold)]/20">
               <Lock size={18} className="text-[var(--gold)] shrink-0" />
-              <p className="text-[13px] text-[var(--gold)] leading-relaxed">
+              <p className="text-sm text-[var(--gold)] leading-relaxed">
                 Only admins can send messages in this group.
               </p>
             </div>
@@ -272,13 +272,13 @@ export default function GroupInfoPanel({ chat, isOpen, onClose }: GroupInfoPanel
         {/* Participants */}
         <div className="py-4">
           <div className="flex items-center justify-between px-5 mb-3">
-            <p className="text-[12px] font-semibold text-[var(--text-muted)] uppercase tracking-widest">
+            <p className="text-xs font-semibold text-[var(--text-muted)] uppercase tracking-widest">
               {chat.participants.length} Participants
             </p>
             {isAdmin && (
               <button
                 onClick={() => setShowAddMembers(true)}
-                className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-[12px] font-semibold text-[var(--emerald)] hover:bg-[var(--emerald)]/10 transition-all duration-200"
+                className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold text-[var(--emerald)] hover:bg-[var(--emerald)]/10 transition-all duration-200"
               >
                 <UserPlus size={15} />
                 Add
@@ -299,16 +299,16 @@ export default function GroupInfoPanel({ chat, isOpen, onClose }: GroupInfoPanel
               />
               <div className="flex-1 min-w-0">
                 <div className="flex items-center gap-2">
-                  <span className="text-[14px] font-medium text-[var(--text-primary)] truncate">
+                  <span className="text-sm font-medium text-[var(--text-primary)] truncate">
                     {p.user_id === user?.id ? 'You' : p.profile?.display_name || 'User'}
                   </span>
                   {p.role === 'admin' && (
-                    <span className="text-[10px] px-2 py-0.5 bg-[var(--emerald)]/10 text-[var(--emerald)] rounded-full font-semibold">
+                    <span className="text-xs px-2 py-0.5 bg-[var(--emerald)]/10 text-[var(--emerald)] rounded-full font-semibold">
                       Admin
                     </span>
                   )}
                 </div>
-                <p className="text-[12px] text-[var(--text-muted)] truncate mt-0.5">
+                <p className="text-xs text-[var(--text-muted)] truncate mt-0.5">
                   {p.profile?.bio || 'Hey there!'}
                 </p>
               </div>
@@ -333,7 +333,7 @@ export default function GroupInfoPanel({ chat, isOpen, onClose }: GroupInfoPanel
                       >
                         <button
                           onClick={() => handleToggleRole(p.user_id, p.role)}
-                          className="w-full flex items-center gap-3 px-4 py-2.5 hover:bg-[var(--bg-hover)] transition-all text-[13px] text-[var(--text-primary)]"
+                          className="w-full flex items-center gap-3 px-4 py-2.5 hover:bg-[var(--bg-hover)] transition-all text-sm text-[var(--text-primary)]"
                         >
                           {p.role === 'admin' ? (
                             <>
@@ -349,7 +349,7 @@ export default function GroupInfoPanel({ chat, isOpen, onClose }: GroupInfoPanel
                         </button>
                         <button
                           onClick={() => handleRemoveMember(p.user_id)}
-                          className="w-full flex items-center gap-3 px-4 py-2.5 hover:bg-red-500/10 transition-all text-[13px] text-red-500"
+                          className="w-full flex items-center gap-3 px-4 py-2.5 hover:bg-red-500/10 transition-all text-sm text-red-500"
                         >
                           <UserMinus size={16} />
                           Remove from group
@@ -367,7 +367,7 @@ export default function GroupInfoPanel({ chat, isOpen, onClose }: GroupInfoPanel
         <div className="px-5 py-4 border-t border-[var(--border-color)]">
           {showLeaveConfirm ? (
             <div className="space-y-3">
-              <p className="text-[13px] text-[var(--text-secondary)] text-center">
+              <p className="text-sm text-[var(--text-secondary)] text-center">
                 Are you sure you want to leave this group?
               </p>
               <div className="flex gap-2">
@@ -382,7 +382,7 @@ export default function GroupInfoPanel({ chat, isOpen, onClose }: GroupInfoPanel
           ) : (
             <button
               onClick={() => setShowLeaveConfirm(true)}
-              className="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-red-500 hover:bg-red-500/10 transition-all duration-200 text-[14px] font-medium"
+              className="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-red-500 hover:bg-red-500/10 transition-all duration-200 text-sm font-medium"
             >
               <LogOut size={18} />
               Leave Group
@@ -471,9 +471,9 @@ function AddMembersOverlay({
         >
           <X size={23} />
         </button>
-        <h2 className="font-semibold text-[var(--text-primary)] text-[15px]">Add Members</h2>
+        <h2 className="font-semibold text-[var(--text-primary)] text-base">Add Members</h2>
         {selectedIds.length > 0 && (
-          <span className="ml-auto text-[12px] text-[var(--emerald)] font-semibold bg-[var(--emerald)]/10 px-2.5 py-1 rounded-full">
+          <span className="ml-auto text-xs text-[var(--emerald)] font-semibold bg-[var(--emerald)]/10 px-2.5 py-1 rounded-full">
             {selectedIds.length} selected
           </span>
         )}
@@ -488,7 +488,7 @@ function AddMembersOverlay({
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             placeholder="Search contacts"
-            className="w-full pl-10 pr-4 py-2.5 bg-[var(--bg-secondary)] text-[var(--text-primary)] rounded-xl text-[14px] focus:outline-none focus:ring-2 focus:ring-[var(--emerald)]/30 border border-transparent focus:border-[var(--emerald)]/20 transition-all duration-200"
+            className="w-full pl-10 pr-4 py-2.5 bg-[var(--bg-secondary)] text-[var(--text-primary)] rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-[var(--emerald)]/30 border border-transparent focus:border-[var(--emerald)]/20 transition-all duration-200"
             autoFocus
           />
         </div>
@@ -503,10 +503,10 @@ function AddMembersOverlay({
               <button
                 key={id}
                 onClick={() => toggleUser(id)}
-                className="flex items-center gap-1 px-2.5 py-1 bg-[var(--emerald)]/10 rounded-full text-[12px] text-[var(--emerald)] font-medium hover:bg-[var(--emerald)]/20 transition-colors"
+                className="flex items-center gap-1 px-2.5 py-1 bg-[var(--emerald)]/10 rounded-full text-xs text-[var(--emerald)] font-medium hover:bg-[var(--emerald)]/20 transition-colors"
               >
                 <span className="truncate max-w-[80px]">{u?.display_name || 'User'}</span>
-                <span className="text-[10px] opacity-60">✕</span>
+                <span className="text-xs opacity-60">✕</span>
               </button>
             );
           })}
@@ -520,7 +520,7 @@ function AddMembersOverlay({
             <Spinner />
           </div>
         ) : filtered.length === 0 ? (
-          <p className="text-center text-[var(--text-muted)] text-[14px] py-12">
+          <p className="text-center text-[var(--text-muted)] text-sm py-12">
             {searchQuery ? 'No contacts found' : 'No contacts available to add'}
           </p>
         ) : (
@@ -534,8 +534,8 @@ function AddMembersOverlay({
               >
                 <Avatar src={u.avatar_url} name={u.display_name} size="md" />
                 <div className="flex-1 text-left min-w-0">
-                  <p className="text-[14px] font-medium text-[var(--text-primary)] truncate">{u.display_name}</p>
-                  <p className="text-[12px] text-[var(--text-muted)] truncate">{u.bio || 'Hey there!'}</p>
+                  <p className="text-sm font-medium text-[var(--text-primary)] truncate">{u.display_name}</p>
+                  <p className="text-xs text-[var(--text-muted)] truncate">{u.bio || 'Hey there!'}</p>
                 </div>
                 <div
                   className={`w-5 h-5 rounded-full border-2 flex items-center justify-center transition-all duration-200 ${
