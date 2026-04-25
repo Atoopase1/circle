@@ -10,6 +10,7 @@ import Toggle from '@/components/ui/Toggle';
 import ChatSidebar from '@/components/chat/ChatSidebar';
 import { useAuthStore } from '@/store/auth-store';
 import ManageStorageModal from '@/components/modals/ManageStorageModal';
+import toast from 'react-hot-toast';
 
 export default function SettingsPage() {
   const router = useRouter();
