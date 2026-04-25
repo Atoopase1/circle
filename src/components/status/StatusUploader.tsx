@@ -181,7 +181,7 @@ export default function StatusUploader({ onStatusPosted }: { onStatusPosted: () 
         </div>
 
         {/* Post button */}
-        <div className="flex items-center justify-center gap-6 px-4 py-3 border-t border-[var(--border-color)]">
+        <div className="flex items-center justify-between px-4 py-3 border-t border-[var(--border-color)]">
           <button
             onClick={handleBackToEdit}
             className="flex items-center gap-1.5 px-3 py-2 text-sm text-[var(--text-muted)] hover:text-[var(--text-primary)] transition-colors"
@@ -265,7 +265,7 @@ export default function StatusUploader({ onStatusPosted }: { onStatusPosted: () 
         </div>
       )}
 
-      <div className="flex flex-wrap items-center justify-center gap-6 mt-2 pt-3 border-t border-[var(--border-color)]">
+      <div className="flex flex-wrap items-center justify-between gap-y-3 mt-2 pt-3 border-t border-[var(--border-color)]">
         <div className="flex items-center gap-2">
           <input
             type="file"

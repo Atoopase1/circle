@@ -181,7 +181,7 @@ export default function StatusPage() {
       </div>
 
       {/* Main Feed Container */}
-      <div className="flex-1 overflow-y-auto w-full">
+      <div className="flex-1 overflow-y-auto overflow-x-hidden w-full">
         <div className="max-w-2xl mx-auto px-6 py-6 pb-32">
           
           <div className="mb-8">

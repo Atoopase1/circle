@@ -194,8 +194,8 @@ export default function StatusCard({ status, onToggleFollow, onRefresh, initialF
   return (
     <div className="bg-[var(--bg-primary)] rounded-xl shadow-sm border border-[var(--border-color)] mb-4 overflow-hidden">
       {/* Header */}
-      <div className="flex items-center justify-center p-4 pb-2 gap-4">
-        <div className="flex items-center gap-3 cursor-pointer min-w-0" onClick={() => router.push(`/profile/${status.user_id}`)}>
+      <div className="flex items-center justify-between p-4 pb-2 gap-3">
+        <div className="flex items-center gap-3 cursor-pointer flex-1 min-w-0" onClick={() => router.push(`/profile/${status.user_id}`)}>
           <div className="shrink-0">
             <Avatar src={profiles.avatar_url} name={profiles.display_name} />
           </div>
@@ -285,7 +285,7 @@ export default function StatusCard({ status, onToggleFollow, onRefresh, initialF
             </div>
           </div>
         ) : text_content && (
-          <p className="text-[var(--text-primary)] whitespace-pre-wrap text-sm leading-relaxed text-center">{text_content}</p>
+          <p className="text-[var(--text-primary)] whitespace-pre-wrap break-words text-sm leading-relaxed text-center w-full min-w-0">{text_content}</p>
         )}
       </div>
 
@@ -303,8 +303,8 @@ export default function StatusCard({ status, onToggleFollow, onRefresh, initialF
       )}
 
       {/* Action bar: Like, Comments, Rating */}
-      <div className="flex items-center justify-center px-4 py-3 border-t border-[var(--border-color)] flex-wrap gap-6">
-        <div className="flex items-center gap-4 sm:gap-6 flex-wrap">
+      <div className="flex items-center justify-between px-4 py-3 border-t border-[var(--border-color)] flex-wrap gap-y-3">
+        <div className="flex items-center gap-3 sm:gap-5 flex-wrap">
           {/* Like */}
           <button
             onClick={handleLike}
