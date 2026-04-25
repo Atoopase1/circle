@@ -1,53 +1,59 @@
-// OfflineBanner — Subtle, professional "Waiting for network" indicator
+// OfflineBanner — Uses the app's signature yellow snake-wave "Waiting for network" animation
 'use client';
 
 import { useNetworkStatus } from '@/hooks/useNetworkStatus';
-import { WifiOff, Wifi, Clock } from 'lucide-react';
+import { WifiOff, Wifi } from 'lucide-react';
 
 export default function OfflineBanner() {
-  const { isOnline, wasOffline, secondsOffline } = useNetworkStatus();
+  const { isOnline, wasOffline } = useNetworkStatus();
 
-  // Format offline duration
-  const formatDuration = (seconds: number) => {
-    if (seconds < 60) return `${seconds}s`;
-    const mins = Math.floor(seconds / 60);
-    const secs = seconds % 60;
-    if (mins < 60) return `${mins}m ${secs}s`;
-    const hrs = Math.floor(mins / 60);
-    return `${hrs}h ${mins % 60}m`;
-  };
-
-  // Reconnected state — brief green banner
+  // Reconnected state — brief green pill then vanishes
   if (wasOffline && isOnline) {
     return (
-      <div className="offline-banner offline-banner--reconnected">
-        <div className="offline-banner__content">
-          <div className="offline-banner__icon offline-banner__icon--online">
-            <Wifi size={14} strokeWidth={2.5} />
-          </div>
-          <span className="offline-banner__text">Connected</span>
+      <div className="flex justify-center py-1.5" style={{ animation: 'slideDown 0.3s ease-out' }}>
+        <div 
+          className="px-4 py-1.5 rounded-full flex items-center gap-1.5 text-sm font-medium tracking-wide border border-[var(--emerald)]/30"
+          style={{  
+            background: 'var(--bg-date-separator)',
+            backdropFilter: 'blur(8px)',
+            boxShadow: 'var(--shadow-xs)',
+          }}
+        >
+          <Wifi size={14} className="text-[var(--emerald)]" />
+          <span className="text-[var(--emerald)] font-semibold">Connected</span>
         </div>
       </div>
     );
   }
 
-  // Offline state
+  // Offline state — yellow snake-wave animation matching MessageList style
   if (!isOnline) {
     return (
-      <div className="offline-banner offline-banner--offline">
-        <div className="offline-banner__content">
-          <div className="offline-banner__icon offline-banner__icon--offline">
-            <WifiOff size={14} strokeWidth={2.5} />
+      <div className="flex justify-center py-1.5" style={{ animation: 'slideDown 0.3s ease-out' }}>
+        <div 
+          className="px-4 py-1.5 rounded-full flex items-center gap-1.5 text-sm font-medium tracking-wide border border-[var(--border-color)]"
+          style={{  
+            background: 'var(--bg-date-separator)',
+            backdropFilter: 'blur(8px)',
+            boxShadow: 'var(--shadow-xs)',
+          }}
+        >
+          <WifiOff size={14} className="animate-pulse opacity-80 text-[#FBBF24]" />
+          <div className="flex">
+            {"Waiting for network...".split('').map((char, i) => (
+              <span
+                key={i}
+                className="animate-snakeWave"
+                style={{
+                  animationDelay: `${i * 0.05}s`,
+                  whiteSpace: char === ' ' ? 'pre' : 'normal',
+                }}
+              >
+                {char}
+              </span>
+            ))}
           </div>
-          <span className="offline-banner__text">Waiting for network</span>
-          {secondsOffline > 3 && (
-            <span className="offline-banner__timer">
-              <Clock size={11} strokeWidth={2.5} />
-              {formatDuration(secondsOffline)}
-            </span>
-          )}
         </div>
-        <div className="offline-banner__progress" />
       </div>
     );
   }
