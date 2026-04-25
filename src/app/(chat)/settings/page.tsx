@@ -37,6 +37,11 @@ export default function SettingsPage() {
     setIsDark(document.documentElement.classList.contains('dark'));
     setIsItalic(localStorage.getItem('app-font-style') === 'italic');
     setIsBold(localStorage.getItem('app-font-weight') === 'bold');
+    
+    // Ensure body has bold class if needed
+    if (localStorage.getItem('app-font-weight') === 'bold') {
+      document.documentElement.classList.add('bold-mode');
+    }
     setCurrentFont(localStorage.getItem('app-font') || 'Inter');
     
     let storedSize = localStorage.getItem('app-text-size') || 'medium';
@@ -114,7 +119,11 @@ export default function SettingsPage() {
   const toggleBoldMode = () => {
     const newBold = !isBold;
     setIsBold(newBold);
-    document.documentElement.style.fontWeight = newBold ? '700' : 'normal';
+    if (newBold) {
+      document.documentElement.classList.add('bold-mode');
+    } else {
+      document.documentElement.classList.remove('bold-mode');
+    }
     localStorage.setItem('app-font-weight', newBold ? 'bold' : 'normal');
   };
 
@@ -379,10 +388,10 @@ export default function SettingsPage() {
                 {!isInstalled && (
                   <button
                     onClick={() => {
-                      if (isInstallable) {
+                      if (isInstallable && promptInstall) {
                         promptInstall();
                       } else {
-                        import('react-hot-toast').then(m => m.default('To install, click the install icon in your browser address bar or menu.', { icon: 'ℹ️' }));
+                        toast('To install, click the install icon in your browser address bar or menu.', { icon: 'ℹ️', duration: 5000 });
                       }
                     }}
                     className="flex items-center gap-2 px-4 py-2 rounded-xl bg-[var(--emerald)] hover:bg-[var(--emerald-hover)] text-white text-sm font-semibold transition-all duration-200 shadow-lg shadow-[var(--emerald)]/20 active:scale-[0.97]"

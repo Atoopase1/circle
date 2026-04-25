@@ -904,3 +904,4 @@ input, textarea {
   transform-origin: bottom center;
 }
 
+\n/* Accessibility overrides */\nhtml.bold-mode * {\n  font-weight: 700 !important;\n}\n

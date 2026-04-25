@@ -78,7 +78,7 @@ export default function RootLayout({
                 
                 var savedWeight = localStorage.getItem('app-font-weight');
                 if (savedWeight === 'bold') {
-                  document.documentElement.style.fontWeight = '700';
+                  document.documentElement.classList.add('bold-mode');
                 }
                 
                 var savedTextSize = localStorage.getItem('app-text-size') || 'medium';
