@@ -178,15 +178,7 @@ html {
   color-scheme: dark;
 }
 
-body {
-  background: var(--bg-app);
-  color: var(--text-primary);
-  font-family: var(--font-sans);
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  letter-spacing: -0.011em;
-  line-height: 1.5;
-}
+body {\n  background: var(--bg-app);\n  color: var(--text-primary);\n  font-family: var(--font-sans);\n  -webkit-font-smoothing: antialiased;\n  -moz-osx-font-smoothing: grayscale;\n  text-rendering: optimizeLegibility;\n  font-variant-numeric: tabular-nums;\n  letter-spacing: -0.011em;\n  line-height: 1.5;\n}
 
 /* Premium heading font */
 h1, h2, h3 {

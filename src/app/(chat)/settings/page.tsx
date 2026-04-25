@@ -178,24 +178,25 @@ export default function SettingsPage() {
                   value={currentFont}
                   onChange={changeFont}
                   className="bg-[var(--bg-secondary)] text-[var(--text-primary)] text-sm rounded-lg px-2 py-1.5 border border-[var(--border-color)] focus:outline-none focus:ring-1 focus:ring-[var(--emerald)] cursor-pointer hover:bg-[var(--bg-hover)] transition-colors max-w-[140px] sm:max-w-none truncate"
+                  style={{ fontFamily: fontMap[currentFont] || 'inherit' }}
                 >
-                  <option value="Inter">Inter (Default)</option>
-                  <option value="Poppins">Poppins</option>
-                  <option value="Nunito">Nunito</option>
-                  <option value="DM Sans">DM Sans</option>
-                  <option value="Manrope">Manrope</option>
-                  <option value="Quicksand">Quicksand</option>
-                  <option value="Space Grotesk">Space Grotesk</option>
-                  <option value="Syne">Syne</option>
-                  <option value="Exo 2">Exo 2</option>
-                  <option value="Playfair">Playfair Display (Serif)</option>
-                  <option value="Cinzel">Cinzel (Serif)</option>
-                  <option value="Cormorant">Cormorant (Serif)</option>
-                  <option value="Caveat">Caveat (Handwriting)</option>
-                  <option value="Abril Fatface">Abril Fatface (Display)</option>
-                  <option value="Roboto">Roboto</option>
-                  <option value="Open Sans">Open Sans</option>
-                  <option value="Lato">Lato</option>
+                  <option value="Inter" style={{ fontFamily: fontMap['Inter'] }}>Inter (Default)</option>
+                  <option value="Poppins" style={{ fontFamily: fontMap['Poppins'] }}>Poppins</option>
+                  <option value="Nunito" style={{ fontFamily: fontMap['Nunito'] }}>Nunito</option>
+                  <option value="DM Sans" style={{ fontFamily: fontMap['DM Sans'] }}>DM Sans</option>
+                  <option value="Manrope" style={{ fontFamily: fontMap['Manrope'] }}>Manrope</option>
+                  <option value="Quicksand" style={{ fontFamily: fontMap['Quicksand'] }}>Quicksand</option>
+                  <option value="Space Grotesk" style={{ fontFamily: fontMap['Space Grotesk'] }}>Space Grotesk</option>
+                  <option value="Syne" style={{ fontFamily: fontMap['Syne'] }}>Syne</option>
+                  <option value="Exo 2" style={{ fontFamily: fontMap['Exo 2'] }}>Exo 2</option>
+                  <option value="Playfair" style={{ fontFamily: fontMap['Playfair'] }}>Playfair Display</option>
+                  <option value="Cinzel" style={{ fontFamily: fontMap['Cinzel'] }}>Cinzel</option>
+                  <option value="Cormorant" style={{ fontFamily: fontMap['Cormorant'] }}>Cormorant</option>
+                  <option value="Caveat" style={{ fontFamily: fontMap['Caveat'] }}>Caveat (Fancy)</option>
+                  <option value="Abril Fatface" style={{ fontFamily: fontMap['Abril Fatface'] }}>Abril Fatface</option>
+                  <option value="Roboto" style={{ fontFamily: fontMap['Roboto'] }}>Roboto</option>
+                  <option value="Open Sans" style={{ fontFamily: fontMap['Open Sans'] }}>Open Sans</option>
+                  <option value="Lato" style={{ fontFamily: fontMap['Lato'] }}>Lato</option>
                 </select>
               </div>
 
