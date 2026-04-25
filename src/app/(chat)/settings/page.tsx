@@ -61,6 +61,15 @@ export default function SettingsPage() {
     'Nunito': "'Nunito', -apple-system, BlinkMacSystemFont, sans-serif",
     'Playfair': "'Playfair Display', serif",
     'Caveat': "'Caveat', cursive",
+    'Exo 2': "'Exo 2', sans-serif",
+    'Cinzel': "'Cinzel', serif",
+    'Abril Fatface': "'Abril Fatface', cursive",
+    'Cormorant': "'Cormorant', serif",
+    'Quicksand': "'Quicksand', sans-serif",
+    'DM Sans': "'DM Sans', sans-serif",
+    'Space Grotesk': "'Space Grotesk', sans-serif",
+    'Manrope': "'Manrope', sans-serif",
+    'Syne': "'Syne', sans-serif",
   };
 
   const changeFont = (e: React.ChangeEvent<HTMLSelectElement>) => {
@@ -150,8 +159,17 @@ export default function SettingsPage() {
                   <option value="Inter">Inter (Default)</option>
                   <option value="Poppins">Poppins</option>
                   <option value="Nunito">Nunito</option>
-                  <option value="Playfair">Playfair Display</option>
-                  <option value="Caveat">Caveat (Fancy)</option>
+                  <option value="DM Sans">DM Sans</option>
+                  <option value="Manrope">Manrope</option>
+                  <option value="Quicksand">Quicksand</option>
+                  <option value="Space Grotesk">Space Grotesk</option>
+                  <option value="Syne">Syne</option>
+                  <option value="Exo 2">Exo 2</option>
+                  <option value="Playfair">Playfair Display (Serif)</option>
+                  <option value="Cinzel">Cinzel (Serif)</option>
+                  <option value="Cormorant">Cormorant (Serif)</option>
+                  <option value="Caveat">Caveat (Handwriting)</option>
+                  <option value="Abril Fatface">Abril Fatface (Display)</option>
                   <option value="Roboto">Roboto</option>
                   <option value="Open Sans">Open Sans</option>
                   <option value="Lato">Lato</option>
