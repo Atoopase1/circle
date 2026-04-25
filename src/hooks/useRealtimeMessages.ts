@@ -388,8 +388,9 @@ export function useRealtimeChatList() {
         channelRef = null;
       }
 
+      const uniqueChannelName = `chat-list-realtime:${user.id}:${Math.random().toString(36).substring(2, 9)}`;
       const channel = supabase
-        .channel(`chat-list-realtime:${user.id}`)
+        .channel(uniqueChannelName)
         .on(
           'postgres_changes',
           { event: 'INSERT', schema: 'public', table: 'messages' },
