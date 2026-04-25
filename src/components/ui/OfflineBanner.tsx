@@ -10,7 +10,7 @@ export default function OfflineBanner() {
   // Reconnected state — brief green pill then vanishes
   if (wasOffline && isOnline) {
     return (
-      <div className="flex justify-center py-1.5" style={{ animation: 'slideDown 0.3s ease-out' }}>
+      <div className="absolute top-4 left-1/2 -translate-x-1/2 z-50 pointer-events-none" style={{ animation: 'slideDown 0.3s ease-out' }}>
         <div 
           className="px-4 py-1.5 rounded-full flex items-center gap-1.5 text-sm font-medium tracking-wide border border-[var(--emerald)]/30"
           style={{  
@@ -29,7 +29,7 @@ export default function OfflineBanner() {
   // Offline state — yellow snake-wave animation matching MessageList style
   if (!isOnline) {
     return (
-      <div className="flex justify-center py-1.5" style={{ animation: 'slideDown 0.3s ease-out' }}>
+      <div className="absolute top-4 left-1/2 -translate-x-1/2 z-50 pointer-events-none" style={{ animation: 'slideDown 0.3s ease-out' }}>
         <div 
           className="px-4 py-1.5 rounded-full flex items-center gap-1.5 text-sm font-medium tracking-wide border border-[var(--border-color)]"
           style={{  

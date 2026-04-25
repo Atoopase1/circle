@@ -165,42 +165,6 @@ export default function MessageList({ chatId, isGroup }: MessageListProps) {
       backgroundSize: '400px',
       backgroundRepeat: 'repeat',
     }}>
-      {/* Reconnecting banner - Floating Pill */}
-      {isReconnecting && (
-        <div 
-          className="absolute left-1/2 -translate-x-1/2 z-40 pointer-events-none"
-          style={{ 
-            top: pinnedMessage ? '64px' : '16px',
-            animation: 'slideDown 0.3s ease-out'
-          }}
-        >
-          <div 
-            className="px-4 py-1.5 rounded-full flex items-center gap-1.5 text-sm font-medium tracking-wide border border-[var(--border-color)]"
-            style={{  
-              background: 'var(--bg-date-separator)',
-              backdropFilter: 'blur(8px)',
-              boxShadow: 'var(--shadow-xs)',
-            }}
-          >
-            <WifiOff size={14} className="animate-pulse opacity-80 text-[#FBBF24]" />
-            <div className="flex">
-              {"Waiting for network...".split('').map((char, i) => (
-                <span
-                  key={i}
-                  className="animate-snakeWave"
-                  style={{
-                    animationDelay: `${i * 0.05}s`,
-                    whiteSpace: char === ' ' ? 'pre' : 'normal',
-                  }}
-                >
-                  {char}
-                </span>
-              ))}
-            </div>
-          </div>
-        </div>
-      )}
-
       {/* Pinned message bar — WhatsApp-style compact */}
       {pinnedMessage && (
         <div 
