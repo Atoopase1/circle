@@ -22,7 +22,7 @@ export default function SettingsPage() {
     router.push('/login');
   };
   const [isDark, setIsDark] = useState(false);
-  const [currentFont, setCurrentFont] = useState('var(--font-inter)');
+  const [currentFont, setCurrentFont] = useState('Inter');
   const [isStorageModalOpen, setIsStorageModalOpen] = useState(false);
 
   const [pushEnabled, setPushEnabled] = useState(true);
@@ -34,7 +34,7 @@ export default function SettingsPage() {
 
   useEffect(() => {
     setIsDark(document.documentElement.classList.contains('dark'));
-    setCurrentFont(localStorage.getItem('app-font') || 'var(--font-inter)');
+    setCurrentFont(localStorage.getItem('app-font') || 'Inter');
     
     // Load toggle states
     setPushEnabled(localStorage.getItem('setting-push') !== 'false');
@@ -52,11 +52,19 @@ export default function SettingsPage() {
     localStorage.setItem('theme', newDark ? 'dark' : 'light');
   };
 
+  const fontMap: Record<string, string> = {
+    'Inter': "'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",
+    'Poppins': "'Poppins', -apple-system, BlinkMacSystemFont, sans-serif",
+    'Roboto': "'Roboto', -apple-system, BlinkMacSystemFont, sans-serif",
+    'Open Sans': "'Open Sans', -apple-system, BlinkMacSystemFont, sans-serif",
+    'Lato': "'Lato', -apple-system, BlinkMacSystemFont, sans-serif",
+  };
+
   const changeFont = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    const newFont = e.target.value;
-    setCurrentFont(newFont);
-    localStorage.setItem('app-font', newFont);
-    document.documentElement.style.setProperty('--font-sans', newFont);
+    const fontKey = e.target.value;
+    setCurrentFont(fontKey);
+    localStorage.setItem('app-font', fontKey);
+    document.documentElement.style.setProperty('--font-sans', fontMap[fontKey] || fontMap['Inter']);
   };
 
   const toggleSetting = (key: string, setter: React.Dispatch<React.SetStateAction<boolean>>, currentVal: boolean) => {
@@ -129,11 +137,11 @@ export default function SettingsPage() {
                   onChange={changeFont}
                   className="bg-[var(--bg-secondary)] text-[var(--text-primary)] text-[14px] rounded-lg px-2 py-1.5 border border-[var(--border-color)] focus:outline-none focus:ring-1 focus:ring-[var(--emerald)] cursor-pointer hover:bg-[var(--bg-hover)] transition-colors"
                 >
-                  <option value="var(--font-inter)">Inter (Default)</option>
-                  <option value="var(--font-poppins)">Poppins</option>
-                  <option value="var(--font-roboto)">Roboto</option>
-                  <option value="var(--font-open-sans)">Open Sans</option>
-                  <option value="var(--font-lato)">Lato</option>
+                  <option value="Inter">Inter (Default)</option>
+                  <option value="Poppins">Poppins</option>
+                  <option value="Roboto">Roboto</option>
+                  <option value="Open Sans">Open Sans</option>
+                  <option value="Lato">Lato</option>
                 </select>
               </div>
             </div>

@@ -49,8 +49,15 @@ export default function RootLayout({
                 if (theme === 'dark' || (!theme && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
                   document.documentElement.classList.add('dark');
                 }
-                const savedFont = localStorage.getItem('app-font') || 'var(--font-inter)';
-                document.documentElement.style.setProperty('--font-sans', savedFont);
+                var fontFamilies = {
+                  'Inter': "'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",
+                  'Poppins': "'Poppins', -apple-system, BlinkMacSystemFont, sans-serif",
+                  'Roboto': "'Roboto', -apple-system, BlinkMacSystemFont, sans-serif",
+                  'Open Sans': "'Open Sans', -apple-system, BlinkMacSystemFont, sans-serif",
+                  'Lato': "'Lato', -apple-system, BlinkMacSystemFont, sans-serif"
+                };
+                var savedFont = localStorage.getItem('app-font') || 'Inter';
+                document.documentElement.style.setProperty('--font-sans', fontFamilies[savedFont] || fontFamilies['Inter']);
                 
                 // Register Service Worker for PWA
                 if ('serviceWorker' in navigator) {
