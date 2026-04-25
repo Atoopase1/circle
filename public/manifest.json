@@ -2,27 +2,26 @@
   "name": "Tekyel",
   "short_name": "Tekyel",
   "description": "Connect, Share, Communicate",
-  "start_url": "/?source=pwa",
+  "start_url": "/",
   "scope": "/",
   "display": "standalone",
   "background_color": "#0F172A",
   "theme_color": "#0F172A",
   "orientation": "any",
-  "categories": [
-    "social",
-    "communication"
-  ],
+  "categories": ["social", "communication"],
   "prefer_related_applications": false,
   "icons": [
     {
       "src": "/icon-192.png",
       "sizes": "192x192",
-      "type": "image/png"
+      "type": "image/png",
+      "purpose": "any"
     },
     {
       "src": "/icon-512.png",
       "sizes": "512x512",
-      "type": "image/png"
+      "type": "image/png",
+      "purpose": "any"
     },
     {
       "src": "/icon-192.png",
@@ -35,6 +34,22 @@
       "sizes": "512x512",
       "type": "image/png",
       "purpose": "maskable"
+    }
+  ],
+  "screenshots": [
+    {
+      "src": "/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "form_factor": "wide",
+      "label": "Tekyel — Desktop Chat"
+    },
+    {
+      "src": "/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "form_factor": "narrow",
+      "label": "Tekyel — Mobile Chat"
     }
   ]
 }
