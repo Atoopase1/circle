@@ -11,6 +11,7 @@ import ImageViewerModal from '@/components/ui/ImageViewerModal';
 import NotificationPanel from '@/components/ui/NotificationPanel';
 import FollowersModal from '@/components/modals/FollowersModal';
 import StatusCard from '@/components/status/StatusCard';
+import ChatSidebar from '@/components/chat/ChatSidebar';
 import { getSupabaseBrowserClient } from '@/lib/supabase/client';
 import { useAuthStore } from '@/store/auth-store';
 import { useChatStore } from '@/store/chat-store';
@@ -261,7 +262,14 @@ export default function ProfileViewPage() {
   }
 
   return (
-    <div className="flex-1 flex flex-col bg-[var(--bg-app)] w-full h-full relative">
+    <div className="flex w-full h-full min-w-0 overflow-hidden">
+      {/* Desktop sidebar */}
+      <div className="w-full max-w-[420px] lg:w-[420px] shrink-0 hidden lg:flex flex-col z-10 border-r border-[var(--border-color)]">
+        <ChatSidebar />
+      </div>
+
+      {/* Main content area */}
+      <div className="flex-1 flex flex-col bg-[var(--bg-app)] w-full h-full relative overflow-hidden">
       
       {/* Hidden file inputs */}
       <input ref={coverInputRef} type="file" accept="image/*" className="hidden" onChange={handleCoverUpload} />
@@ -454,6 +462,7 @@ export default function ProfileViewPage() {
         profileId={profileId}
         followerCount={followerCount}
       />
+      </div>
     </div>
   );
 }

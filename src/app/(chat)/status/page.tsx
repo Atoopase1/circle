@@ -7,6 +7,7 @@ import { ArrowLeft } from 'lucide-react';
 import Spinner from '@/components/ui/Spinner';
 import StatusUploader from '@/components/status/StatusUploader';
 import StatusCard from '@/components/status/StatusCard';
+import ChatSidebar from '@/components/chat/ChatSidebar';
 import { getSupabaseBrowserClient } from '@/lib/supabase/client';
 import { useAuthStore } from '@/store/auth-store';
 import toast from 'react-hot-toast';
@@ -145,110 +146,118 @@ export default function StatusPage() {
   });
 
   return (
-    <div className="flex-1 flex flex-col bg-[var(--bg-app)] w-full max-w-full overflow-x-hidden">
-      {/* Header */}
-      <div className="bg-[var(--bg-header)] shadow-sm z-10 w-full">
-        <div className="max-w-2xl mx-auto px-3 sm:px-6 py-4">
-          
-          <div className="flex items-center gap-3 mb-4">
-            {/* Mobile-only back button (lg:hidden because sidebar is visible on desktop) */}
-            <button 
-              onClick={() => router.push('/')}
-              className="p-2 -ml-2 rounded-xl hover:bg-[var(--bg-secondary)] transition-colors lg:hidden text-[var(--text-primary)]"
-              aria-label="Back to chat list"
-            >
-              <ArrowLeft size={24} />
-            </button>
-            <h1 className="text-xl font-semibold text-[var(--text-primary)]">Status & Feed</h1>
-          </div>
-          
-          {/* Search & Filter Bar */}
-          <div className="flex flex-col sm:flex-row gap-3 mb-4">
-            <div className="relative flex-1">
-              <input
-                type="text"
-                placeholder="Search posts or users..."
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full bg-[var(--bg-search)] text-[var(--text-primary)] pl-10 pr-4 py-2 rounded-xl text-sm border-none focus:ring-1 focus:ring-[var(--wa-green)]"
-              />
-              <div className="absolute left-3 top-1/2 -translate-y-1/2 text-[var(--text-muted)]">
-                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
-              </div>
-            </div>
-            
-            <div className="flex gap-2 shrink-0">
-              {(['all', 'media', 'text'] as const).map((type) => (
-                <button
-                  key={type}
-                  onClick={() => setFilterType(type)}
-                  className={`px-3 py-1.5 rounded-lg text-sm font-medium transition-colors border ${
-                    filterType === type 
-                      ? 'bg-[var(--wa-green)]/10 border-[var(--wa-green)]/30 text-[var(--wa-green)]' 
-                      : 'bg-[var(--bg-secondary)] border-[var(--border-color)] text-[var(--text-muted)] hover:text-[var(--text-primary)]'
-                  }`}
-                >
-                  {type.charAt(0).toUpperCase() + type.slice(1)}
-                </button>
-              ))}
-            </div>
-          </div>
-
-          <div className="flex gap-4 border-b border-[var(--border-color)]">
-            <button
-              className={`pb-2 px-2 font-medium transition-colors ${
-                activeTab === 'public'
-                  ? 'text-[var(--wa-green)] border-b-2 border-[var(--wa-green)]'
-                  : 'text-[var(--text-muted)] hover:text-[var(--text-primary)]'
-              }`}
-              onClick={() => setActiveTab('public')}
-            >
-              🌍 Public Feed
-            </button>
-            <button
-              className={`pb-2 px-2 font-medium transition-colors ${
-                activeTab === 'circle'
-                  ? 'text-[var(--wa-green)] border-b-2 border-[var(--wa-green)]'
-                  : 'text-[var(--text-muted)] hover:text-[var(--text-primary)]'
-              }`}
-              onClick={() => setActiveTab('circle')}
-            >
-              👥 My Tekyel
-            </button>
-          </div>
-        </div>
+    <div className="flex w-full h-full min-w-0 overflow-hidden">
+      {/* Desktop sidebar */}
+      <div className="w-full max-w-[420px] lg:w-[420px] shrink-0 hidden lg:flex flex-col z-10 border-r border-[var(--border-color)]">
+        <ChatSidebar />
       </div>
 
-      {/* Main Feed Container */}
-      <div className="flex-1 overflow-y-auto overflow-x-hidden w-full max-w-full">
-        <div className="max-w-2xl mx-auto w-full px-3 sm:px-6 py-6 pb-32 overflow-x-hidden">
-          
-          <div className="mb-8">
-            <h2 className="text-sm font-semibold text-[var(--text-muted)] uppercase mb-3 px-1">Share an update</h2>
-            <StatusUploader onStatusPosted={loadStatuses} />
-          </div>
-
-          <h2 className="text-sm font-semibold text-[var(--text-muted)] uppercase mb-3 px-1">
-            {activeTab === 'public' ? 'Recent Public Posts' : 'Friends & Family Updates'}
-          </h2>
-
-          {isLoading ? (
-            <div className="flex justify-center p-8"><Spinner /></div>
-          ) : filteredStatuses.length === 0 ? (
-            <div className="text-center p-8 bg-[var(--bg-primary)] rounded-xl border border-[var(--border-color)]">
-              <p className="text-[var(--text-muted)]">No posts found in this feed.</p>
+      {/* Main content area */}
+      <div className="flex-1 flex flex-col bg-[var(--bg-app)] w-full max-w-full overflow-x-hidden">
+        {/* Header */}
+        <div className="bg-[var(--bg-header)] shadow-sm z-10 w-full">
+          <div className="max-w-2xl mx-auto px-3 sm:px-6 py-4">
+            
+            <div className="flex items-center gap-3 mb-4">
+              {/* Mobile-only back button (lg:hidden because sidebar is visible on desktop) */}
+              <button 
+                onClick={() => router.push('/')}
+                className="p-2 -ml-2 rounded-xl hover:bg-[var(--bg-secondary)] transition-colors lg:hidden text-[var(--text-primary)]"
+                aria-label="Back to chat list"
+              >
+                <ArrowLeft size={24} />
+              </button>
+              <h1 className="text-xl font-semibold text-[var(--text-primary)]">Status & Feed</h1>
             </div>
-          ) : (
-            filteredStatuses.map((status) => (
-              <StatusCard 
-                key={status.id} 
-                status={status} 
-                onRefresh={loadStatuses}
-                onToggleFollow={handleToggleFollow}
-                initialFollowed={followingIds.includes(status.user_id)}
-              />
-            ))
-          )}
+            
+            {/* Search & Filter Bar */}
+            <div className="flex flex-col sm:flex-row gap-3 mb-4">
+              <div className="relative flex-1">
+                <input
+                  type="text"
+                  placeholder="Search posts or users..."
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  className="w-full bg-[var(--bg-search)] text-[var(--text-primary)] pl-10 pr-4 py-2 rounded-xl text-sm border-none focus:ring-1 focus:ring-[var(--wa-green)]"
+                />
+                <div className="absolute left-3 top-1/2 -translate-y-1/2 text-[var(--text-muted)]">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+                </div>
+              </div>
+              
+              <div className="flex gap-2 shrink-0">
+                {(['all', 'media', 'text'] as const).map((type) => (
+                  <button
+                    key={type}
+                    onClick={() => setFilterType(type)}
+                    className={`px-3 py-1.5 rounded-lg text-sm font-medium transition-colors border ${
+                      filterType === type 
+                        ? 'bg-[var(--wa-green)]/10 border-[var(--wa-green)]/30 text-[var(--wa-green)]' 
+                        : 'bg-[var(--bg-secondary)] border-[var(--border-color)] text-[var(--text-muted)] hover:text-[var(--text-primary)]'
+                    }`}
+                  >
+                    {type.charAt(0).toUpperCase() + type.slice(1)}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            <div className="flex gap-4 border-b border-[var(--border-color)]">
+              <button
+                className={`pb-2 px-2 font-medium transition-colors ${
+                  activeTab === 'public'
+                    ? 'text-[var(--wa-green)] border-b-2 border-[var(--wa-green)]'
+                    : 'text-[var(--text-muted)] hover:text-[var(--text-primary)]'
+                }`}
+                onClick={() => setActiveTab('public')}
+              >
+                🌍 Public Feed
+              </button>
+              <button
+                className={`pb-2 px-2 font-medium transition-colors ${
+                  activeTab === 'circle'
+                    ? 'text-[var(--wa-green)] border-b-2 border-[var(--wa-green)]'
+                    : 'text-[var(--text-muted)] hover:text-[var(--text-primary)]'
+                }`}
+                onClick={() => setActiveTab('circle')}
+              >
+                👥 My Tekyel
+              </button>
+            </div>
+          </div>
+        </div>
+
+        {/* Main Feed Container */}
+        <div className="flex-1 overflow-y-auto overflow-x-hidden w-full max-w-full">
+          <div className="max-w-2xl mx-auto w-full px-3 sm:px-6 py-6 pb-32 overflow-x-hidden">
+            
+            <div className="mb-8">
+              <h2 className="text-sm font-semibold text-[var(--text-muted)] uppercase mb-3 px-1">Share an update</h2>
+              <StatusUploader onStatusPosted={loadStatuses} />
+            </div>
+
+            <h2 className="text-sm font-semibold text-[var(--text-muted)] uppercase mb-3 px-1">
+              {activeTab === 'public' ? 'Recent Public Posts' : 'Friends & Family Updates'}
+            </h2>
+
+            {isLoading ? (
+              <div className="flex justify-center p-8"><Spinner /></div>
+            ) : filteredStatuses.length === 0 ? (
+              <div className="text-center p-8 bg-[var(--bg-primary)] rounded-xl border border-[var(--border-color)]">
+                <p className="text-[var(--text-muted)]">No posts found in this feed.</p>
+              </div>
+            ) : (
+              filteredStatuses.map((status) => (
+                <StatusCard 
+                  key={status.id} 
+                  status={status} 
+                  onRefresh={loadStatuses}
+                  onToggleFollow={handleToggleFollow}
+                  initialFollowed={followingIds.includes(status.user_id)}
+                />
+              ))
+            )}
+          </div>
         </div>
       </div>
     </div>
