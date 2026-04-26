@@ -12,7 +12,8 @@ import {
   Trash2, 
   MoreVertical,
   Pencil,
-  CheckCircle2
+  CheckCircle2,
+  Download
 } from 'lucide-react';
 import { useChatStore } from '@/store/chat-store';
 import type { Message } from '@/types';
@@ -34,6 +35,7 @@ interface MessageContextMenuProps {
   isStarred: boolean;
   isPinned: boolean;
   disabled?: boolean;
+  onSave?: () => void;
   children?: React.ReactNode;
 }
 
@@ -302,6 +304,13 @@ export default function MessageContextMenu(props: MessageContextMenuProps) {
                   <ActionBtn icon={Info} label="Info" onClick={props.onInfo} iconClass="text-blue-500" />
                 )}
               </Row>
+              {(props.onSave || props.message.media_url) && (
+                <Row>
+                  {props.onSave && <ActionBtn icon={Download} label="Save" onClick={props.onSave} />}
+                  <div className="flex-1" />
+                  <div className="flex-1" />
+                </Row>
+              )}
 
               {/* Divider */}
               <div className="h-px bg-[var(--border-color)] mx-3 my-0.5" />

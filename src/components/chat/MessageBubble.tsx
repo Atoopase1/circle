@@ -48,6 +48,37 @@ const MessageBubble = React.memo(function MessageBubble({ message, isOwn, showSe
   const [lightboxOpen, setLightboxOpen] = useState(false);
   const [lightboxZoom, setLightboxZoom] = useState(1);
   const [lightboxType, setLightboxType] = useState<'image' | 'video' | 'document'>('image');
+  const [isDownloading, setIsDownloading] = useState(false);
+
+  const handleDownload = useCallback(async (e?: React.MouseEvent) => {
+    if (e) {
+      e.preventDefault();
+      e.stopPropagation();
+    }
+    if (!message.media_url || isDownloading) return;
+    try {
+      setIsDownloading(true);
+      const response = await fetch(message.media_url);
+      const blob = await response.blob();
+      const blobUrl = URL.createObjectURL(blob);
+      
+      const a = document.createElement('a');
+      a.href = blobUrl;
+      const fallbackName = `tekyel-media-${Date.now()}`;
+      const ext = message.media_metadata?.filename?.split('.').pop() || '';
+      a.download = message.media_metadata?.filename || (ext ? `${fallbackName}.${ext}` : fallbackName);
+      
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(blobUrl);
+    } catch (error) {
+      console.error('Download failed:', error);
+      toast.error('Download failed, please try again');
+    } finally {
+      setIsDownloading(false);
+    }
+  }, [message.media_url, message.media_metadata, isDownloading]);
 
   const openLightbox = useCallback((type: 'image' | 'video' | 'document' = 'image') => {
     setLightboxZoom(1);
@@ -255,6 +286,7 @@ const MessageBubble = React.memo(function MessageBubble({ message, isOwn, showSe
               ), { duration: Infinity });
             }
           }}
+          onSave={message.media_url ? handleDownload : undefined}
           onForward={() => setShowForward(true)}
           onDeleteForMe={() => deleteMessageForMe(message.id)}
           onDeleteForEveryone={() => deleteMessageForEveryone(message.id)}
@@ -533,16 +565,17 @@ const MessageBubble = React.memo(function MessageBubble({ message, isOwn, showSe
                   </button>
                 </>
               )}
-              <a
-                href={message.media_url}
-                download
-                target="_blank"
-                rel="noopener noreferrer"
-                onClick={(e) => e.stopPropagation()}
-                className="p-2 rounded-full bg-white/10 hover:bg-white/20 text-white transition-colors"
+              <button
+                onClick={handleDownload}
+                disabled={isDownloading}
+                className="p-2 rounded-full bg-white/10 hover:bg-white/20 text-white transition-colors disabled:opacity-50"
               >
-                <Download size={26} />
-              </a>
+                {isDownloading ? (
+                  <div className="w-[26px] h-[26px] border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                ) : (
+                  <Download size={26} />
+                )}
+              </button>
               <button
                 onClick={closeLightbox}
                 className="p-2 rounded-full bg-white/10 hover:bg-white/20 text-white transition-colors"
@@ -601,16 +634,18 @@ const MessageBubble = React.memo(function MessageBubble({ message, isOwn, showSe
                   <FileText size={26} />
                   Open
                 </a>
-                <a
-                  href={message.media_url}
-                  download
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="flex-1 flex items-center justify-center gap-2 px-4 py-3 rounded-xl bg-[var(--emerald)] text-white font-medium text-sm hover:opacity-90 transition-opacity"
+                <button
+                  onClick={handleDownload}
+                  disabled={isDownloading}
+                  className="flex-1 flex items-center justify-center gap-2 px-4 py-3 rounded-xl bg-[var(--emerald)] text-white font-medium text-sm hover:opacity-90 transition-opacity disabled:opacity-50"
                 >
-                  <Download size={26} />
+                  {isDownloading ? (
+                    <div className="w-[26px] h-[26px] border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                  ) : (
+                    <Download size={26} />
+                  )}
                   Download
-                </a>
+                </button>
               </div>
             </div>
           )}
