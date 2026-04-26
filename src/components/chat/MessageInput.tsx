@@ -118,7 +118,7 @@ export default function MessageInput({ chatId }: MessageInputProps) {
         sendStopTyping();
         // Fire and forget, database handles it asynchronously
         let expiresAtStr: string | undefined;
-        if (expirationDays !== null && expirationDays > 0) {
+        if (selectedFile && expirationDays !== null && expirationDays > 0) {
           expiresAtStr = new Date(Date.now() + expirationDays * 24 * 60 * 60 * 1000).toISOString();
         }
 
