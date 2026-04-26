@@ -11,7 +11,7 @@ export default function TekyelLogo({ size = 48, className = '', showText = false
   return (
     <div className={`inline-flex items-center gap-2.5 ${className}`}>
       <img 
-        src="/logo.jpg" 
+        src="/logo.png" 
         alt="Tekyel Logo" 
         width={size} 
         height={size} 

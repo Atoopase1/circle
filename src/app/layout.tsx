@@ -11,7 +11,7 @@ export const metadata: Metadata = {
   manifest: "/manifest.json",
   icons: {
     icon: "/favicon-v2.png",
-    apple: "/logo.jpg",
+    apple: "/logo.png",
   },
   verification: {
     google: "sk3Hm1wRQhXhx0Z-Dg0lxMs0HQudYUbN4maojIGSsPs",

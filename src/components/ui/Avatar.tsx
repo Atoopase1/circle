@@ -33,7 +33,7 @@ export default function Avatar({ src, name, size = 'md', isOnline, className = '
         />
       ) : (
         <img
-          src="/logo.jpg"
+          src="/logo.png"
           alt={name}
           className={`${s.container} rounded-full object-cover ring-1 ring-[var(--border-color)] transition-all duration-200`}
         />
