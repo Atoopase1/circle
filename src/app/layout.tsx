@@ -10,7 +10,7 @@ export const metadata: Metadata = {
   keywords: ["tekyel", "chat", "messaging", "social", "realtime", "video call", "audio call"],
   manifest: "/manifest.json",
   icons: {
-    icon: "/logo.jpg",
+    icon: "/favicon-v2.png",
     apple: "/logo.jpg",
   },
   verification: {
