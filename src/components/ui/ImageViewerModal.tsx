@@ -16,6 +16,7 @@ export default function ImageViewerModal({ isOpen, onClose, src, alt = 'Image', 
   const overlayRef = useRef<HTMLDivElement>(null);
   const imgRef = useRef<HTMLImageElement>(null);
   const [mounted, setMounted] = useState(false);
+  const [isDownloading, setIsDownloading] = useState(false);
 
   // Zoom and Pan State
   const [scale, setScale] = useState(1);
@@ -144,6 +145,30 @@ export default function ImageViewerModal({ isOpen, onClose, src, alt = 'Image', 
   });
   const resetView = () => { setScale(1); setOffset({ x: 0, y: 0 }); };
 
+  const handleDownload = async () => {
+    if (!src || isDownloading) return;
+    try {
+      setIsDownloading(true);
+      const response = await fetch(src);
+      const blob = await response.blob();
+      const blobUrl = URL.createObjectURL(blob);
+      
+      const a = document.createElement('a');
+      a.href = blobUrl;
+      // Extract filename from URL or fallback
+      const filename = src.split('/').pop()?.split('?')[0] || `tekyel-image-${Date.now()}.jpg`;
+      a.download = filename;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(blobUrl);
+    } catch (error) {
+      console.error('Download failed:', error);
+    } finally {
+      setIsDownloading(false);
+    }
+  };
+
   return createPortal(
     <div
       ref={overlayRef}
@@ -176,15 +201,17 @@ export default function ImageViewerModal({ isOpen, onClose, src, alt = 'Image', 
         </div>
 
         <div className="flex gap-3 pointer-events-auto ml-auto">
-          <a 
-            href={src} 
-            download 
-            target="_blank" 
-            rel="noopener noreferrer"
-            className="p-2.5 rounded-full bg-white/10 text-white hover:bg-white/20 transition-all backdrop-blur-md border border-white/10"
+          <button 
+            onClick={handleDownload}
+            disabled={isDownloading}
+            className="p-2.5 rounded-full bg-white/10 text-white hover:bg-white/20 transition-all backdrop-blur-md border border-white/10 disabled:opacity-50"
           >
-            <Download size={24} />
-          </a>
+            {isDownloading ? (
+               <div className="w-6 h-6 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+            ) : (
+               <Download size={24} />
+            )}
+          </button>
           <button
             onClick={onClose}
             className="p-2.5 rounded-full bg-white/10 text-white hover:bg-white/20 hover:rotate-90 transition-all backdrop-blur-md border border-white/10"
