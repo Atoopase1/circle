@@ -44,6 +44,7 @@ interface ChatState {
   editMessage: (messageId: string, newContent: string) => Promise<void>;
   retryMessage: (messageId: string, chatId: string, content: string, messageType?: string, mediaUrl?: string, mediaMetadata?: Record<string, unknown>, replyToId?: string) => Promise<void>;
   initOfflineQueue: () => void;
+  flushOfflineQueue: () => Promise<void>;
   deleteMessageForMe: (messageId: string) => Promise<void>;
   deleteMessageForEveryone: (messageId: string) => Promise<void>;
   pinMessage: (chatId: string, messageId: string, scope: 'me' | 'everyone') => Promise<void>;
@@ -282,6 +283,8 @@ export const useChatStore = create<ChatState>((set, get) => ({
     const supabase = getSupabaseBrowserClient();
 
     try {
+      await supabase.auth.getSession(); // Ensure session is fresh before RLS query
+      
       // Build query — try with advanced features, fall back to basic if tables don't exist
       const buildQuery = (advanced: boolean) => {
         const selectStr = advanced
@@ -428,6 +431,8 @@ export const useChatStore = create<ChatState>((set, get) => ({
     }
 
     // 3. Send to Database in background
+    await supabase.auth.getSession(); // Ensure session is absolutely fresh to prevent RLS failure on wakeup
+    
     const { error } = await supabase
       .from('messages')
       .insert({
@@ -719,40 +724,49 @@ export const useChatStore = create<ChatState>((set, get) => ({
     }
   },
 
+  flushOfflineQueue: async () => {
+    console.log('[Offline] Flushing queue and syncing...');
+    const queue = JSON.parse(localStorage.getItem('offline-messages-queue') || '[]');
+    if (queue.length > 0) {
+      const toast = (await import('react-hot-toast')).default;
+      toast.success(`Sending ${queue.length} queued message${queue.length > 1 ? 's' : ''}…`, {
+        icon: '📤',
+        duration: 2000,
+      });
+      for (const q of queue) {
+        await get().retryMessage(q.optimisticId, q.chatId, q.content, q.messageType, q.mediaUrl, q.mediaMetadata, q.replyToId);
+      }
+    }
+  },
+
   initOfflineQueue: () => {
     if (typeof window === 'undefined') return;
     
-    const handleOnline = async () => {
-      console.log('[Offline] Network restored — flushing queue and syncing...');
+    const handleRestore = async () => {
+      await get().flushOfflineQueue();
 
-      // 1. Flush queued messages sequentially
-      const queue = JSON.parse(localStorage.getItem('offline-messages-queue') || '[]');
-      if (queue.length > 0) {
-        const toast = (await import('react-hot-toast')).default;
-        toast.success(`Sending ${queue.length} queued message${queue.length > 1 ? 's' : ''}…`, {
-          icon: '📤',
-          duration: 2000,
-        });
-        for (const q of queue) {
-          await get().retryMessage(q.optimisticId, q.chatId, q.content, q.messageType, q.mediaUrl, q.mediaMetadata, q.replyToId);
-        }
-      }
-
-      // 2. Refresh chat list to sync any messages received while offline
+      // Refresh chat list to sync any messages received while offline
       await get().fetchChats();
 
-      // 3. If user has an active chat open, refresh its messages too
+      // If user has an active chat open, refresh its messages too
       const activeChatId = get().activeChatId;
       if (activeChatId) {
         await get().fetchMessages(activeChatId);
       }
     };
 
-    window.addEventListener('online', handleOnline);
+    window.addEventListener('online', handleRestore);
+    
+    // Listen to visibilitychange because mobile OS often drops 'online' events on wake
+    document.addEventListener('visibilitychange', () => {
+      if (document.visibilityState === 'visible' && navigator.onLine) {
+        handleRestore();
+      }
+    });
 
     // Also run immediately on boot if we are already online
     if (navigator.onLine) {
-      setTimeout(handleOnline, 1000); // Give the app a second to boot up before flushing
+      setTimeout(handleRestore, 1000); // Give the app a second to boot up before flushing
     }
   },
 
