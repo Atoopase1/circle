@@ -2,6 +2,7 @@
 'use client';
 
 import { useState, useEffect, useCallback, useRef } from 'react';
+import { useRealtimeConnection } from './useRealtimeMessages';
 
 interface NetworkStatus {
   isOnline: boolean;
@@ -10,14 +11,15 @@ interface NetworkStatus {
 }
 
 export function useNetworkStatus(): NetworkStatus {
-  const [isOnline, setIsOnline] = useState(true);
+  const isWebSocketReconnecting = useRealtimeConnection();
+  const [isBrowserOnline, setIsBrowserOnline] = useState(true);
   const [wasOffline, setWasOffline] = useState(false);
   const [secondsOffline, setSecondsOffline] = useState(0);
   const offlineTimerRef = useRef<NodeJS.Timeout | null>(null);
   const offlineStartRef = useRef<number | null>(null);
 
   const handleOnline = useCallback(() => {
-    setIsOnline(true);
+    setIsBrowserOnline(true);
     setSecondsOffline(0);
 
     // Clear the offline timer
@@ -33,7 +35,7 @@ export function useNetworkStatus(): NetworkStatus {
   }, []);
 
   const handleOffline = useCallback(() => {
-    setIsOnline(false);
+    setIsBrowserOnline(false);
     setWasOffline(false);
     offlineStartRef.current = Date.now();
 
@@ -48,7 +50,7 @@ export function useNetworkStatus(): NetworkStatus {
   useEffect(() => {
     // Initialize with current state
     if (typeof navigator !== 'undefined') {
-      setIsOnline(navigator.onLine);
+      setIsBrowserOnline(navigator.onLine);
       if (!navigator.onLine) {
         handleOffline();
       }
@@ -65,6 +67,23 @@ export function useNetworkStatus(): NetworkStatus {
       }
     };
   }, [handleOnline, handleOffline]);
+
+  // Overall online status is true ONLY if both browser has internet AND websocket is not reconnecting
+  const isOnline = isBrowserOnline && !isWebSocketReconnecting;
+
+  // We consider "wasOffline" valid either from browser reconnect or websocket reconnect transition
+  // We can track the previous isOnline to trigger wasOffline if needed, but for simplicity
+  // the websocket reconnection system handles showing the connected banner briefly when it recovers.
+  const prevOnlineRef = useRef(isOnline);
+  useEffect(() => {
+    if (!prevOnlineRef.current && isOnline) {
+      setWasOffline(true);
+      const timer = setTimeout(() => setWasOffline(false), 3000);
+      prevOnlineRef.current = isOnline;
+      return () => clearTimeout(timer);
+    }
+    prevOnlineRef.current = isOnline;
+  }, [isOnline]);
 
   return { isOnline, wasOffline, secondsOffline };
 }

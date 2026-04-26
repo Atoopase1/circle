@@ -18,12 +18,38 @@ export function useAppNotifications() {
   useEffect(() => {
     if (!profile) return;
 
+    // Request native notification permission on mount
+    if (typeof window !== 'undefined' && 'Notification' in window) {
+      if (Notification.permission === 'default') {
+        Notification.requestPermission().catch(() => {});
+      }
+    }
+
     const playSound = () => {
       try {
         const audio = new Audio('/notify.ogg');
         audio.volume = 1.0;
         audio.play().catch(e => console.warn('Audio play blocked:', e));
       } catch (e) {}
+    };
+
+    const triggerNativeNotification = (title: string, body: string, iconUrl?: string) => {
+      if (typeof window !== 'undefined' && 'Notification' in window && Notification.permission === 'granted') {
+        // We only trigger native notification if the app is hidden, to avoid double-notifying
+        // when they are actively using the app and seeing the toast.
+        if (document.hidden) {
+          try {
+            new Notification(title, {
+              body,
+              icon: iconUrl || '/icon-192.png',
+              badge: '/icon-192.png',
+              silent: false // let the OS handle the sound if it wants
+            });
+          } catch (e) {
+            console.warn('Native notification failed:', e);
+          }
+        }
+      }
     };
 
     const handleNewInteraction = async (payload: any, type: string) => {
@@ -64,6 +90,9 @@ export function useAppNotifications() {
         statusId: record.status_id,
         preview
       });
+
+      // Show native OS popup if app is hidden
+      triggerNativeNotification(actor.display_name, preview, actor.avatar_url);
 
       // 5. Show beautiful top toast alert that stays on top
       toast.custom(
@@ -144,6 +173,9 @@ export function useAppNotifications() {
         preview: newStatus.text_content || (newStatus.media_url ? '📷 Shared a new photo' : 'Posted a new status'),
       });
 
+      // Show native OS popup if app is hidden
+      triggerNativeNotification(`New post from ${actor.display_name}`, newStatus.text_content || 'Shared an update', actor.avatar_url);
+
       toast.custom(
         (t) => (
           <div
@@ -201,6 +233,9 @@ export function useAppNotifications() {
         preview: `started following you`,
       });
 
+      // Show native OS popup if app is hidden
+      triggerNativeNotification('New Follower', `${actor.display_name} started following you`, actor.avatar_url);
+
       toast.custom(
         (t) => (
           <div
@@ -254,6 +289,13 @@ export function useAppNotifications() {
       if (!actor) return;
 
       playSound();
+
+      // Show native OS popup if app is hidden
+      triggerNativeNotification(
+        `New message from ${actor.display_name}`, 
+        msg.content || (msg.media_url ? '📷 Sent an image' : 'Sent a message'), 
+        actor.avatar_url
+      );
 
       toast.custom(
         (t) => (
