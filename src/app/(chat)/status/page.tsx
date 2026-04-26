@@ -239,7 +239,7 @@ export default function StatusPage() {
               ref={headerContentRef}
               className="overflow-hidden transition-all duration-300 ease-in-out"
               style={{
-                maxHeight: isHeaderExpanded ? ((headerContentRef.current?.scrollHeight ?? 800) + (showUploader ? 500 : 0)) + 'px' : '0px',
+                maxHeight: isHeaderExpanded ? (showUploader ? '3000px' : '1000px') : '0px',
                 opacity: isHeaderExpanded ? 1 : 0,
                 transform: isHeaderExpanded ? 'translateY(0)' : 'translateY(-10px)',
               }}
