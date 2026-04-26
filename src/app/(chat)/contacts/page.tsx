@@ -3,6 +3,7 @@
 
 import { useState, useEffect } from 'react';
 import { Search, UserPlus, Users, Crown, MessageSquare, ArrowLeft } from 'lucide-react';
+import Link from 'next/link';
 import ChatSidebar from '@/components/chat/ChatSidebar';
 import SearchInput from '@/components/ui/SearchInput';
 import Avatar from '@/components/ui/Avatar';
@@ -110,13 +111,13 @@ export default function ContactsPage() {
         {/* Search Header */}
         <div className="glass-header px-6 py-6 border-b border-[var(--border-color)] z-10 w-full max-w-4xl mx-auto">
           <div className="flex items-center gap-3 mb-5">
-            <button 
-              onClick={() => router.push('/')}
+            <Link 
+              href="/"
               className="p-2 -ml-2 rounded-xl hover:bg-[var(--bg-secondary)] transition-colors lg:hidden text-[var(--text-primary)]"
               aria-label="Back to chat list"
             >
               <ArrowLeft size={24} />
-            </button>
+            </Link>
             <h1 className="text-xl font-semibold text-[var(--text-primary)]" style={{ fontFamily: 'var(--font-heading)' }}>
               Network & Contacts
             </h1>

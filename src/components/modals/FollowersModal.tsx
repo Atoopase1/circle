@@ -121,6 +121,9 @@ export default function FollowersModal({ isOpen, onClose, profileId, followerCou
     if (!currentUser || togglingId) return;
     setTogglingId(userId);
 
+    // Refresh session to ensure RLS policies work
+    await supabase.auth.getSession();
+
     if (followingMap[userId]) {
       const { error } = await supabase
         .from('follows')
@@ -131,15 +134,25 @@ export default function FollowersModal({ isOpen, onClose, profileId, followerCou
       if (!error) {
         setFollowingMap(prev => ({ ...prev, [userId]: false }));
         toast.success('Unfollowed');
+      } else {
+        console.error('Unfollow error:', error);
+        toast.error(`Failed to unfollow: ${error.message}`);
       }
     } else {
+      // Use upsert to prevent duplicate-key errors when follow state is stale
       const { error } = await supabase
         .from('follows')
-        .insert({ follower_id: currentUser.id, following_id: userId });
+        .upsert(
+          { follower_id: currentUser.id, following_id: userId },
+          { onConflict: 'follower_id,following_id' }
+        );
 
       if (!error) {
         setFollowingMap(prev => ({ ...prev, [userId]: true }));
         toast.success('Following!');
+      } else {
+        console.error('Follow error:', error);
+        toast.error(`Failed to follow: ${error.message}`);
       }
     }
     setTogglingId(null);

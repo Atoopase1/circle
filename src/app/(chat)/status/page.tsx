@@ -3,6 +3,7 @@
 
 import { useState, useEffect, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
+import Link from 'next/link';
 import { ArrowLeft } from 'lucide-react';
 import Spinner from '@/components/ui/Spinner';
 import StatusUploader from '@/components/status/StatusUploader';
@@ -160,13 +161,13 @@ export default function StatusPage() {
             
             <div className="flex items-center gap-3 mb-4">
               {/* Mobile-only back button (lg:hidden because sidebar is visible on desktop) */}
-              <button 
-                onClick={() => router.push('/')}
+              <Link 
+                href="/"
                 className="p-2 -ml-2 rounded-xl hover:bg-[var(--bg-secondary)] transition-colors lg:hidden text-[var(--text-primary)]"
                 aria-label="Back to chat list"
               >
                 <ArrowLeft size={24} />
-              </button>
+              </Link>
               <h1 className="text-xl font-semibold text-[var(--text-primary)]">Status & Feed</h1>
             </div>
             

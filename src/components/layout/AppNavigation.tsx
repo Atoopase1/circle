@@ -3,6 +3,7 @@
 
 import { MessageSquare, Users, Aperture, Phone } from 'lucide-react';
 import { usePathname, useRouter } from 'next/navigation';
+import Link from 'next/link';
 
 export default function AppNavigation() {
   const pathname = usePathname();
@@ -27,9 +28,9 @@ export default function AppNavigation() {
           const Icon = tab.icon;
           const isActive = pathname === tab.href || (tab.href !== '/' && pathname.startsWith(tab.href));
           return (
-            <button
+            <Link
               key={tab.name}
-              onClick={() => router.push(tab.href)}
+              href={tab.href}
               className={`p-3 rounded-xl transition-all duration-200 group relative ${
                 isActive
                   ? 'bg-[var(--emerald)]/10 text-[var(--emerald)]'
@@ -50,7 +51,7 @@ export default function AppNavigation() {
               <span className="absolute left-[60px] px-2.5 py-1.5 bg-[var(--navy)] text-white text-sm rounded-lg opacity-0 group-hover:opacity-100 pointer-events-none transition-all duration-200 whitespace-nowrap z-50 shadow-lg translate-x-[-4px] group-hover:translate-x-0">
                 {tab.name}
               </span>
-            </button>
+            </Link>
           );
         })}
       </div>
@@ -64,9 +65,9 @@ export default function AppNavigation() {
           const Icon = tab.icon;
           const isActive = pathname === tab.href || (tab.href !== '/' && pathname.startsWith(tab.href));
           return (
-            <button
+            <Link
               key={tab.name}
-              onClick={() => router.push(tab.href)}
+              href={tab.href}
               className={`flex flex-col items-center justify-center w-full h-full gap-1 transition-all duration-200 relative ${
                 isActive ? 'text-[var(--emerald)]' : 'text-[var(--text-secondary)]'
               }`}
@@ -81,7 +82,7 @@ export default function AppNavigation() {
                   style={{ boxShadow: '0 2px 8px rgba(22, 163, 74, 0.4)' }}
                 />
               )}
-            </button>
+            </Link>
           );
         })}
       </div>

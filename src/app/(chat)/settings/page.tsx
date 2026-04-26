@@ -144,12 +144,12 @@ export default function SettingsPage() {
       <div className="flex-1 flex flex-col bg-[var(--bg-app)] max-w-2xl mx-auto w-full">
         {/* Header */}
         <div className="flex items-center gap-3 px-5 py-4 glass-header border-b border-[var(--border-color)]">
-          <button
-            onClick={() => router.push('/')}
-            className="p-2 rounded-xl hover:bg-[var(--bg-hover)] transition-all duration-200 text-[var(--text-muted)] hover:text-[var(--text-primary)]"
+          <Link
+            href="/"
+            className="p-2 -ml-2 rounded-xl hover:bg-[var(--bg-hover)] transition-all duration-200 text-[var(--text-muted)] hover:text-[var(--text-primary)] lg:hidden"
           >
             <ArrowLeft size={26} />
-          </button>
+          </Link>
           <h1 className="text-lg font-semibold text-[var(--text-primary)]" style={{ fontFamily: 'var(--font-heading)' }}>Settings</h1>
         </div>
 

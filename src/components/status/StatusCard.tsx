@@ -171,31 +171,48 @@ export default function StatusCard({ status, onToggleFollow, onRefresh, initialF
     setFollowed(newFollowState);
     if (onToggleFollow) onToggleFollow(status.user_id, newFollowState);
 
-    if (newFollowState) {
-      const { error } = await supabase
-        .from('follows')
-        .insert({ follower_id: profile.id, following_id: status.user_id });
-      
-      if (error) {
-        toast.error('Failed to follow user');
-        setFollowed(false);
-        if (onToggleFollow) onToggleFollow(status.user_id, false);
+    try {
+      // Refresh session to ensure RLS policies work
+      await supabase.auth.getSession();
+
+      if (newFollowState) {
+        // Use upsert to prevent duplicate-key errors when follow state is stale
+        const { error } = await supabase
+          .from('follows')
+          .upsert(
+            { follower_id: profile.id, following_id: status.user_id },
+            { onConflict: 'follower_id,following_id' }
+          );
+        
+        if (error) {
+          console.error('Follow error:', error);
+          toast.error(`Failed to follow: ${error.message}`);
+          setFollowed(false);
+          if (onToggleFollow) onToggleFollow(status.user_id, false);
+        } else {
+          toast.success('Following!');
+        }
       } else {
-        toast.success('Following!');
+        const { error } = await supabase
+          .from('follows')
+          .delete()
+          .eq('follower_id', profile.id)
+          .eq('following_id', status.user_id);
+        
+        if (error) {
+          console.error('Unfollow error:', error);
+          toast.error(`Failed to unfollow: ${error.message}`);
+          setFollowed(true);
+          if (onToggleFollow) onToggleFollow(status.user_id, true);
+        } else {
+          toast.success('Unfollowed');
+        }
       }
-    } else {
-      const { error } = await supabase
-        .from('follows')
-        .delete()
-        .match({ follower_id: profile.id, following_id: status.user_id });
-      
-      if (error) {
-        toast.error('Failed to unfollow user');
-        setFollowed(true);
-        if (onToggleFollow) onToggleFollow(status.user_id, true);
-      } else {
-        toast.success('Unfollowed');
-      }
+    } catch (err: any) {
+      console.error('Follow/unfollow error:', err);
+      toast.error('Network error, please try again');
+      setFollowed(!newFollowState);
+      if (onToggleFollow) onToggleFollow(status.user_id, !newFollowState);
     }
   };
 
@@ -206,7 +223,11 @@ export default function StatusCard({ status, onToggleFollow, onRefresh, initialF
     <div className="bg-[var(--bg-primary)] rounded-xl shadow-sm border border-[var(--border-color)] mb-4 overflow-hidden w-full max-w-full box-border">
       {/* Header */}
       <div className="flex items-center justify-between p-4 pb-2 gap-3">
-        <div className="flex items-center gap-3 cursor-pointer flex-1 min-w-0" onClick={() => router.push(`/profile/${status.user_id}`)}>
+        <button 
+          type="button"
+          className="flex items-center gap-3 cursor-pointer flex-1 min-w-0 text-left bg-transparent border-none p-0" 
+          onClick={() => router.push(`/profile/${status.user_id}`)}
+        >
           <div className="shrink-0">
             <Avatar src={profiles.avatar_url} name={profiles.display_name} />
           </div>
@@ -221,7 +242,7 @@ export default function StatusCard({ status, onToggleFollow, onRefresh, initialF
               {formatDistanceToNow(new Date(created_at), { addSuffix: true })}
             </span>
           </div>
-        </div>
+        </button>
 
         {/* Actions for owner or follow for others */}
         {isOwnPost ? (

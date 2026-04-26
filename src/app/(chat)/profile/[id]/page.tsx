@@ -3,6 +3,7 @@
 
 import { useState, useEffect, useRef, useCallback } from 'react';
 import { useParams, useRouter } from 'next/navigation';
+import Link from 'next/link';
 import { ArrowLeft, Settings, Pencil, Camera, UserCheck, UserPlus, Image as ImageIcon, MessageSquare, Bell } from 'lucide-react';
 import Avatar from '@/components/ui/Avatar';
 import Button from '@/components/ui/Button';
@@ -162,9 +163,13 @@ export default function ProfileViewPage() {
   const toggleFollow = async () => {
     if (!currentUser) return;
     
+    // Refresh session to ensure RLS policies work
+    await supabase.auth.getSession();
+
     if (isFollowing) {
       const { error } = await supabase.from('follows').delete().eq('follower_id', currentUser.id).eq('following_id', profileId);
       if (error) {
+        console.error('Unfollow error:', error);
         toast.error(`Error: ${error.message}`);
         return;
       }
@@ -172,8 +177,13 @@ export default function ProfileViewPage() {
       setFollowerCount(p => Math.max(0, p - 1));
       toast.success('Unfollowed');
     } else {
-      const { error } = await supabase.from('follows').insert({ follower_id: currentUser.id, following_id: profileId });
+      // Use upsert to prevent duplicate-key errors when follow state is stale
+      const { error } = await supabase.from('follows').upsert(
+        { follower_id: currentUser.id, following_id: profileId },
+        { onConflict: 'follower_id,following_id' }
+      );
       if (error) {
+        console.error('Follow error:', error);
         toast.error(`Error: ${error.message}`);
         return;
       }
@@ -277,9 +287,9 @@ export default function ProfileViewPage() {
 
       {/* Header bar (Pinned) */}
       <div className="glass-header w-full flex-shrink-0 z-20 flex items-center justify-between px-5 py-3 border-b border-[var(--border-color)]">
-        <button onClick={() => router.back()} className="p-2 rounded-xl hover:bg-[var(--bg-hover)] text-[var(--text-muted)] hover:text-[var(--text-primary)] transition-all duration-200">
+        <Link href="/" className="p-2 -ml-2 rounded-xl hover:bg-[var(--bg-hover)] text-[var(--text-muted)] hover:text-[var(--text-primary)] transition-all duration-200 lg:hidden">
           <ArrowLeft size={26} />
-        </button>
+        </Link>
         
         <h1 className="text-base font-semibold text-[var(--text-primary)] truncate flex-1 min-w-0 text-center mx-4">{author.display_name}</h1>
 
