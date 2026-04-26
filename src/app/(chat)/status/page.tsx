@@ -229,21 +229,21 @@ export default function StatusPage() {
             <div className="flex gap-4 border-b border-[var(--border-color)]">
               <button
                 className={`pb-2 px-2 font-medium transition-colors ${
-                  activeTab === 'public'
+                  activeTab === 'public' && !showUploader
                     ? 'text-[var(--wa-green)] border-b-2 border-[var(--wa-green)]'
                     : 'text-[var(--text-muted)] hover:text-[var(--text-primary)]'
                 }`}
-                onClick={() => setActiveTab('public')}
+                onClick={() => { setActiveTab('public'); setShowUploader(false); }}
               >
                 🌍 Public Feed
               </button>
               <button
                 className={`pb-2 px-2 font-medium transition-colors ${
-                  activeTab === 'circle'
+                  activeTab === 'circle' && !showUploader
                     ? 'text-[var(--wa-green)] border-b-2 border-[var(--wa-green)]'
                     : 'text-[var(--text-muted)] hover:text-[var(--text-primary)]'
                 }`}
-                onClick={() => setActiveTab('circle')}
+                onClick={() => { setActiveTab('circle'); setShowUploader(false); }}
               >
                 👥 My Tekyel
               </button>
@@ -263,9 +263,9 @@ export default function StatusPage() {
             {/* Status Uploader — toggles on tap */}
             <div
               ref={uploaderRef}
-              className="overflow-hidden transition-all duration-300 ease-in-out"
+              className="overflow-hidden transition-all duration-500 ease-in-out"
               style={{
-                maxHeight: showUploader ? (uploaderRef.current?.scrollHeight ?? 500) + 'px' : '0px',
+                maxHeight: showUploader ? '2000px' : '0px',
                 opacity: showUploader ? 1 : 0,
                 marginTop: showUploader ? '12px' : '0px',
               }}
