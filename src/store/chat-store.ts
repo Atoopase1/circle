@@ -439,15 +439,22 @@ export const useChatStore = create<ChatState>((set, get) => ({
 
     if (error) {
       console.error('[ChatStore] Supabase insert failed:', error);
-      // Mark as failed instead of deleting
+      
+      // Push to offline queue so it survives a browser refresh and can be retried
+      const queue = JSON.parse(localStorage.getItem('offline-messages-queue') || '[]');
+      queue.push({ chatId, content, messageType, mediaUrl, mediaMetadata, replyToId, optimisticId: messageId });
+      localStorage.setItem('offline-messages-queue', JSON.stringify(queue));
+
+      // Mark as queued/failed so the user sees it hasn't gone through yet
       get().updateMessageInList({
         ...optimisticMessage,
-        status: [{ id: 'temp', message_id: messageId, user_id: user.id, status: 'failed', updated_at: new Date().toISOString() }],
+        status: [{ id: 'temp', message_id: messageId, user_id: user.id, status: 'queued', updated_at: new Date().toISOString() }],
       });
+      
       // Show error toast if possible
       if (typeof window !== 'undefined') {
         const toast = (await import('react-hot-toast')).default;
-        toast.error(`Message failed: ${error.message}`);
+        toast.error('Network disconnected. Message queued and will retry.');
       }
       return optimisticMessage;
     }
@@ -738,6 +745,11 @@ export const useChatStore = create<ChatState>((set, get) => ({
     };
 
     window.addEventListener('online', handleOnline);
+
+    // Also run immediately on boot if we are already online
+    if (navigator.onLine) {
+      setTimeout(handleOnline, 1000); // Give the app a second to boot up before flushing
+    }
   },
 
   deleteMessageForMe: async (messageId: string) => {
