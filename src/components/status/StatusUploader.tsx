@@ -42,9 +42,18 @@ export default function StatusUploader({ onStatusPosted }: { onStatusPosted: () 
     return 'document';
   };
 
+  const MAX_VIDEO_SIZE_MB = 5;
+
   const handleFileSelect = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
     const selected = e.target.files?.[0];
     if (!selected) return;
+
+    // Reject videos larger than 5MB
+    if (selected.type.startsWith('video/') && selected.size > MAX_VIDEO_SIZE_MB * 1024 * 1024) {
+      toast.error(`Video must be ${MAX_VIDEO_SIZE_MB}MB or less. Your file is ${(selected.size / 1024 / 1024).toFixed(1)}MB.`);
+      e.target.value = '';
+      return;
+    }
     
     setFile(selected);
 
