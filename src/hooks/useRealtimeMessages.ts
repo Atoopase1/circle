@@ -164,6 +164,21 @@ export function useRealtimeMessages(chatId: string | null) {
             } as Message);
           }
         )
+        // ── Deleted messages
+        .on(
+          'postgres_changes',
+          {
+            event: 'DELETE',
+            schema: 'public',
+            table: 'messages',
+            filter: `chat_id=eq.${chatId}`,
+          },
+          (payload) => {
+            const deletedId = payload.old.id;
+            console.log(`[Realtime] Message deleted: ${deletedId}`);
+            useChatStore.getState().removeMessage(deletedId);
+          }
+        )
         // ── Message status (read receipts / delivery ticks) 
         .on(
           'postgres_changes',

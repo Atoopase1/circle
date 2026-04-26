@@ -13,10 +13,18 @@ import { useInView } from '@/hooks/useInView';
 import toast from 'react-hot-toast';
 import MessageContextMenu from './MessageContextMenu';
 import { useGifStore } from '@/store/gif-store';
+import { getSupabaseBrowserClient } from '@/lib/supabase/client';
 import MessageInfoModal from '../modals/MessageInfoModal';
 import ForwardModal from '../modals/ForwardModal';
 
 const ExpiryOverlay = ({ expiresAt, isOwn }: { expiresAt: string, isOwn: boolean }) => {
+  const [, setTick] = useState(0);
+  
+  useEffect(() => {
+    const interval = setInterval(() => setTick(t => t + 1), 1000);
+    return () => clearInterval(interval);
+  }, []);
+
   return (
     <motion.div 
       initial={{ opacity: 0, y: -8, scale: 0.95 }}
@@ -136,6 +144,32 @@ const MessageBubble = React.memo(function MessageBubble({ message, isOwn, showSe
       if (expiryTimerRef.current) clearTimeout(expiryTimerRef.current);
     };
   }, []);
+
+  // Automatic deletion when time reaches expiration
+  useEffect(() => {
+    if (!message.expires_at) return;
+
+    const expiresAt = new Date(message.expires_at).getTime();
+    const now = new Date().getTime();
+    const delay = expiresAt - now;
+
+    if (delay <= 0) {
+      const supabase = getSupabaseBrowserClient();
+      supabase.from('messages').delete().eq('id', message.id).then(({ error }) => {
+        if (!error) useChatStore.getState().removeMessage(message.id);
+      });
+      return;
+    }
+
+    const timer = setTimeout(() => {
+      const supabase = getSupabaseBrowserClient();
+      supabase.from('messages').delete().eq('id', message.id).then(({ error }) => {
+        if (!error) useChatStore.getState().removeMessage(message.id);
+      });
+    }, delay);
+
+    return () => clearTimeout(timer);
+  }, [message.id, message.expires_at]);
 
   const handleDragEnd = async (event: any, info: PanInfo) => {
     if (info.offset.x > 60) {

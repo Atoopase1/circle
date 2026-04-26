@@ -23,6 +23,8 @@ interface ChatState {
   editingMessage: Message | null;
   selectionMode: boolean;
   selectedMessageIds: string[];
+  toggleMessageSelection: (id: string) => void;
+  removeMessage: (messageId: string) => void;
 
   // Actions
   fetchChats: () => Promise<void>;
@@ -54,7 +56,6 @@ interface ChatState {
   addReaction: (messageId: string, emoji: string) => Promise<void>;
   removeReaction: (messageId: string, emoji: string) => Promise<void>;
   toggleSelectionMode: (force?: boolean) => void;
-  toggleMessageSelection: (messageId: string) => void;
   clearSelection: () => void;
   deleteChat: (chatId: string) => Promise<void>;
   updateGroupSettings: (chatId: string, settings: { name?: string; description?: string; iconUrl?: string; adminOnlyMessages?: boolean }) => Promise<void>;
@@ -1061,14 +1062,23 @@ export const useChatStore = create<ChatState>((set, get) => ({
   },
 
   toggleMessageSelection: (messageId: string) => {
-    set(state => {
-      const selected = state.selectedMessageIds.includes(messageId);
-      return {
-        selectedMessageIds: selected
-          ? state.selectedMessageIds.filter(id => id !== messageId)
-          : [...state.selectedMessageIds, messageId]
-      };
-    });
+    set(state => ({
+      selectedMessageIds: state.selectedMessageIds.includes(messageId)
+        ? state.selectedMessageIds.filter(id => id !== messageId)
+        : [...state.selectedMessageIds, messageId]
+    }));
+  },
+
+  removeMessage: (messageId: string) => {
+    set((state) => ({
+      messages: state.messages.filter((m) => m.id !== messageId),
+      messagesByChat: Object.fromEntries(
+        Object.entries(state.messagesByChat).map(([cId, msgs]) => [
+          cId,
+          msgs.filter((m) => m.id !== messageId)
+        ])
+      )
+    }));
   },
 
   clearSelection: () => {
