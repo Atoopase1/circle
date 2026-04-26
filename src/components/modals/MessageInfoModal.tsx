@@ -54,7 +54,7 @@ export default function MessageInfoModal({ message, chatParticipants, onClose }:
 
   return (
     <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 animate-fadeIn">
-      <div className="absolute inset-0 bg-[var(--navy)]/40 backdrop-blur-md" onClick={onClose} />
+      <div className="absolute inset-0 bg-[var(--navy)]/40 backdrop-blur-md" onPointerDown={onClose} onClick={(e) => { e.stopPropagation(); e.preventDefault(); }} />
       <div 
         className="relative bg-[var(--bg-primary)] w-full max-w-md rounded-2xl overflow-hidden flex flex-col max-h-[80vh] animate-scaleIn"
         style={{ boxShadow: 'var(--shadow-2xl)' }}

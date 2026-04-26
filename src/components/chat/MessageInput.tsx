@@ -404,7 +404,7 @@ export default function MessageInput({ chatId }: MessageInputProps) {
         {/* Emoji picker — portaled to body for guaranteed top-layer rendering */}
         {showEmoji && typeof document !== 'undefined' && createPortal(
           <>
-            <div className="fixed inset-0 z-[9998]" onClick={() => setShowEmoji(false)} />
+            <div className="fixed inset-0 z-[9998]" onPointerDown={() => setShowEmoji(false)} onClick={(e) => { e.stopPropagation(); e.preventDefault(); }} />
             <div 
               className="fixed z-[9999] animate-scaleIn" 
               style={{ bottom: '70px', left: '16px' }}
@@ -419,7 +419,7 @@ export default function MessageInput({ chatId }: MessageInputProps) {
         {/* GIF picker — portaled to body for guaranteed top-layer rendering */}
         {showGifPicker && typeof document !== 'undefined' && createPortal(
           <>
-            <div className="fixed inset-0 z-[9998]" onClick={() => setShowGifPicker(false)} />
+            <div className="fixed inset-0 z-[9998]" onPointerDown={() => setShowGifPicker(false)} onClick={(e) => { e.stopPropagation(); e.preventDefault(); }} />
             <div 
               className="fixed z-[9999] animate-scaleIn" 
               style={{ bottom: '70px', left: '16px' }}
@@ -445,7 +445,7 @@ export default function MessageInput({ chatId }: MessageInputProps) {
           </button>
           {showAttachMenu && typeof document !== 'undefined' && createPortal(
             <>
-              <div className="fixed inset-0 z-[9998]" onClick={() => setShowAttachMenu(false)} />
+              <div className="fixed inset-0 z-[9998]" onPointerDown={() => setShowAttachMenu(false)} onClick={(e) => { e.stopPropagation(); e.preventDefault(); }} />
               <div 
                 className="fixed z-[9999] bg-[var(--bg-primary)] rounded-2xl border border-[var(--border-color)] py-2 min-w-[190px] animate-scaleIn origin-bottom-left"
                 style={{ bottom: '70px', left: '16px', boxShadow: 'var(--shadow-xl)' }}

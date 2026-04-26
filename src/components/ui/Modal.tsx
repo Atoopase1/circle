@@ -41,7 +41,8 @@ export default function Modal({ isOpen, onClose, title, children, maxWidth = 'ma
     <div
       ref={overlayRef}
       className="fixed inset-0 z-50 flex items-center justify-center p-4 animate-fadeIn"
-      onClick={(e) => e.target === overlayRef.current && onClose()}
+      onPointerDown={(e) => e.target === overlayRef.current && onClose()}
+      onClick={(e) => e.stopPropagation()}
     >
       {/* Premium frosted backdrop */}
       <div className="absolute inset-0 bg-[var(--navy)]/40 backdrop-blur-md" />

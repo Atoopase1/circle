@@ -326,7 +326,7 @@ export default function GroupInfoPanel({ chat, isOpen, onClose }: GroupInfoPanel
                   {/* Context menu */}
                   {memberMenuId === p.user_id && (
                     <>
-                      <div className="fixed inset-0 z-40" onClick={() => setMemberMenuId(null)} />
+                      <div className="fixed inset-0 z-40" onPointerDown={() => setMemberMenuId(null)} onClick={(e) => { e.stopPropagation(); e.preventDefault(); }} />
                       <div
                         className="absolute right-0 top-8 z-50 bg-[var(--bg-primary)] rounded-xl border border-[var(--border-color)] py-1.5 min-w-[180px] animate-scaleIn origin-top-right"
                         style={{ boxShadow: 'var(--shadow-xl)' }}

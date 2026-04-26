@@ -44,7 +44,8 @@ export default function ImageViewerModal({ isOpen, onClose, src, alt = 'Image', 
     <div
       ref={overlayRef}
       className="fixed inset-0 z-[100] flex flex-col p-4 sm:p-8 animate-fadeIn"
-      onClick={(e) => e.target === overlayRef.current && onClose()}
+      onPointerDown={(e) => e.target === overlayRef.current && onClose()}
+      onClick={(e) => e.stopPropagation()}
     >
       <div className="absolute inset-0 bg-black/90 backdrop-blur-md -z-10" />
       
@@ -70,7 +71,8 @@ export default function ImageViewerModal({ isOpen, onClose, src, alt = 'Image', 
       {/* Image Area */}
       <div 
         className={`relative flex-1 flex min-h-0 w-full ${alignClass}`}
-        onClick={(e) => e.target === e.currentTarget && onClose()}
+        onPointerDown={(e) => e.target === e.currentTarget && onClose()}
+        onClick={(e) => e.stopPropagation()}
       >
         <img
           src={src}

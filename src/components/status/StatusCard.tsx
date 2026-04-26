@@ -1,10 +1,11 @@
 // StatusCard — Post card with like, follow, save, download
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
 import { formatDistanceToNow } from 'date-fns';
-import { UserPlus, UserCheck, Bookmark, BookmarkCheck, Download, Heart, MessageSquare, Star, Send, MoreVertical, Trash2, Edit, Check, X } from 'lucide-react';
+import { UserPlus, UserCheck, Bookmark, BookmarkCheck, Download, Heart, MessageSquare, Star, Send, MoreVertical, Trash2, Edit, Check, X, Play, Pause } from 'lucide-react';
 import Avatar from '@/components/ui/Avatar';
+import ImageViewerModal from '@/components/ui/ImageViewerModal';
 import { useRouter } from 'next/navigation';
 import { getSupabaseBrowserClient } from '@/lib/supabase/client';
 import { useAuthStore } from '@/store/auth-store';
@@ -50,6 +51,55 @@ export default function StatusCard({ status, onToggleFollow, onRefresh, initialF
     setFollowed(initialFollowed);
   }, [initialFollowed]);
   const [saved, setSaved] = useState(false);
+
+  // Image lightbox
+  const [lightboxOpen, setLightboxOpen] = useState(false);
+
+  // Video autoplay-on-scroll
+  const videoRef = useRef<HTMLVideoElement>(null);
+  const videoWrapRef = useRef<HTMLDivElement>(null);
+  const [isPlaying, setIsPlaying] = useState(false);
+  const [userPaused, setUserPaused] = useState(false);
+
+  // Persistent IntersectionObserver for video in/out of view
+  useEffect(() => {
+    if (content_type !== 'video' || !media_url) return;
+    const el = videoWrapRef.current;
+    if (!el) return;
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        const video = videoRef.current;
+        if (!video) return;
+        if (entry.isIntersecting) {
+          // Only autoplay if user hasn't manually paused
+          if (!userPaused) {
+            video.play().then(() => setIsPlaying(true)).catch(() => {});
+          }
+        } else {
+          video.pause();
+          setIsPlaying(false);
+        }
+      },
+      { threshold: 0.5 }
+    );
+
+    observer.observe(el);
+    return () => observer.disconnect();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [content_type, media_url]);
+
+  const togglePlay = useCallback(() => {
+    const video = videoRef.current;
+    if (!video) return;
+    if (video.paused) {
+      video.play().then(() => { setIsPlaying(true); setUserPaused(false); }).catch(() => {});
+    } else {
+      video.pause();
+      setIsPlaying(false);
+      setUserPaused(true);
+    }
+  }, []);
   const [showMenu, setShowMenu] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
   const [editText, setEditText] = useState(status.text_content || '');
@@ -321,16 +371,61 @@ export default function StatusCard({ status, onToggleFollow, onRefresh, initialF
         )}
       </div>
 
-      {/* Media Content (truncated logic for brevity, assuming standard rendering) */}
+      {/* Image — tap to open lightbox */}
       {media_url && content_type === 'image' && (
-        <div className="relative w-full max-w-full bg-black overflow-hidden">
-          <img src={media_url} alt="Status media" className="object-contain w-full max-w-full max-h-[500px] block" />
+        <div
+          className="relative w-full max-w-full bg-black overflow-hidden cursor-pointer"
+          onClick={() => setLightboxOpen(true)}
+        >
+          <img
+            src={media_url}
+            alt="Status media"
+            className="object-contain w-full max-w-full max-h-[500px] block transition-opacity duration-300 hover:opacity-90 active:opacity-75"
+          />
+          {/* Tap hint overlay */}
+          <div className="absolute inset-0 flex items-end justify-end p-3 pointer-events-none">
+            <span className="text-xs text-white/70 bg-black/40 backdrop-blur-sm px-2 py-1 rounded-full">
+              Tap to expand
+            </span>
+          </div>
         </div>
       )}
-      
+
+      {/* Video — autoplay on scroll into view, tap overlay to pause/resume */}
       {media_url && content_type === 'video' && (
-        <div className="relative w-full max-w-full bg-black overflow-hidden">
-          <video src={media_url} controls className="w-full max-w-full max-h-[500px] block" />
+        <div ref={videoWrapRef} className="relative w-full max-w-full bg-black overflow-hidden">
+          <video
+            ref={videoRef}
+            src={media_url}
+            className="w-full max-w-full max-h-[500px] block"
+            playsInline
+            muted
+            loop
+            preload="metadata"
+            onPlay={() => setIsPlaying(true)}
+            onPause={() => setIsPlaying(false)}
+          />
+          {/* Play / Pause overlay button */}
+          <button
+            onClick={togglePlay}
+            className="absolute inset-0 flex items-center justify-center group"
+            aria-label={isPlaying ? 'Pause video' : 'Play video'}
+          >
+            <div className={`w-14 h-14 rounded-full flex items-center justify-center transition-all duration-200 ${
+              isPlaying
+                ? 'bg-black/0 group-hover:bg-black/40'
+                : 'bg-black/50'
+            }`}>
+              {isPlaying
+                ? <Pause size={28} className="text-white opacity-0 group-hover:opacity-100 transition-opacity drop-shadow-lg" fill="white" />
+                : <Play size={28} className="text-white drop-shadow-lg ml-1" fill="white" />
+              }
+            </div>
+          </button>
+          {/* Muted badge */}
+          <span className="absolute top-3 right-3 text-xs text-white/80 bg-black/40 backdrop-blur-sm px-2 py-1 rounded-full pointer-events-none">
+            🔇 Muted
+          </span>
         </div>
       )}
 
@@ -419,6 +514,14 @@ export default function StatusCard({ status, onToggleFollow, onRefresh, initialF
           </div>
         </div>
       )}
+
+      {/* Image Lightbox */}
+      <ImageViewerModal
+        isOpen={lightboxOpen}
+        onClose={() => setLightboxOpen(false)}
+        src={media_url}
+        alt="Status photo"
+      />
     </div>
   );
 }
