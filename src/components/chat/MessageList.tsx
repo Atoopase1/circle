@@ -37,17 +37,27 @@ export default function MessageList({ chatId, isGroup }: MessageListProps) {
   const scrollTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   const isReconnecting = useRealtimeConnection();
   const [showScrollBottom, setShowScrollBottom] = useState(false);
+  const [newMessageCount, setNewMessageCount] = useState(0);
+  const prevMessageCountRef = useRef(messages.length);
 
-  // Scroll to bottom when new messages arrive
+  // Scroll to bottom when new messages arrive (or count new messages if scrolled up)
   useEffect(() => {
+    const addedCount = messages.length - prevMessageCountRef.current;
+    prevMessageCountRef.current = messages.length;
+
     if (isAutoScrollRef.current) {
       bottomRef.current?.scrollIntoView({ behavior: 'smooth' });
+      setNewMessageCount(0);
+    } else if (addedCount > 0) {
+      // User is scrolled up — show them how many new messages arrived
+      setNewMessageCount((c) => c + addedCount);
     }
   }, [messages]);
 
   // Initial scroll
   useEffect(() => {
     bottomRef.current?.scrollIntoView();
+    setNewMessageCount(0);
   }, [chatId]);
 
   // Track if user is near bottom
@@ -274,9 +284,17 @@ export default function MessageList({ chatId, isGroup }: MessageListProps) {
       {/* Scroll to Bottom FAB */}
       {showScrollBottom && (
         <button
-          onClick={() => bottomRef.current?.scrollIntoView({ behavior: 'smooth' })}
+          onClick={() => {
+            bottomRef.current?.scrollIntoView({ behavior: 'smooth' });
+            setNewMessageCount(0);
+          }}
           className="absolute bottom-4 right-4 z-50 p-3 bg-[var(--bg-primary)] border border-[var(--border-color)] rounded-full text-[var(--emerald)] shadow-lg hover:bg-[var(--bg-hover)] transition-all animate-scaleIn"
         >
+          {newMessageCount > 0 && (
+            <span className="absolute -top-1.5 -right-1.5 bg-[var(--emerald)] text-white text-[10px] font-bold min-w-[20px] h-[20px] flex items-center justify-center rounded-full px-1 shadow-md animate-scaleIn">
+              {newMessageCount > 99 ? '99+' : newMessageCount}
+            </span>
+          )}
           <ChevronDown size={26} />
         </button>
       )}

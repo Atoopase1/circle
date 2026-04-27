@@ -63,6 +63,7 @@ interface ChatState {
   setMemberRole: (chatId: string, userId: string, role: 'admin' | 'member') => Promise<void>;
   addGroupMembers: (chatId: string, memberIds: string[]) => Promise<void>;
   leaveGroup: (chatId: string) => Promise<void>;
+  syncNewMessages: (chatId: string) => Promise<void>;
 }
 
 export const useChatStore = create<ChatState>((set, get) => ({
@@ -1231,6 +1232,85 @@ export const useChatStore = create<ChatState>((set, get) => ({
         toast.error(`Failed to leave group: ${error.message}`);
       }
       await get().fetchChats();
+    }
+  },
+
+  syncNewMessages: async (chatId: string) => {
+    const supabase = getSupabaseBrowserClient();
+    const user = useAuthStore.getState().user;
+    if (!user) return;
+
+    try {
+      const cached = get().messagesByChat[chatId] || [];
+      // Find the latest message timestamp in our local cache
+      const latestMsg = cached.length > 0
+        ? cached.reduce((a, b) => new Date(a.created_at).getTime() > new Date(b.created_at).getTime() ? a : b)
+        : null;
+
+      if (!latestMsg) {
+        // No messages cached at all — do a full fetch instead
+        await get().fetchMessages(chatId);
+        return;
+      }
+
+      // Only fetch messages created AFTER our latest local message
+      const { data, error } = await supabase
+        .from('messages')
+        .select('*, sender:profiles!messages_sender_id_fkey(*), status:message_status(*), reply_to:messages!messages_reply_to_id_fkey(*), stars:message_stars!message_stars_message_id_fkey(*), reactions:message_reactions!message_reactions_message_id_fkey(*, profile:profiles!message_reactions_user_id_fkey(*)), deletions:message_deletions!message_deletions_message_id_fkey(*)')
+        .eq('chat_id', chatId)
+        .gt('created_at', latestMsg.created_at)
+        .order('created_at', { ascending: true })
+        .limit(50);
+
+      if (error) {
+        console.warn('[ChatStore] syncNewMessages query error:', error.message);
+        return;
+      }
+
+      if (!data || data.length === 0) return;
+
+      const localDeletedIds = typeof localStorage !== 'undefined' && user ? JSON.parse(localStorage.getItem(`deleted-messages-${user.id}`) || '[]') : [];
+      const now = new Date().getTime();
+
+      const newMessages = (data as Message[]).filter(m => {
+        if (localDeletedIds.includes(m.id)) return false;
+        if (m.deletions?.some(d => d.user_id === user?.id)) return false;
+        if (m.expires_at && new Date(m.expires_at).getTime() < now) return false;
+        // Don't add if already in cache (deduplicate)
+        if (cached.some(c => c.id === m.id)) return false;
+        return true;
+      });
+
+      if (newMessages.length === 0) return;
+
+      console.log(`[ChatStore] syncNewMessages: Found ${newMessages.length} new message(s) for chat ${chatId}`);
+
+      set((state) => {
+        const existing = state.messagesByChat[chatId] || [];
+        const msgMap = new Map(existing.map(m => [m.id, m]));
+        newMessages.forEach(m => msgMap.set(m.id, m));
+
+        const merged = Array.from(msgMap.values()).sort(
+          (a, b) => new Date(a.created_at).getTime() - new Date(b.created_at).getTime()
+        );
+
+        // Persist to IndexedDB
+        cacheMessages(chatId, merged).catch(() => {});
+
+        const updates: Partial<ChatState> = {
+          messagesByChat: { ...state.messagesByChat, [chatId]: merged },
+        };
+        if (state.activeChatId === chatId) {
+          updates.messages = merged;
+        }
+        return updates;
+      });
+
+      // Update chat list with the newest message
+      const newest = newMessages[newMessages.length - 1];
+      get().updateChatWithNewMessage(chatId, newest);
+    } catch (err: any) {
+      console.warn('[ChatStore] syncNewMessages error:', err?.message || err);
     }
   },
 }));

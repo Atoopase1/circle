@@ -52,10 +52,12 @@ export function useRealtimeConnection() {
 
 export function useRealtimeMessages(chatId: string | null) {
   const addMessage = useChatStore((s) => s.addMessage);
+  const syncNewMessages = useChatStore((s) => s.syncNewMessages);
   const channelRef = useRef<ReturnType<ReturnType<typeof getSupabaseBrowserClient>['channel']> | null>(null);
   const reconnectTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const reconnectAttemptsRef = useRef(0);
   const isUnmountedRef = useRef(false);
+  const pollIntervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
   useEffect(() => {
     if (!chatId) return;
@@ -308,11 +310,25 @@ export function useRealtimeMessages(chatId: string | null) {
     window.addEventListener('touchstart', handleInteractionSync, { passive: true });
     window.addEventListener('mousedown', handleInteractionSync, { passive: true });
 
+    // ── Background Polling Safety Net ──
+    // If the WebSocket silently drops, this ensures messages still arrive within 15s.
+    pollIntervalRef.current = setInterval(() => {
+      if (isUnmountedRef.current || !chatId) return;
+      // Only poll when the tab is visible to save resources
+      if (document.visibilityState === 'visible') {
+        syncNewMessages(chatId).catch(() => {});
+      }
+    }, 15_000);
+
     return () => {
       isUnmountedRef.current = true;
 
       clearInterval(wakeupInterval);
       clearInterval(networkRecoveryInterval);
+      if (pollIntervalRef.current) {
+        clearInterval(pollIntervalRef.current);
+        pollIntervalRef.current = null;
+      }
       window.removeEventListener('focus', handleFocusSync);
       window.removeEventListener('online', handleFocusSync);
       document.removeEventListener('visibilitychange', onVisibilityChange);
@@ -333,7 +349,7 @@ export function useRealtimeMessages(chatId: string | null) {
         channelRef.current = null;
       }
     };
-  }, [chatId, addMessage]);
+  }, [chatId, addMessage, syncNewMessages]);
 }
 
 /**
@@ -565,10 +581,26 @@ export function useRealtimeChatList() {
     window.addEventListener('touchstart', handleInteractionSync, { passive: true });
     window.addEventListener('mousedown', handleInteractionSync, { passive: true });
 
+    // ── Background Polling Safety Net for Chat List ──
+    // Ensures chat list stays fresh even if the Realtime channel drops silently.
+    const chatListPollInterval = setInterval(() => {
+      if (isUnmounted || !user) return;
+      if (document.visibilityState === 'visible') {
+        fetchChats();
+
+        // Also sync messages for the currently active chat
+        const activeChatId = useChatStore.getState().activeChatId;
+        if (activeChatId) {
+          useChatStore.getState().syncNewMessages(activeChatId).catch(() => {});
+        }
+      }
+    }, 30_000);
+
     return () => {
       isUnmounted = true;
 
       clearInterval(wakeupInterval);
+      clearInterval(chatListPollInterval);
       window.removeEventListener('focus', handleFocusSync);
       window.removeEventListener('online', handleFocusSync);
       document.removeEventListener('visibilitychange', onVisibilityChange);
